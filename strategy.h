@@ -14,6 +14,11 @@ class Info
 		vector<int> my_history; // last m steps
 		vector<int> opp_history; //TODO:it could be matrix (n,m) , n players for last m steps
 		Info() : action_size(0){;}
+		void print_history()
+		{
+			for(int i : my_history) cout << i << "-" << endl;
+			for(int j : opp_history) cout << j << "-" << endl;
+		}
 };
 
 // any algorithm will be implemented as a Strategy object 
