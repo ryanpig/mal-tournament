@@ -30,9 +30,9 @@ class Strategy
 		int exec(Info inf)
 		{
 			int a = rand() % 100 + 1;
-			cout << a << endl;
-			if(a > 50) return 0;
-			else return 1;
+			// cout << a << endl;
+			if(a > 50) return 1;
+			else return 0;
 		}
 };
 
