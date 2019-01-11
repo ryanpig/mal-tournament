@@ -41,7 +41,8 @@ class Game
 			// create n players & set its strategy (now only random strategy is available) 
 			for(int i = 0; i < m_num_of_players; i++)
 			{
-				Strategy s;
+				// Strategy s;
+				Strategy* s = new Strategy_Random() ;
 				Player* p = new Player(s, i);
 				m_players.push_back(p);
 			}

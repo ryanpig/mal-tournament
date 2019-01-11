@@ -21,13 +21,29 @@ class Info
 		}
 };
 
+// Compostion: all common apis can be put here rather than in pure Strategy class
+class Strategy_Mgr
+{
+
+};
+
+
 // any algorithm will be implemented as a Strategy object 
 class Strategy
 {
 	public:
 		Strategy(){;}
 		// agent, that may or may not use opponenet(s)' information, executes the strategy to select its action. 
-		int exec(Info inf)
+		virtual int exec(Info i) = 0;
+};
+
+class Strategy_Random : public Strategy 
+{
+	public:		
+		using Strategy::Strategy;
+		// equivalent to Str_random() : Strategy() {}
+
+		int exec(Info inf) 
 		{
 			int a = rand() % 100 + 1;
 			// cout << a << endl;
