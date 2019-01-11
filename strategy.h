@@ -1,12 +1,9 @@
-//TODO: this should be changed to abstract class
-//TODO:use C++ <random> to generate certain distribution
-// #include <rand>
 #include <iostream>
 #include <vector>
+#include <random>
 using namespace std;
 
-// Info class is useless now, but it would've been used to pass opponent history in MAL algorithms later on.
-// Info could be seen as the knowledge of the agent
+// Info class is useless now (player maintains these info.), but it would've been used to pass opponent history in MAL algorithms later on.
 class Info
 {
 	public:
@@ -28,7 +25,7 @@ class Strategy_Mgr
 };
 
 
-// any algorithm will be implemented as a Strategy object 
+// Any algorithm will be implemented as a Strategy object 
 class Strategy
 {
 	public:
@@ -37,17 +34,27 @@ class Strategy
 		virtual int exec(Info i) = 0;
 };
 
+/* Random algorithm
+ */
+// algorithm related parameter
+static std::uniform_int_distribution<int> distr(0,99); //99 is included
+
 class Strategy_Random : public Strategy 
 {
 	public:		
-		using Strategy::Strategy;
+		// using Strategy::Strategy;
 		// equivalent to Str_random() : Strategy() {}
+		std::default_random_engine eng;
+		Strategy_Random() : Strategy() 
+		{
+			uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
+			eng.seed(seed);
+		}
 
 		int exec(Info inf) 
 		{
-			int a = rand() % 100 + 1;
 			// cout << a << endl;
-			if(a > 50) return 1;
+			if(distr(eng) > 50) return 1;
 			else return 0;
 		}
 };
