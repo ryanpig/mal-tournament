@@ -35,6 +35,12 @@ endif
 # CXXFLAGS += $(FREEIMAGE_CXXFLAGS)
 # LDFLAGS += $(FREEIMAGE_LDFLAGS)
 
+BOOST_ROOT = /usr/local/Cellar/boost/1.67.0_1
+
+BOOST_CXXFLAGS := -I${BOOST_ROOT}/include
+BOOST_LDFLAGS := -L${BOOST_ROOT}/lib -lboost_program_options
+CXXFLAGS += $(BOOST_CXXFLAGS)
+LDFLAGS += $(BOOST_LDFLAGS)
 # Collect sources
 CXX_SOURCES := $(wildcard *.cpp)
 
