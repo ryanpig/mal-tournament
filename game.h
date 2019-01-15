@@ -46,8 +46,18 @@ class Game
 			// create n players & set its strategy (now only random strategy is available) 
 			for(int ind = 0; ind < m_num_of_players; ind++)
 			{
-				// Strategy s;
-				Strategy* ptr_strategy = new Strategy_Random() ;
+				Strategy* ptr_strategy;
+				if(ind==0)
+				{
+				  ptr_strategy = new Strategy_Random();
+					ptr_strategy->set_index(0);
+				}
+				else
+				{
+				  ptr_strategy = new Strategy_UCB1();
+				  ptr_strategy->set_index(1);
+				}
+
 				Player* p = new Player(ptr_strategy, ind, NUM_OF_ACTIONS);
 				m_players.push_back(p);
 			}
@@ -65,17 +75,25 @@ void Game::single_step()
   m_selected_actions.clear();	
 	for(auto player : m_players)
 	{
-		// cout << "player:" << player->index << endl;
+		// update rounds
+		player->m_info.m_cur_round = m_cur_round;
+		// exec player's algorithm
 		m_selected_actions.push_back(player->select_action());
 	}
-	// calculate payoffs by looking up the matrix
+	// calculate payoffs by looking up the matrix 
+	// TODO: adaptive to n actions
 	int ind = m_selected_actions[0] + m_selected_actions[1] * NUM_OF_ACTIONS;
 	// cout << "action(p0):" << m_selected_actions[0] << ", action(p1):" << m_selected_actions[1] << ",ind:" << ind << endl;
 	for(int i=0; i< NUM_OF_PLAYERS; i++)
 	{
-	 //p1: action 0,1 / p2:action 0,1 (mat_payoffs[4][2] 
-	  m_players[i]->m_acc_payoffs += mat_payoffs[ind][i];
-		m_players[i]->payoff_history.push_back(mat_payoffs[ind][i]);
+		Player *p = m_players[i];
+		//reward for player i
+		int reward = mat_payoffs[ind][i];
+	  p->m_info.m_acc_payoffs_by_action[p->current_action] += reward;
+		p->m_info.m_counts_by_action[p->current_action] += 1;
+	  //p1: action 0,1 / p2:action 0,1 (mat_payoffs[4][2] 
+	  p->m_acc_payoffs += reward;
+		p->payoff_history.push_back(reward);
 		// cout << "player " << i << " get " << mat_payoffs[ind][i] << endl;
 	}
 
@@ -90,17 +108,17 @@ void Game::print_player_info()
   if(m_cur_round <= m_print_top || m_cur_round > m_rounds - m_print_last)
 	{
 		cout << "---step " << m_cur_round << " ----" << endl;
-		for(auto player : m_players)
+		for(auto p : m_players)
 		{
-			cout << "player: " << player->index << endl;
+			cout << "player: " << p->index << ", "<< p->current_strategy->getname(p->strategy_index) << endl;
 			if(m_cur_round <= m_print_top)
 			{
-				player->print_action_history();
-				player->print_payoff_history();
+				p->print_action_history();
+				p->print_payoff_history();
 			}
-			player->print_action_statistic();
-			player->print_payoffs();
-			cout << "Avg. payoff:" << (float)(player->m_acc_payoffs) / m_cur_round << endl;
+			p->print_action_statistic();
+			p->print_payoffs();
+			cout << "Avg. payoff:" << (float)(p->m_acc_payoffs) / m_cur_round << endl;
 			cout << "----------" << endl;
 		}
 	}

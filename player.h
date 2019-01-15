@@ -11,6 +11,7 @@ class Player
 		Info m_info;
 		int index;
 		Strategy* current_strategy;
+		int strategy_index;
 		int current_action; // not neccessary
 		vector<int> payoff_history; //debug
 		vector<int> action_history; //debug
@@ -22,8 +23,11 @@ class Player
 		Player(Strategy* s, int ind, int action_size) : m_acc_payoffs(0)
 		{
 			current_strategy = s;
+			strategy_index = current_strategy->get_index();
 			index = ind;
-			m_action_size = action_size;
+			m_info.m_action_size = action_size;
+			m_info.m_acc_payoffs_by_action.resize(action_size,0);
+			m_info.m_counts_by_action.resize(action_size,0);
 		}
 
 		// return an action by its strategy
@@ -46,16 +50,14 @@ int Player::select_action()
 
 void Player::print_action_statistic()
 {
-	vector<int> action_distr;
-  for(int i=0; i < m_action_size; i++)
+	// print all action relevant information 
+	cout << "Actions info:" << endl;
+	for(size_t i = 0; i < m_info.m_acc_payoffs_by_action.size(); i++)
 	{
-		uint count = std::count(action_history.begin(), action_history.end(), i);
-		action_distr.push_back(count);
+		float acc = m_info.m_acc_payoffs_by_action[i]; 
+		float count = m_info.m_counts_by_action[i];
+		float avg = acc / count;
+		cout << "action " << i << ":" << acc << "(acc_payoffs), " << count << "(times)," << avg << "(average)" << endl;
 	}
-
-	cout << "action counts:";
-	for(auto c : action_distr)
-		cout << c << ", "; 
-	cout << endl;
 }
 
