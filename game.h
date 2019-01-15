@@ -1,10 +1,7 @@
 #include "player.h"
+#include "config.h"
 
-#define NUM_OF_PLAYERS 2
-#define NUM_OF_TURNS 10000
-#define NUM_OF_ACTIONS 2
-#define PRINT_TOP 3 //only print top n and last n steps
-#define PRINT_LAST 1
+
 
 //temporary payoff matrix for testing 
 static const int mat_payoffs[NUM_OF_PLAYERS * NUM_OF_ACTIONS][NUM_OF_PLAYERS] = {{3,3}, {5,0}, {0,5}, {1,1}};
@@ -12,25 +9,27 @@ static const int mat_payoffs[NUM_OF_PLAYERS * NUM_OF_ACTIONS][NUM_OF_PLAYERS] = 
 class Game
 {
 	public:
-		int m_turns; // the number of turns in a game
+		int m_rounds; // the number of rounds in a game
 		int m_num_of_players;
-		int m_cur_turn;
+		int m_cur_round;
 		vector<Player*> m_players; // the number of players in a game
 		vector<int> m_selected_actions; // actions selected by each players
 		//Printing parameter
-		int print_top;
-		int print_last;
+		int m_print_top;
+		int m_print_last;
 
 
 		// constructor	
-		Game(uint turns, uint num_of_players) : m_cur_turn(0), print_top(PRINT_TOP), print_last(PRINT_LAST)
+		Game(uint rounds, uint num_of_players, int print_top, int print_last) : m_cur_round(0), m_print_top(3), m_print_last(1)
 		{
 			// initialization
-			m_turns = turns;
+			m_rounds = rounds;
 			m_num_of_players = num_of_players;
+			m_print_top = print_top;
+			m_print_last = print_last;
 
 			// print basic inforamtion of the game
-			cout << "Total players: " << m_num_of_players << ", Total turns: " << m_turns << ", Action size:" << NUM_OF_ACTIONS << endl;
+			cout << "Total players: " << m_num_of_players << ", Total rounds: " << m_rounds << ", Action size:" << NUM_OF_ACTIONS << endl;
 			cout << "-- Payoff Matrix --" << endl;
 			for(int i = 0; i < m_num_of_players; i++)
 			{
@@ -61,7 +60,7 @@ class Game
 
 void Game::single_step()
 {
-	m_cur_turn++;
+	m_cur_round++;
 	// action selection
   m_selected_actions.clear();	
 	for(auto player : m_players)
@@ -88,20 +87,20 @@ void Game::single_step()
 // print each player's action history, payoff history, and acc_payoff 
 void Game::print_player_info()
 {
-  if(m_cur_turn <= print_top || m_cur_turn > m_turns - print_last)
+  if(m_cur_round <= m_print_top || m_cur_round > m_rounds - m_print_last)
 	{
-		cout << "---step " << m_cur_turn << " ----" << endl;
+		cout << "---step " << m_cur_round << " ----" << endl;
 		for(auto player : m_players)
 		{
 			cout << "player: " << player->index << endl;
-			if(m_cur_turn <= print_top)
+			if(m_cur_round <= m_print_top)
 			{
 				player->print_action_history();
 				player->print_payoff_history();
 			}
 			player->print_action_statistic();
 			player->print_payoffs();
-			cout << "Avg. payoff:" << (float)(player->m_acc_payoffs) / m_cur_turn << endl;
+			cout << "Avg. payoff:" << (float)(player->m_acc_payoffs) / m_cur_round << endl;
 			cout << "----------" << endl;
 		}
 	}
