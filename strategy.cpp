@@ -24,7 +24,7 @@ int Strategy_UCB1::exec(Info &inf)
 	else
 	{
 		// normal 
-		cout << "action size(UCB1):" << inf.m_action_size << endl;
+		// cout << "action size(UCB1):" << inf.m_action_size << endl;
 		vector<float> x_avg(inf.m_action_size, 0.0);
 		vector<float> evaluated(inf.m_action_size, 0.0);
 		int t = inf.m_cur_round; 
@@ -37,12 +37,12 @@ int Strategy_UCB1::exec(Info &inf)
 			float opt	= sqrt(2 * log(t) / inf.m_counts_by_action[i]);
 			// sum of 1st and 2nd term
 			evaluated[i] = x_avg[i] + opt;
-			cout << "x_avg[i]:" << x_avg[i] << ", opt:" << opt << ", evaluated[i]:" << evaluated[i] << endl;
+			// cout << "x_avg[i]:" << x_avg[i] << ", opt:" << opt << ", evaluated[i]:" << evaluated[i] << endl;
 		}
-		cout << endl;
+		// cout << endl;
 		// select action based on evaluated result 
 		int select_action = max_element(evaluated.begin(), evaluated.end()) - evaluated.begin();
-		cout << "select_action:" << select_action << ",evaluted:" << evaluated[select_action] << endl;
+		// cout << "select_action:" << select_action << ",evaluted:" << evaluated[select_action] << endl;
 
 		return select_action;
 	}

@@ -57,4 +57,6 @@ int main(int argc, char** argv)
 	  testgame.single_step();	
 	}
 
+	//statistic analysis
+	testgame.dataToFile();
 }

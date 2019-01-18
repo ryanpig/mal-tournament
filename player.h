@@ -13,6 +13,7 @@ class Player
 		Strategy* current_strategy;
 		int current_action; // not neccessary
 		vector<int> payoff_history; //debug
+		vector<int> acc_payoff_history; //debug
 		vector<int> action_history; //debug
 		int m_action_size;
 
@@ -31,10 +32,11 @@ class Player
 		int select_action();
 
 		// helper functions
-		void print_payoffs(){cout << "Acculated Payoff:" << m_acc_payoffs << endl;}
+		void print_payoffs(){cout << "Accumulated Payoff:" << m_acc_payoffs << endl;}
 		void print_action_history(){for(auto i: action_history){cout<<i<<"-- ";} cout<<endl;}
 		void print_action_statistic();
 		void print_payoff_history(){for(auto i: payoff_history){cout<<i<<"-- ";} cout<<endl;}
+		void print_acc_regret(){ cout << "Accumulated Regrets:" << m_info.m_acc_regret << endl;}
 };
 
 // based on strategy and info, the agent selects best action.(not really best)

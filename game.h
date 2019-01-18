@@ -1,5 +1,6 @@
 #include "player.h"
 #include "config.h"
+#include "IOHandler.h"
 
 
 
@@ -17,6 +18,7 @@ class Game
 		//Printing parameter
 		int m_print_top;
 		int m_print_last;
+		vector<int> vec_acc_regret;
 
 
 		// constructor	
@@ -57,6 +59,7 @@ class Game
 
 		void single_step();
 		void print_player_info();
+		void dataToFile();
 			
 };
 
@@ -81,14 +84,40 @@ void Game::single_step()
 		Player *p = m_players[i];
 		//reward for player i
 		int reward = mat_payoffs[ind][i];
+		//store to m_info by selected action
 	  p->m_info.m_acc_payoffs_by_action[p->current_action] += reward;
 		p->m_info.m_counts_by_action[p->current_action] += 1;
-	  //p1: action 0,1 / p2:action 0,1 (mat_payoffs[4][2] 
+		//store to player data member for all actions 
 	  p->m_acc_payoffs += reward;
 		p->payoff_history.push_back(reward);
+		p->acc_payoff_history.push_back(p->m_acc_payoffs);
+	   	
+		// DEBUG
 		// cout << "player " << i << " get " << mat_payoffs[ind][i] << endl;
 	}
 
+	// regret calcuation (regret = reward of the best action - reward of the current action
+	// assume player 1 play UCB , and calculate regret for player 1
+	// 2 player version,  TODO: for n players
+	auto f_regret_cal = [](int player_index, int my_action, int opp_action, int &acc_regret){
+		int ind = opp_action + my_action * NUM_OF_ACTIONS; 		
+		int cur_reward = mat_payoffs[ind][player_index];
+		int	max = cur_reward; 
+		// find the best action		
+		for(int i = 0; i < NUM_OF_ACTIONS; i++)
+		{
+		  ind = opp_action + i * NUM_OF_ACTIONS; //TODO: assume player 1 use no-regret so that evaluating its diff. actions 
+			int tmp = mat_payoffs[ind][player_index];
+			if(tmp > cur_reward)
+				max = tmp;
+		}
+		acc_regret += max - cur_reward;
+	};
+	int my_ind = 1;
+	int opp_ind = 0;
+	f_regret_cal(my_ind, m_selected_actions[my_ind], m_selected_actions[opp_ind], m_players[my_ind]->m_info.m_acc_regret);
+	vec_acc_regret.push_back(m_players[my_ind]->m_info.m_acc_regret);
+	
 	//show result
 	print_player_info();
 	
@@ -110,8 +139,16 @@ void Game::print_player_info()
 			}
 			p->print_action_statistic();
 			p->print_payoffs();
+			p->print_acc_regret();
 			cout << "Avg. payoff:" << (float)(p->m_acc_payoffs) / m_cur_round << endl;
 			cout << "----------" << endl;
 		}
 	}
+}
+
+void Game::dataToFile()
+{
+	io_Handler.writeToCSV(vec_acc_regret, "regret.csv");
+	io_Handler.writeVectorsToCSV(m_players[0]->acc_payoff_history, m_players[1]->acc_payoff_history, "acc_payoffs.csv");
+	io_Handler.writeVectorsToCSV(m_players[0]->action_history, m_players[1]->action_history, "action_history.csv");
 }

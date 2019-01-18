@@ -15,10 +15,11 @@ class Info
 		vector<Info*> opp_history; //TODO: using vector<Info*> 
 		vector<int> m_acc_payoffs_by_action;
 		vector<int> m_counts_by_action;
+		int m_acc_regret;
 		int m_cur_round;
 
 		// constructor 
-		Info() : m_action_size(0){;}
+		Info() : m_action_size(0), m_acc_regret(0){;}
 		void print_history()
 		{
 			for(int i : my_history) cout << i << "-" << endl;
