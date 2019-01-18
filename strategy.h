@@ -88,16 +88,23 @@ class Strategy_UCB1 : public Strategy
 
 class Strategy_EXP3: public Strategy 
 {
-
+	public:
+		Strategy_EXP3() : Strategy(2)
+		{
+			;
+		}
 };
 
 // Compostion: all common apis can be put here rather than in pure Strategy class
 static class Strategy_Mgr
 {
 	public:
-		Strategy* createNewStrategy(int strategy_index) {
+		static Strategy* createNewStrategy(int strategy_index) {
 			if(strategy_index == 0) return new Strategy_Random();
 			else if(strategy_index == 1) return new Strategy_UCB1();
-			else cerr << "strategy index " << strategy_index << " is not supported!" << endl;
+			else {
+				cerr << "strategy index " << strategy_index << " is not supported!" << endl;
+				return nullptr;
+			}
 		}
-};
+} strategy_Mgr;
