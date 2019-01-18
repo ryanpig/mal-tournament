@@ -43,22 +43,14 @@ class Game
 				}
 			}
 
-			// create n players & set its strategy (now only random strategy is available) 
-			for(int ind = 0; ind < m_num_of_players; ind++)
+			// create n players & set its strategy  
+			for(int player_ind = 0; player_ind < m_num_of_players; player_ind++)
 			{
-				Strategy* ptr_strategy;
-				if(ind==0)
-				{
-				  ptr_strategy = new Strategy_Random();
-					ptr_strategy->set_index(0);
-				}
+				Player* p;
+				if(player_ind==0)
+					p = new Player(0, player_ind, NUM_OF_ACTIONS); 
 				else
-				{
-				  ptr_strategy = new Strategy_UCB1();
-				  ptr_strategy->set_index(1);
-				}
-
-				Player* p = new Player(ptr_strategy, ind, NUM_OF_ACTIONS);
+					p = new Player(1, player_ind, NUM_OF_ACTIONS); 
 				m_players.push_back(p);
 			}
 		}
@@ -110,7 +102,7 @@ void Game::print_player_info()
 		cout << "---step " << m_cur_round << " ----" << endl;
 		for(auto p : m_players)
 		{
-			cout << "player: " << p->index << ", "<< p->current_strategy->getname(p->strategy_index) << endl;
+			cout << "player: " << p->index << ", "<< p->current_strategy->getname() << endl;
 			if(m_cur_round <= m_print_top)
 			{
 				p->print_action_history();

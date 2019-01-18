@@ -45,10 +45,13 @@ int main(int argc, char** argv)
 	catch(exception& e) {
 		std::cerr << e.what() << "\n";
 	}
-	
+	char a{0};
 	// start a game
 	cout << "--Game start--" << endl;
 	Game testgame(set_rounds, NUM_OF_PLAYERS, set_print_top, set_print_last);
+	// wait to see basic information
+	while(a != 'y'){cout << "Please enter y to continue the game" << endl; cin >> a;}
+	// loop m rounds games
 	for(int i=0;i<testgame.m_rounds;i++)
 	{
 	  testgame.single_step();	
