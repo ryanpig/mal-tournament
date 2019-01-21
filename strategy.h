@@ -3,6 +3,8 @@
 #include <random>
 #include <math.h>
 #include <algorithm>
+#include "math_utility.h"
+
 using namespace std;
 
 // Info class is useless now (player maintains these info.), but it would've been used to pass opponent history in MAL algorithms later on.
@@ -90,10 +92,25 @@ class Strategy_UCB1 : public Strategy
 class Strategy_EXP3: public Strategy 
 {
 	public:
-		Strategy_EXP3() : Strategy(2)
+		// Variables
+		vector<float> weights;
+		vector<float> probs;
+		vector<vector<float>> weights_history;
+		float gamma; // tunnable parameter
+		default_random_engine random_eng;
+
+		Strategy_EXP3(int numberOfAction) : Strategy(2), gamma(0.07)
 		{
-			;
+			weights.resize(numberOfAction, 1.0f);
+			probs.resize(numberOfAction, 0.0f);
+			// To randomly pick an action, we initialize the random engine w/ a seed
+			uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
+			random_eng.seed(seed);
 		}
+		
+		int exec(Info &inf);
+		void prob_distr_calc();
+		int draw_action();
 };
 
 // Compostion: all common apis can be put here rather than in pure Strategy class

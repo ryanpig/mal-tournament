@@ -47,3 +47,57 @@ int Strategy_UCB1::exec(Info &inf)
 		return select_action;
 	}
 }
+
+/* Exp3 algorithm 
+ * 1. Initialization
+ *  -  wi = 1 
+ * 2. Draw an action according to weights 
+ * 3. Generate probability distribution 
+ *  -  pi(t) = (1 - gamma) * wi / sum(wi(t)) + gamma / N (note: pi: probability of action i ; wi: weight of action i )
+ * 4. get reward r(t)
+ * 5. Update weights
+ *  - r^i(t) = r(t) / pi(t)  if action(t) = i else 0
+ *  - wi *= math.exp(gamma * r^i(t) / N ) (note: N: the number of actions)
+ *  */
+
+// TODO: think how to pass reward to calculation (e.g. update weights by previous reward?)
+int Strategy_EXP3::exec(Info &inf)
+{
+	//TODO: retrieve from inf? scalar reward?
+	float reward = 0.0f; 	
+	// draw a action based on weights
+	uint select_action = draw_action();
+	
+	// calculate probability distribution by the formula in 3
+	prob_distr_calc(); 
+	// update weights
+	float estimated_reward = reward / probs[select_action];
+	weights[select_action] *= exp(gamma * estimated_reward / weights.size());
+
+	return select_action;
+}
+
+// generate probability distribution
+void Strategy_EXP3::prob_distr_calc()
+{
+	float sum_weights = sum(weights);
+	float a = ( 1 - gamma) / sum_weights;
+	float b = gamma / weights.size();
+  for(size_t i = 0; i < weights.size(); i++){
+		probs[i] = a * weights[i] + b;
+	}
+}
+
+// randomly pick one action according to weights
+int Strategy_EXP3::draw_action()
+{
+	float sum_weights = sum(weights);
+	std::uniform_real_distribution<> distr(0, sum_weights); // TODO:Verify the randomness
+	float rand_choice = distr(random_eng);
+	for(size_t i = 0; i < weights.size(); i++){
+		rand_choice -= weights[i];
+		if(rand_choice < 0.0f)
+			return i;
+	}
+	return 0;
+}
