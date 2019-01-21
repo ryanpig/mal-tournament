@@ -6,26 +6,33 @@
 
 using namespace std;
 /* for test */
-/*
+
 int main()
 {
-	process_Mgr.generateGame();
+	process_Mgr.generateGame("Rand2", 3, 4);
 }
-*/
 
-void Process_Mgr::generateGame()
+void Process_Mgr::generateGame(string fname, int actions, int players)
 {
-	// filename
-	string filename = "Random1";
+	// filename flag
+	string filename = fname;
 	filename += ".game";
+  string output_flag = " -f " + filename; 
+	// action flag
+	// string game_flag = " -actions " + std::to_string(actions);
+	string game_flag = " -actions 2 3 5 4" ;
+	// player flag
+	game_flag += " -players " + std::to_string(players);
+	
 	// clean up 
 	bool r = process_Mgr.file_exist(filename);
 	if(r)
 		string res = process_Mgr.cmd_exec("rm " + filename);
 	// command w/ a file flag
-  string file_flag = " -f " + filename; 
-	string cmd = "java -jar gamut.jar -g RandomGame -actions 3 -players 2 -output GambitOutput -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
-	cmd += file_flag;
+	// string cmd = "java -jar gamut.jar -g RandomGame -actions 3 -players 2 -output GambitOutput -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
+	string cmd = "java -jar gamut.jar -g RandomGame";
+	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
+	cmd += output_flag + " -output GambitOutput";
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
 
