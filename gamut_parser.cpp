@@ -27,9 +27,24 @@ void GameParser::parser(string filename)
 	std::string line;
 	bool start_flag = false;
 	std::vector<float> parsed_vec;
+	std::vector<int> parsed_act;
+	string find_action = "Actions:";
 
 	while(std::getline(infile, line))
 	{
+		// parsing action size
+		size_t pos = line.find(find_action);
+		if(pos != string::npos)
+		{
+			line.erase(pos, find_action.length()); 
+			std::istringstream iss1(line);
+			std::string token1;
+			while(std::getline(iss1, token1,' '))
+			{
+				parsed_act.push_back(std::stoi(token1.c_str()));	
+			}
+		}
+		// parsing payoff data, save to a vector 
 		if(start_flag)
 		{
 			std::istringstream iss(line);
@@ -39,19 +54,19 @@ void GameParser::parser(string filename)
 			{
 				parsed_vec.push_back(std::stof(token.c_str()));	
 			}
-
-			std::cout << line << std::endl;
+			// std::cout << line << std::endl;
 		}
+		// if empty line, start to parse data
 		if(line.size() == 0)
 			start_flag = true;	
 	}
 
-
-	// 3 players , 3 actions for each one
-	const vector<int> act{3,3,3}; //action
-	// 4 players, various action number
-	// const vector<int> act{2,3,5,4}; // action TODO:get from parsing
-	// Debug
+	const vector<int> act = parsed_act; //action
+	// parsing result
+	cout << "Parsed action size:";
+	for(auto &e : act)
+		cout << e << ",";
+	cout << endl;
 
 	// convert vector to matrix by traversing all rows of each player (size_reward: the size of elements that each player has)
 	auto vecToMatrix = [](vector<float> &vec, const vector<int> &act_dim){
@@ -90,7 +105,7 @@ void GameParser::parser(string filename)
 		}	
 		return index;
 	};
-	auto print_vec_i = [](vector<int> &v){for(auto &e : v) cout << e << ","; cout << endl;};
+	auto print_vec_i = [](vector<int> &v){for(auto &e : v) cout << e << ",";};
 	auto print_vec_f = [](vector<float> &v){for(auto &e : v) cout << e << ","; cout << endl;};
 
 	// sample test 
@@ -119,6 +134,7 @@ void GameParser::parser(string filename)
 					int ind = funcQuery(act, v);
 					cout << "row " << ind  << " :";
 					print_vec_i(v);
+					cout << "---";
 				  print_vec_f(matrix[ind]); 
 					count++;
 					set1.insert(ind);
