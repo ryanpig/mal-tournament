@@ -8,8 +8,8 @@
 
 int main()
 {
-	// std::string fname = "Rand1"; // Players:3 , actions:{3,3,3}
-	std::string fname = "RandTest"; // players:4 , actions: {2,3,5,4}
+	std::string fname = "Rand1"; // Players:3 , actions:{3,3,3}
+	// std::string fname = "RandTest"; // players:4 , actions: {2,3,5,4}
 	// process_Mgr.generateGame(fname, 3, 3);
   GameParser g;
 	g.parser(fname + ".game");
@@ -48,9 +48,9 @@ void GameParser::parser(string filename)
 
 
 	// 3 players , 3 actions for each one
-	// const vector<int> act{3,3,3} //action
+	const vector<int> act{3,3,3}; //action
 	// 4 players, various action number
-	const vector<int> act{2,3,5,4}; // action TODO:get from parsing
+	// const vector<int> act{2,3,5,4}; // action TODO:get from parsing
 	// Debug
 
 	// convert vector to matrix by traversing all rows of each player (size_reward: the size of elements that each player has)
@@ -95,8 +95,8 @@ void GameParser::parser(string filename)
 
 	// sample test 
 	// vector<int> test1{1,1,1}; //expect = {72,7,8}
-	// vector<int> test2{2,1,0}; //expect = {95,39,12}
-	vector<int> test1{1,2,3,2}; // Expect: 81,67,10,5
+	vector<int> test1{2,1,0}; //expect = {95,39,12}
+	// vector<int> test1{1,2,3,2}; // Expect: 81,67,10,5
 	int query_index = funcQuery(act, test1);
 	std::cout << std::endl;
 	// show query result
@@ -110,19 +110,19 @@ void GameParser::parser(string filename)
 	for(size_t i0 = 0; i0 < act[0]; i0++){
 		for(size_t i1 = 0; i1 < act[1]; i1++){
 			for(size_t i2 = 0; i2 < act[2]; i2++){
-				for(size_t i3 = 0; i3 < act[3]; i3++) {
+				// for(size_t i3 = 0; i3 < act[3]; i3++) {
 					vector<int> v;
 					v.push_back(i0);
 					v.push_back(i1);
 					v.push_back(i2);
-					v.push_back(i3);
+					// v.push_back(i3);
 					int ind = funcQuery(act, v);
 					cout << "row " << ind  << " :";
 					print_vec_i(v);
 				  print_vec_f(matrix[ind]); 
 					count++;
 					set1.insert(ind);
-				}
+				// }
 			}
 		}
 	}
