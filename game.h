@@ -20,7 +20,7 @@ class Game
 		int m_print_last;
 		vector<int> vec_acc_regret;
 		GameParser *m_game_parser;
-		vector<float> getPayoffs(vector<int> &v){return m_game_parser->queryByVec(v);};
+		vector<float> getPayoffs(){return m_game_parser->queryByVec(m_selected_actions);};
 
 
 		// constructor	
@@ -37,6 +37,7 @@ class Game
 			cout << "Total players: " << m_num_of_players << ", Total rounds: " << m_rounds << ", Action size:" << NUM_OF_ACTIONS << endl;
 			cout << "-- Payoff Matrix --" << endl;
 			m_game_parser->traverseMat();
+			// DEBUG: Use manual payoff matrix
 			// for(int i = 0; i < m_num_of_players; i++)
 			// {
 			//   cout << "--Payoff of player " << i << endl;
@@ -50,13 +51,15 @@ class Game
 			// }
 
 			// create n players & set its strategy  
+			
+			vector<int> action_size = m_game_parser->getActionSize();
 			for(int player_ind = 0; player_ind < m_num_of_players; player_ind++)
 			{
 				Player* p;
 				if(player_ind==0)
-					p = new Player(0, player_ind, NUM_OF_ACTIONS); 
+					p = new Player(1, player_ind, action_size[player_ind]); 
 				else
-					p = new Player(1, player_ind, NUM_OF_ACTIONS); 
+					p = new Player(0, player_ind, action_size[player_ind]); 
 				m_players.push_back(p);
 			}
 		}

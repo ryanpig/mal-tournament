@@ -15,13 +15,15 @@ void Game::single_step()
 	}
 	// calculate payoffs by looking up the matrix 
 	// TODO: adaptive to n actions
-	int ind = m_selected_actions[0] + m_selected_actions[1] * NUM_OF_ACTIONS;
+	// int ind = m_selected_actions[0] + m_selected_actions[1] * NUM_OF_ACTIONS;
+	vector<float> cur_payoffs = getPayoffs();
 	// cout << "action(p0):" << m_selected_actions[0] << ", action(p1):" << m_selected_actions[1] << ",ind:" << ind << endl;
-	for(int i=0; i< NUM_OF_PLAYERS; i++)
+	for(int i=0; i< m_num_of_players; i++)
 	{
 		Player *p = m_players[i];
 		//reward for player i
-		int reward = mat_payoffs[ind][i];
+		// int reward = mat_payoffs[ind][i];
+		int reward = cur_payoffs[i]; 
 		//store to m_info by selected action
 	  p->m_info.m_acc_payoffs_by_action[p->current_action] += reward;
 		p->m_info.m_counts_by_action[p->current_action] += 1;
@@ -39,13 +41,16 @@ void Game::single_step()
 	// 2 player version,  TODO: for n players
 	auto f_regret_cal = [](int player_index, int my_action, int opp_action, int &acc_regret){
 		int ind = opp_action + my_action * NUM_OF_ACTIONS; 		
+		// vector<float> cur_payoffs = getPayoffs();
 		int cur_reward = mat_payoffs[ind][player_index];
+		// int cur_reward = cur_payoffs[player_index]; 
 		int	max = cur_reward; 
 		// find the best action		
 		for(int i = 0; i < NUM_OF_ACTIONS; i++)
 		{
 		  ind = opp_action + i * NUM_OF_ACTIONS; //TODO: assume player 1 use no-regret so that evaluating its diff. actions 
-			int tmp = mat_payoffs[ind][player_index];
+			// int tmp = mat_payoffs[ind][player_index];
+			int tmp = mat_payoffs[ind][player_index]; // TODO: change opp_action to all n opponets actions
 			if(tmp > cur_reward)
 				max = tmp;
 		}

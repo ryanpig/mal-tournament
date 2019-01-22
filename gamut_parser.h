@@ -16,6 +16,7 @@ class GameParser
 		// void printByPlayer(int n) const;
 		int getIndex(vector<int> &vec_query) const;
 		void traverseMat() const;
+		vector<int> getActionSize(){return m_act_dim;};
 
 	private:
 		vector<vector<float>> m_matrix;

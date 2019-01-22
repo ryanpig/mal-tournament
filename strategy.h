@@ -120,6 +120,7 @@ static class Strategy_Mgr
 		static Strategy* createNewStrategy(int strategy_index) {
 			if(strategy_index == 0) return new Strategy_Random();
 			else if(strategy_index == 1) return new Strategy_UCB1();
+			// else if(strategy_index == 2) return new Strategy_EXP3();
 			else {
 				cerr << "strategy index " << strategy_index << " is not supported!" << endl;
 				return nullptr;
