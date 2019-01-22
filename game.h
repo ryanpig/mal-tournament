@@ -57,9 +57,9 @@ class Game
 			{
 				Player* p;
 				if(player_ind==0)
-					p = new Player(1, player_ind, action_size[player_ind]); 
+					p = new Player(StrategyType::UCB1, player_ind, action_size[player_ind]); 
 				else
-					p = new Player(0, player_ind, action_size[player_ind]); 
+					p = new Player(StrategyType::Random, player_ind, action_size[player_ind]); 
 				m_players.push_back(p);
 			}
 		}

@@ -74,7 +74,7 @@ void Game::print_player_info()
 		cout << "---step " << m_cur_round << " ----" << endl;
 		for(auto p : m_players)
 		{
-			cout << "player: " << p->index << ", "<< p->current_strategy->getname() << endl;
+			cout << "player: " << p->index << ", "<< strategy_Mgr.getname(p->current_strategy->type) << endl;
 			if(m_cur_round <= m_print_top)
 			{
 				p->print_action_history();
