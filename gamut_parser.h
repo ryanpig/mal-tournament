@@ -17,10 +17,14 @@ class GameParser
 		int getIndex(vector<int> &vec_query) const;
 		void traverseMat() const;
 		vector<int> getActionSize(){return m_act_dim;};
+		bool indexCheck(int &ind) const{return (ind < m_index_max);};
+		template<typename T>
+		void printVec(vector<T> &v) const{for(auto &e : v) cout << e << " ,"; cout<<endl;};
 
 	private:
 		vector<vector<float>> m_matrix;
 		vector<int> m_act_dim;
+		int m_index_max;
 
 };
 

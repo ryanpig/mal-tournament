@@ -36,18 +36,20 @@ class Strategy
 	protected:
 		int index;
 	public:
-		vector<string> strategy_names = {"Random", "UCB1"};
-		Strategy(uint ind){index = ind;}
+		vector<string> strategy_names = {"Random", "UCB1", "EXP3"}; //TODO:Change to Enum
+		//base constructor
+		Strategy(int ind, int act_size) : index(ind), action_size(act_size)
+		{index = ind;}
 		// agent, that may or may not use opponenet(s)' information, executes the strategy to select its action. 
 		virtual int exec(Info &i) = 0;
 		string getname(){return strategy_names[index];}
 		int get_index(){return index;}
+	  int action_size;
 };
 
 /* Random algorithm
  */
 // algorithm related parameter
-static std::uniform_int_distribution<int> distr(0,99); //99 is included
 
 class Strategy_Random : public Strategy 
 {
@@ -55,7 +57,7 @@ class Strategy_Random : public Strategy
 		// using Strategy::Strategy;
 		// equivalent to Str_random() : Strategy() {}
 		std::default_random_engine eng;
-		Strategy_Random() : Strategy(0)
+		Strategy_Random(int act) : Strategy(0, act)
 		{
 			cout << "Strategy Random is selected." << endl;
 			uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
@@ -64,9 +66,9 @@ class Strategy_Random : public Strategy
 
 		int exec(Info &inf) 
 		{
-			// cout << a << endl;
-			if(distr(eng) > 50) return 1;
-			else return 0;
+			std::uniform_int_distribution<int> distr(0, action_size - 1);
+			int choice = distr(eng);
+			return choice; 
 		}
 };
 
@@ -80,7 +82,7 @@ class Strategy_UCB1 : public Strategy
 		int initial_counts;
 		bool initial_flag;
 		// Constructor
-		Strategy_UCB1() : Strategy(1), initial_counts(0), initial_flag(true)
+		Strategy_UCB1(int act) : Strategy(1, act), initial_counts(0), initial_flag(true)
 		{
 			cout << "Strategy UCB1 is selected." << endl;
 		}
@@ -99,10 +101,10 @@ class Strategy_EXP3: public Strategy
 		float gamma; // tunnable parameter
 		default_random_engine random_eng;
 
-		Strategy_EXP3(int numberOfAction) : Strategy(2), gamma(0.07)
+		Strategy_EXP3(int act) : Strategy(2, act), gamma(0.07)
 		{
-			weights.resize(numberOfAction, 1.0f);
-			probs.resize(numberOfAction, 0.0f);
+			weights.resize(action_size, 1.0f);
+			probs.resize(action_size, 0.0f);
 			// To randomly pick an action, we initialize the random engine w/ a seed
 			uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
 			random_eng.seed(seed);
@@ -117,10 +119,10 @@ class Strategy_EXP3: public Strategy
 static class Strategy_Mgr
 {
 	public:
-		static Strategy* createNewStrategy(int strategy_index) {
-			if(strategy_index == 0) return new Strategy_Random();
-			else if(strategy_index == 1) return new Strategy_UCB1();
-			// else if(strategy_index == 2) return new Strategy_EXP3();
+		static Strategy* createNewStrategy(int strategy_index, int action_size) {
+			if(strategy_index == 0) return new Strategy_Random(action_size); //TODO:change to Enum StrategyType {Random, UCB1, EXP3}
+			else if(strategy_index == 1) return new Strategy_UCB1(action_size);
+			// else if(strategy_index == 2) return new Strategy_EXP3(action_size);
 			else {
 				cerr << "strategy index " << strategy_index << " is not supported!" << endl;
 				return nullptr;

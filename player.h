@@ -21,7 +21,7 @@ class Player
 		Player(int str_index, int ind, int action_size) : m_acc_payoffs(0)
 		{
 			cout << "Player " << ind << ", ";
-			current_strategy = strategy_Mgr.createNewStrategy(str_index);
+			current_strategy = strategy_Mgr.createNewStrategy(str_index, action_size);
 			index = ind;
 			m_info.m_action_size = action_size;
 			m_info.m_acc_payoffs_by_action.resize(action_size,0);
