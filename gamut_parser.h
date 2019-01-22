@@ -8,6 +8,7 @@ class GameParser
 {
 	public:
 		void parser(string filename);
+		void selftest();
 };
 
 inline int multi(const vector<int> &v)
