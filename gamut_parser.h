@@ -3,7 +3,7 @@
 #include <numeric>
 #include "process.h"
 
-
+#pragma once
 using namespace std;
 
 class GameParser
@@ -11,8 +11,9 @@ class GameParser
 	public:
 		bool parser(string filename);
 		void selftest();
-		vector<vector<float>> getMat(){return m_matrix;};
+		vector<vector<float>> copyMat(){return m_matrix;};
 		vector<float> queryByVec(vector<int> &v);
+		void printByPlayer(int n);
 		int getIndex(vector<int> &vec_query);
 
 	private:

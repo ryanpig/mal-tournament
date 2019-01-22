@@ -1,7 +1,7 @@
 #include "player.h"
 #include "config.h"
 #include "IOHandler.h"
-
+#include "gamut_parser.h"
 
 
 //temporary payoff matrix for testing 
@@ -19,16 +19,19 @@ class Game
 		int m_print_top;
 		int m_print_last;
 		vector<int> vec_acc_regret;
+		GameParser *m_game_parser;
+		vector<float> getPayoffs(vector<int> &v){return m_game_parser->queryByVec(v);};
 
 
 		// constructor	
-		Game(uint rounds, uint num_of_players, int print_top, int print_last) : m_cur_round(0), m_print_top(3), m_print_last(1)
+		Game(uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp) : m_cur_round(0), m_print_top(3), m_print_last(1)
 		{
 			// initialization
 			m_rounds = rounds;
 			m_num_of_players = num_of_players;
 			m_print_top = print_top;
 			m_print_last = print_last;
+			m_game_parser = &gp;
 
 			// print basic inforamtion of the game
 			cout << "Total players: " << m_num_of_players << ", Total rounds: " << m_rounds << ", Action size:" << NUM_OF_ACTIONS << endl;

@@ -187,3 +187,8 @@ void GameParser::selftest()
 	cout << "passed" << endl;
 }
 
+void GameParser::printByPlayer(int n)
+{
+	
+}
+
