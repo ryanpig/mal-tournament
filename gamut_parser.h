@@ -2,12 +2,13 @@
 #include <vector>
 #include <numeric>
 
+
 using namespace std;
 
 class GameParser
 {
 	public:
-		void parser(string filename);
+		bool parser(string filename);
 		void selftest();
 		vector<vector<float>> getMat(){return m_matrix;};
 		vector<float> queryByVec(vector<int> &v);

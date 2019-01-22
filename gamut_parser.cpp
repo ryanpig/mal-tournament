@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include "gamut_parser.h"
+#include "process.h"
 #include <vector>
 #include <iostream>
 #include <set>
@@ -8,21 +9,29 @@
 
 int main()
 {
-	std::string fname = "Rand1"; // Players:3 , actions:{3,3,3}
-	// std::string fname = "RandTest"; // players:4 , actions: {2,3,5,4}
-	// process_Mgr.generateGame(fname, 3, 3);
+	// Existing games for testing 
+	std::string fname = "RandTest333"; // Players:3 , actions:{3,3,3}
+	// std::string fname = "RandTest2354"; // players:4 , actions: {2,3,5,4}
+	
+	// Generate a new game
+	// std::string fname = "RandNew1";
+	// process_Mgr.generateGame(fname, 5, 2); // action size, players
   GameParser g;
-	g.parser(fname + ".game");
-	g.selftest();
+	bool r = g.parser(fname + ".game");
+	if(r)
+		g.selftest();
 }
 
 
-void GameParser::parser(string filename)
+bool GameParser::parser(string filename)
 {
 	// file open
 	std::ifstream infile(filename);	
 	if(!infile.is_open())
+	{
 		std::cerr << filename << " can't be opened!" << std::endl;
+		return false;
+	}
 	
 	// parsing line by line, and save result to a vector
 	std::string line;
@@ -72,7 +81,7 @@ void GameParser::parser(string filename)
 		vector<vector<float>> mat;
 		int size_rewards = multi(act_dim); 
 		int cur{0};
-		std::cout << "total size:" << vec.size() << ", plyaers:" << act_dim.size() << ", each player:" << size_rewards << std::endl;
+		std::cout << "Total size:" << vec.size() << ", Plyaers:" << act_dim.size() << ", Each player:" << size_rewards << std::endl;
 		for(int i = 0; i < size_rewards ; i++)
 		{
 			std::cout << "row number:" << i << "-- ";
@@ -94,16 +103,17 @@ void GameParser::parser(string filename)
 		cout << "Parsing successfully!" << endl;
 	else
 		cerr << "Parsing error: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << endl;
+	return true;
 }
 
-
+// query payoff vector by a given action vector
 vector<float> GameParser::queryByVec(vector<int> &vec_query)
 {
 	int ind = getIndex(vec_query);
 	return m_matrix[ind];
 }
 
-// return index by a vector
+// return index by a given action vector
 int GameParser::getIndex(vector<int> &vec_query){
 		int index{0};
 		for(int i = 0; i < m_act_dim.size(); i++)
@@ -120,6 +130,7 @@ int GameParser::getIndex(vector<int> &vec_query){
 //TODO: test different game sizes
 void GameParser::selftest()
 {
+	cout << endl;
 	cout << "Performing self test..." << endl;
 	auto print_vec = [](vector<int> &vi, vector<float> &vf)
 	{
@@ -134,7 +145,6 @@ void GameParser::selftest()
 
 	// Start to test 
 	// sample test 
-	// vector<int> test1{1,1,1}; //expect = {72,7,8}
 	vector<int> test1{2,1,0}; //expect = {95,39,12}
 	// vector<int> test1{1,2,3,2}; // Expect: 81,67,10,5
 

@@ -6,11 +6,10 @@
 
 using namespace std;
 /* for test */
-
-int main()
-{
-	process_Mgr.generateGame("Rand2", 3, 4);
-}
+// int main()
+// {
+//   process_Mgr.generateGame("Rand2", 3, 4);
+// }
 
 void Process_Mgr::generateGame(string fname, int actions, int players)
 {
@@ -19,8 +18,8 @@ void Process_Mgr::generateGame(string fname, int actions, int players)
 	filename += ".game";
   string output_flag = " -f " + filename; 
 	// action flag
-	// string game_flag = " -actions " + std::to_string(actions);
-	string game_flag = " -actions 2 3 5 4" ;
+	string game_flag = " -actions " + std::to_string(actions);
+	// string game_flag = " -actions 2 3 5 4" ;
 	// player flag
 	game_flag += " -players " + std::to_string(players);
 	
