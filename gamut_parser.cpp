@@ -4,22 +4,25 @@
 #include <vector>
 #include <iostream>
 #include <set>
+#include <algorithm>
 // #include "process.h"
 
 // For test
 // int main()
 // {
 //   // Existing games for testing 
-//   std::string fname = "RandTest333"; // Players:3 , actions:{3,3,3}
+//   // std::string fname = "RandTest333"; // Players:3 , actions:{3,3,3}
 //   // std::string fname = "RandTest2354"; // players:4 , actions: {2,3,5,4}
 	
 //   // Generate a new game
-//   // std::string fname = "RandNew1";
-//   // process_Mgr.generateGame(fname, 5, 2); // action size, players
+//   std::string fname = "RandNew1";
+//   process_Mgr.generateGame(fname, 5, 2); // action size, players
 //   GameParser g;
-//   bool r = g.parser(fname + ".game");
-//   if(r)
-//     g.selftest();
+//   if(!g.parser(fname + ".game"))
+//     cout << "parser failed" << endl;
+//   else
+//     g.traverseMat();
+//   //   g.selftest();
 // }
 
 
@@ -107,14 +110,14 @@ bool GameParser::parser(string filename)
 }
 
 // query payoff vector by a given action vector
-vector<float> GameParser::queryByVec(vector<int> &vec_query)
+vector<float> GameParser::queryByVec(vector<int> &vec_query) const
 {
 	int ind = getIndex(vec_query);
 	return m_matrix[ind];
 }
 
 // return index by a given action vector
-int GameParser::getIndex(vector<int> &vec_query){
+int GameParser::getIndex(vector<int> &vec_query) const{
 		int index{0};
 		for(size_t i = 0; i < m_act_dim.size(); i++)
 		{
@@ -134,10 +137,10 @@ void GameParser::selftest()
 	cout << "Performing self test..." << endl;
 	auto print_vec = [](vector<int> &vi, vector<float> &vf)
 	{
-		cout << " test: ";
+		cout << " action: ";
 		for(auto &e : vi) 
 			cout << e << ",";
-		cout << " return: ";
+		cout << " payoffs: ";
 		for(auto &e : vf) 
 			cout << e << ",";
 		cout << endl;
@@ -186,8 +189,84 @@ void GameParser::selftest()
 	assert(set1.size() == m_matrix.size());
 	cout << "passed" << endl;
 }
+void GameParser::traverseMat() const
+{
+	//helper function
+	auto print_vec = [](const vector<int> &vi)
+	{
+		for(auto &e : vi) 
+			cout << e << ",";
+		cout << endl;
+	};
 
-void GameParser::printByPlayer(int n)
+	auto print_vec2 = [](vector<int> &vi, vector<float> &vf)
+	{
+		cout << " action: ";
+		for(auto &e : vi) 
+			cout << e << ",";
+		cout << " payoffs: ";
+		for(auto &e : vf) 
+			cout << e << ",";
+		cout << endl;
+	};
+	// set element that postion is smaller than pos to zero
+	auto resetZero = [](vector<int> &v, int pos){
+		for(size_t p = 0; p < pos; p++){
+			v[p] = 0;
+		}
+	};
+
+	// input
+	vector<int> cur(m_act_dim.size(), 0);
+	vector<int> max = m_act_dim;
+	for_each(max.begin(), max.end(), [](int &e){e--;});
+	int epos = 0;	
+	int count = 1;
+	bool flag_plus{false};
+	bool overflow{false};
+	// start
+	cout << "action size vector:";
+ 	print_vec(m_act_dim);
+	vector<float> ini = queryByVec(cur);
+	print_vec2(cur, ini);
+	while(cur != max)
+	{
+		flag_plus = false;
+		epos = 0;
+		// each digit check
+		while(!flag_plus){
+			//if current digit is smaller than its max value, the overflow occurrs.  
+			if((cur[epos] + 1) <= max[epos])
+			{
+				// no overflow
+				if(!overflow){
+					cur[epos]++;
+					flag_plus = true;
+				}else{
+					// overflow
+					cur[epos]++;
+					// set previous digis to 0;
+					resetZero(cur,epos);
+					overflow = false;
+					flag_plus = true;
+				}
+			}else{
+				//overflow
+				overflow = true;
+				epos++; // go to next digit
+			}
+		}
+		vector<float> res = queryByVec(cur);
+		print_vec2(cur, res);		
+		count++;
+	}
+
+	cout << "Total items:" << count << endl;
+}
+
+
+
+void GameParser::printByPlayer(int n) const
 {
 	
 }

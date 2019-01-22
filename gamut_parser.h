@@ -12,9 +12,10 @@ class GameParser
 		bool parser(string filename);
 		void selftest();
 		vector<vector<float>> copyMat(){return m_matrix;};
-		vector<float> queryByVec(vector<int> &v);
-		void printByPlayer(int n);
-		int getIndex(vector<int> &vec_query);
+		vector<float> queryByVec(vector<int> &v) const;
+		void printByPlayer(int n) const;
+		int getIndex(vector<int> &vec_query) const;
+		void traverseMat() const;
 
 	private:
 		vector<vector<float>> m_matrix;
