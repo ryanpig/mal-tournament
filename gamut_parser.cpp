@@ -87,15 +87,16 @@ bool GameParser::parser(string filename)
 		std::cout << "Total size:" << vec.size() << ", Plyaers:" << act_dim.size() << ", Each player:" << size_rewards << std::endl;
 		for(int i = 0; i < size_rewards ; i++)
 		{
-			std::cout << "row number:" << i << "-- ";
+			// std::cout << "row number:" << i << "-- ";
 			vector<float> tmp;
 			for(size_t p = 0; p < act_dim.size(); p++)
 			{
 				tmp.push_back(vec[cur]);
-				std::cout << vec[cur++] << ",";
+				cur++;
+				// std::cout << vec[cur] << ",";
 			}
 			mat.push_back(tmp);
-			std::cout << std::endl;
+			// std::cout << std::endl;
 		};
 			
 		return mat;
@@ -211,7 +212,7 @@ void GameParser::traverseMat() const
 	};
 	// set element that postion is smaller than pos to zero
 	auto resetZero = [](vector<int> &v, int pos){
-		for(size_t p = 0; p < pos; p++){
+		for(int p = 0; p < pos; p++){
 			v[p] = 0;
 		}
 	};
@@ -266,8 +267,4 @@ void GameParser::traverseMat() const
 
 
 
-void GameParser::printByPlayer(int n) const
-{
-	
-}
 

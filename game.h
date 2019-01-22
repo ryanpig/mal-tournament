@@ -36,17 +36,18 @@ class Game
 			// print basic inforamtion of the game
 			cout << "Total players: " << m_num_of_players << ", Total rounds: " << m_rounds << ", Action size:" << NUM_OF_ACTIONS << endl;
 			cout << "-- Payoff Matrix --" << endl;
-			for(int i = 0; i < m_num_of_players; i++)
-			{
-				cout << "--Payoff of player " << i << endl;
-				for(int j = 0; j < m_num_of_players * NUM_OF_ACTIONS;j++)
-				{
-					// cout << "i:" << i << ", j:" << j << ", payoff:" << mat_payoffs[j][i] << endl; 
-					cout << mat_payoffs[j][i] << "," ;
-					if(j % NUM_OF_ACTIONS == 1)
-						cout << endl;
-				}
-			}
+			m_game_parser->traverseMat();
+			// for(int i = 0; i < m_num_of_players; i++)
+			// {
+			//   cout << "--Payoff of player " << i << endl;
+			//   for(int j = 0; j < m_num_of_players * NUM_OF_ACTIONS;j++)
+			//   {
+			//     // cout << "i:" << i << ", j:" << j << ", payoff:" << mat_payoffs[j][i] << endl; 
+			//     cout << mat_payoffs[j][i] << "," ;
+			//     if(j % NUM_OF_ACTIONS == 1)
+			//       cout << endl;
+			//   }
+			// }
 
 			// create n players & set its strategy  
 			for(int player_ind = 0; player_ind < m_num_of_players; player_ind++)
