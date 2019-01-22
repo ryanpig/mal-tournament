@@ -9,6 +9,14 @@ class GameParser
 	public:
 		void parser(string filename);
 		void selftest();
+		vector<vector<float>> getMat(){return m_matrix;};
+		vector<float> queryByVec(vector<int> &v);
+		int getIndex(vector<int> &vec_query);
+
+	private:
+		vector<vector<float>> m_matrix;
+		vector<int> m_act_dim;
+
 };
 
 inline int multi(const vector<int> &v)

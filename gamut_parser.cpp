@@ -13,6 +13,7 @@ int main()
 	// process_Mgr.generateGame(fname, 3, 3);
   GameParser g;
 	g.parser(fname + ".game");
+	g.selftest();
 }
 
 
@@ -27,7 +28,6 @@ void GameParser::parser(string filename)
 	std::string line;
 	bool start_flag = false;
 	std::vector<float> parsed_vec;
-	std::vector<int> parsed_act;
 	string find_action = "Actions:";
 
 	while(std::getline(infile, line))
@@ -41,7 +41,7 @@ void GameParser::parser(string filename)
 			std::string token1;
 			while(std::getline(iss1, token1,' '))
 			{
-				parsed_act.push_back(std::stoi(token1.c_str()));	
+				m_act_dim.push_back(std::stoi(token1.c_str()));	
 			}
 		}
 		// parsing payoff data, save to a vector 
@@ -61,15 +61,14 @@ void GameParser::parser(string filename)
 			start_flag = true;	
 	}
 
-	const vector<int> act = parsed_act; //action
 	// parsing result
 	cout << "Parsed action size:";
-	for(auto &e : act)
+	for(auto &e : m_act_dim)
 		cout << e << ",";
 	cout << endl;
 
 	// convert vector to matrix by traversing all rows of each player (size_reward: the size of elements that each player has)
-	auto vecToMatrix = [](vector<float> &vec, const vector<int> &act_dim){
+	auto vecToMatrix = [](vector<float> &vec, vector<int> &act_dim){
 		vector<vector<float>> mat;
 		int size_rewards = multi(act_dim); 
 		int cur{0};
@@ -86,56 +85,85 @@ void GameParser::parser(string filename)
 			mat.push_back(tmp);
 			std::cout << std::endl;
 		};
+			
 		return mat;
 	};
 
-	auto matrix = vecToMatrix(parsed_vec, act);
+	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
+	if(m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) 
+		cout << "Parsing successfully!" << endl;
+	else
+		cerr << "Parsing error: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << endl;
+}
 
-	// calculation the corresponding query index
-	auto funcQuery = [](const vector<int> &act_dim, vector<int> &vec_query){
+
+vector<float> GameParser::queryByVec(vector<int> &vec_query)
+{
+	int ind = getIndex(vec_query);
+	return m_matrix[ind];
+}
+
+// return index by a vector
+int GameParser::getIndex(vector<int> &vec_query){
 		int index{0};
-		for(int i = 0; i < act_dim.size(); i++)
+		for(int i = 0; i < m_act_dim.size(); i++)
 		{
-			int pop = vec_query[act_dim.size() - 1 - i];
-			if(i != act_dim.size() - 1)
-				index += pop * multi_range(act_dim, i + 1);
+			int pop = vec_query[m_act_dim.size() - 1 - i];
+			if(i != m_act_dim.size() - 1)
+				index += pop * multi_range(m_act_dim, i + 1);
 			else
 				index += pop;
-			// cout << "i:" << i << ", pop:" << pop << ", multi:" << multi_range(act, i + 1) << ", index:" << index << endl;
 		}	
 		return index;
-	};
-	auto print_vec_i = [](vector<int> &v){for(auto &e : v) cout << e << ",";};
-	auto print_vec_f = [](vector<float> &v){for(auto &e : v) cout << e << ","; cout << endl;};
+}
 
+//TODO: test different game sizes
+void GameParser::selftest()
+{
+	cout << "Performing self test..." << endl;
+	auto print_vec = [](vector<int> &vi, vector<float> &vf)
+	{
+		cout << " test: ";
+		for(auto &e : vi) 
+			cout << e << ",";
+		cout << " return: ";
+		for(auto &e : vf) 
+			cout << e << ",";
+		cout << endl;
+	};
+
+	// Start to test 
 	// sample test 
 	// vector<int> test1{1,1,1}; //expect = {72,7,8}
 	vector<int> test1{2,1,0}; //expect = {95,39,12}
 	// vector<int> test1{1,2,3,2}; // Expect: 81,67,10,5
-	int query_index = funcQuery(act, test1);
-	std::cout << std::endl;
+
 	// show query result
+	cout << "Test single vector:" << endl;
+	int query_index = getIndex(test1);
 	cout << "row:" << query_index << endl;
-	print_vec_i(test1);
-	print_vec_f(matrix[query_index]);
+	print_vec(test1, m_matrix[query_index]);
+
+	vector<float> expect{95,39,12};
+	assert(queryByVec(test1) == expect);
+	cout << "passed" << endl;
 
 	// naive way to traverse all rows TODO:change to recursive code or other adaptive function
+	cout << "Test traverse all rows:" << endl;
 	int count ={0};
 	set<int> set1;
-	for(size_t i0 = 0; i0 < act[0]; i0++){
-		for(size_t i1 = 0; i1 < act[1]; i1++){
-			for(size_t i2 = 0; i2 < act[2]; i2++){
-				// for(size_t i3 = 0; i3 < act[3]; i3++) {
+	for(size_t i0 = 0; i0 < m_act_dim[0]; i0++){
+		for(size_t i1 = 0; i1 < m_act_dim[1]; i1++){
+			for(size_t i2 = 0; i2 < m_act_dim[2]; i2++){
+				// for(size_t i3 = 0; i3 < m_act_dim[3]; i3++) {
 					vector<int> v;
 					v.push_back(i0);
 					v.push_back(i1);
 					v.push_back(i2);
 					// v.push_back(i3);
-					int ind = funcQuery(act, v);
+					int ind = getIndex(v);
 					cout << "row " << ind  << " :";
-					print_vec_i(v);
-					cout << "---";
-				  print_vec_f(matrix[ind]); 
+					print_vec(v, m_matrix[ind]); 
 					count++;
 					set1.insert(ind);
 				// }
@@ -144,11 +172,8 @@ void GameParser::parser(string filename)
 	}
 	cout << "total:" << count << endl;
 	cout << "set total:" << set1.size() << endl;
-
-}
-//TODO: test different game sizes
-void GameParser::selftest()
-{
-	
+	assert(count == m_matrix.size());
+	assert(set1.size() == m_matrix.size());
+	cout << "passed" << endl;
 }
 
