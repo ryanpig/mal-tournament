@@ -3,6 +3,7 @@
 #include <boost/program_options.hpp>
 #include <chrono>
 #include "config.h"
+#include "gamut_parser.h"
 
 
 using namespace boost::program_options;
@@ -27,6 +28,7 @@ int main(int argc, char** argv)
 
 
 	// parsing arguments
+	cout << "---Start to parse commandline arguments---" << endl;
 	try
  	{
 		store(parse_command_line(argc, argv, desc), vm);
@@ -45,9 +47,19 @@ int main(int argc, char** argv)
 	catch(exception& e) {
 		std::cerr << e.what() << "\n";
 	}
-	char a{0};
+	cout << endl;
+
+	// generate a new game from Gamut
+	cout << "---Generate a game from Gamut ---" << endl;
+	std::string fname = "RandNew1";
+	process_Mgr.generateGame(fname, 5, 2); // action size, players
+	GameParser g;
+	bool r = g.parser(fname + ".game");
+	cout << endl;
+
 	// start a game
-	cout << "--Game start--" << endl;
+	char a{0};
+	cout << "---Game start---" << endl;
 	Game testgame(set_rounds, NUM_OF_PLAYERS, set_print_top, set_print_last);
 	// wait to see basic information
 	while(a != 'y'){cout << "Please enter y to continue the game" << endl; cin >> a;}
@@ -58,5 +70,6 @@ int main(int argc, char** argv)
 	}
 
 	//statistic analysis
+	cout << "---Save data to the CSV file ---" << endl;
 	testgame.dataToFile();
 }

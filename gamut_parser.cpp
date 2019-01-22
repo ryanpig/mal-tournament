@@ -1,26 +1,26 @@
 #include <fstream>
 #include <sstream>
 #include "gamut_parser.h"
-#include "process.h"
 #include <vector>
 #include <iostream>
 #include <set>
 // #include "process.h"
 
-int main()
-{
-	// Existing games for testing 
-	std::string fname = "RandTest333"; // Players:3 , actions:{3,3,3}
-	// std::string fname = "RandTest2354"; // players:4 , actions: {2,3,5,4}
+// For test
+// int main()
+// {
+//   // Existing games for testing 
+//   std::string fname = "RandTest333"; // Players:3 , actions:{3,3,3}
+//   // std::string fname = "RandTest2354"; // players:4 , actions: {2,3,5,4}
 	
-	// Generate a new game
-	// std::string fname = "RandNew1";
-	// process_Mgr.generateGame(fname, 5, 2); // action size, players
-  GameParser g;
-	bool r = g.parser(fname + ".game");
-	if(r)
-		g.selftest();
-}
+//   // Generate a new game
+//   // std::string fname = "RandNew1";
+//   // process_Mgr.generateGame(fname, 5, 2); // action size, players
+//   GameParser g;
+//   bool r = g.parser(fname + ".game");
+//   if(r)
+//     g.selftest();
+// }
 
 
 bool GameParser::parser(string filename)
@@ -86,7 +86,7 @@ bool GameParser::parser(string filename)
 		{
 			std::cout << "row number:" << i << "-- ";
 			vector<float> tmp;
-			for(int p =0; p < act_dim.size(); p++)
+			for(size_t p = 0; p < act_dim.size(); p++)
 			{
 				tmp.push_back(vec[cur]);
 				std::cout << vec[cur++] << ",";
@@ -99,7 +99,7 @@ bool GameParser::parser(string filename)
 	};
 
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
-	if(m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) 
+	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) 
 		cout << "Parsing successfully!" << endl;
 	else
 		cerr << "Parsing error: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << endl;
@@ -116,7 +116,7 @@ vector<float> GameParser::queryByVec(vector<int> &vec_query)
 // return index by a given action vector
 int GameParser::getIndex(vector<int> &vec_query){
 		int index{0};
-		for(int i = 0; i < m_act_dim.size(); i++)
+		for(size_t i = 0; i < m_act_dim.size(); i++)
 		{
 			int pop = vec_query[m_act_dim.size() - 1 - i];
 			if(i != m_act_dim.size() - 1)
@@ -162,10 +162,10 @@ void GameParser::selftest()
 	cout << "Test traverse all rows:" << endl;
 	int count ={0};
 	set<int> set1;
-	for(size_t i0 = 0; i0 < m_act_dim[0]; i0++){
-		for(size_t i1 = 0; i1 < m_act_dim[1]; i1++){
-			for(size_t i2 = 0; i2 < m_act_dim[2]; i2++){
-				// for(size_t i3 = 0; i3 < m_act_dim[3]; i3++) {
+	for(int i0 = 0; i0 < m_act_dim[0]; i0++){
+		for(int i1 = 0; i1 < m_act_dim[1]; i1++){
+			for(int i2 = 0; i2 < m_act_dim[2]; i2++){
+				// for(int i3 = 0; i3 < m_act_dim[3]; i3++) {
 					vector<int> v;
 					v.push_back(i0);
 					v.push_back(i1);
@@ -182,7 +182,7 @@ void GameParser::selftest()
 	}
 	cout << "total:" << count << endl;
 	cout << "set total:" << set1.size() << endl;
-	assert(count == m_matrix.size());
+	assert(count == (int)m_matrix.size());
 	assert(set1.size() == m_matrix.size());
 	cout << "passed" << endl;
 }
