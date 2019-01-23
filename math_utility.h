@@ -3,7 +3,7 @@ using namespace std;
 
 template<typename T> //int, float
 T sum(vector<T> &v){
-	return accumulate(v.begin(), v.end(), 0);
+	return accumulate(v.begin(), v.end(), 0.0f);
 }
 
 // return average of all elements in the array

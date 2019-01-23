@@ -24,10 +24,11 @@ class Game
 		vector<float> getPayoffs(){return m_game_parser->queryByVec(m_selected_actions);};
 		bool f_print;
 		bool f_permute;
+		StrategyType main_strategy;
 
 
 		// constructor	
-		Game(int gameid, uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp, int assign_strategy, bool f_print, bool f_permute) : m_gameid(gameid), m_cur_round(0), m_print_top(3), m_print_last(1), f_print(f_print), f_permute(f_permute)
+		Game(int gameid, uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp, int assign_strategy, bool f_print, bool f_permute, StrategyType str_type) : m_gameid(gameid), m_cur_round(0), m_print_top(3), m_print_last(1), f_print(f_print), f_permute(f_permute), main_strategy(str_type)
 	{	
 			// initialization
 			m_rounds = rounds;
@@ -50,7 +51,7 @@ class Game
 			{
 				Player* p;
 				if(player_ind==assign_strategy)
-					p = new Player(StrategyType::UCB1, player_ind, action_size[player_ind]); 
+					p = new Player(main_strategy, player_ind, action_size[player_ind]); 
 				else
 					p = new Player(StrategyType::Random, player_ind, action_size[player_ind]); 
 				m_players.push_back(p);

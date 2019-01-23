@@ -61,19 +61,29 @@ int Strategy_UCB1::exec(Info &inf)
  *  */
 
 // TODO: think how to pass reward to calculation (e.g. update weights by previous reward?)
+static const float rewardMax = 100.0f;
+static const float rewardMin = 0.0f;
 int Strategy_EXP3::exec(Info &inf)
 {
-	//TODO: retrieve from inf? scalar reward?
-	float reward = 0.0f; 	
-	// draw a action based on weights
-	uint select_action = draw_action();
-	
+	// retrive info from previous action/reward
+	float reward = inf.last_reward; 	
+	int last_action = inf.last_action;
 	// calculate probability distribution by the formula in 3
 	prob_distr_calc(); 
 	// update weights
-	float estimated_reward = reward / probs[select_action];
-	weights[select_action] *= exp(gamma * estimated_reward / weights.size());
+	float scaledReward = (reward - rewardMin) / (rewardMax - rewardMin);
+	float estimated_reward = scaledReward / probs[last_action]; 
+	weights[last_action] *= exp(gamma * estimated_reward / weights.size());
 
+	//debug
+	// cout << "last reward:" << reward << endl;
+	// cout << "probs:";
+	// strategy_Mgr.printVec(probs);
+	// cout << "last act:" << last_action << ", weight:" << weights[last_action] << ", estimated_reward:"<< estimated_reward << ", exp:" << exp(gamma * estimated_reward / weights.size()) << endl;
+
+
+	// draw a action based on weights
+	uint select_action = draw_action();
 	return select_action;
 }
 
@@ -94,10 +104,17 @@ int Strategy_EXP3::draw_action()
 	float sum_weights = sum(weights);
 	std::uniform_real_distribution<> distr(0, sum_weights); // TODO:Verify the randomness
 	float rand_choice = distr(random_eng);
+	// debug:
+	// cout << "Weights:";
+	// strategy_Mgr.printVec(weights);	
+	// cout << "sum_weights:" << sum_weights << ", rand_choice:" << rand_choice << endl;
 	for(size_t i = 0; i < weights.size(); i++){
 		rand_choice -= weights[i];
 		if(rand_choice < 0.0f)
+		{
+			// cout << "choice:" << i << endl;
 			return i;
+		}
 	}
 	return 0;
 }

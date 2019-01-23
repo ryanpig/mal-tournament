@@ -20,9 +20,11 @@ class Info
 		vector<int> m_counts_by_action;
 		float m_acc_regrets;
 		int m_cur_round;
+		int last_action;
+		float last_reward;
 
 		// constructor 
-		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0){
+		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f){
 			m_acc_payoffs_by_action.resize(action_size,0);
 			m_counts_by_action.resize(action_size,0);
 		}
@@ -101,7 +103,7 @@ class Strategy_EXP3: public Strategy
 		vector<float> weights;
 		vector<float> probs;
 		vector<vector<float>> weights_history;
-		float gamma; // tunnable parameter
+		float gamma; // TODO: tunnable parameter
 		default_random_engine random_eng;
 
 		Strategy_EXP3(int act) : Strategy(2, act, StrategyType::EXP3), gamma(0.07)
@@ -140,4 +142,7 @@ static class Strategy_Mgr
 			}
 
 		}
+
+		template<typename T>
+		void printVec(vector<T> &v){for(auto e : v) cout<<e<<" ,"; cout << endl;};
 } strategy_Mgr;

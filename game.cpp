@@ -26,6 +26,8 @@ void Game::single_step()
 		// store to m_info : accumulated payoffs by selected action, counts by selected action
 	  p->m_info.m_acc_payoffs_by_action[p->current_action] += reward;
 		p->m_info.m_counts_by_action[p->current_action] += 1;
+		p->m_info.last_reward = reward;
+		p->m_info.last_action = p->current_action;
 		// store accumulated payoffs 
 	  p->m_acc_payoffs += reward;
 		// store payoff and accumulated payoffs history
@@ -101,7 +103,6 @@ void Game::dataToFile()
 	vector<vector<float>> vecs_acc_regret;
 	vector<vector<int>> vecs_acc_payoff;
 	// vector<vector<float>> vecs_acc_regret;
-	int i{0};
 	for(auto p : m_players)
 	{
 		vecs_acc_regret.push_back(p->acc_regret_history);
