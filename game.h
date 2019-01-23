@@ -10,6 +10,7 @@ static const int mat_payoffs[NUM_OF_PLAYERS * NUM_OF_ACTIONS][NUM_OF_PLAYERS] = 
 class Game
 {
 	public:
+		int m_gameid;
 		int m_rounds; // the number of rounds in a game
 		int m_num_of_players;
 		int m_cur_round;
@@ -22,11 +23,12 @@ class Game
 		GameParser *m_game_parser;
 		vector<float> getPayoffs(){return m_game_parser->queryByVec(m_selected_actions);};
 		bool f_print;
+		bool f_permute;
 
 
 		// constructor	
-		Game(uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp, int assign_strategy, bool f_print) : m_cur_round(0), m_print_top(3), m_print_last(1), f_print(f_print)
-		{
+		Game(int gameid, uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp, int assign_strategy, bool f_print, bool f_permute) : m_gameid(gameid), m_cur_round(0), m_print_top(3), m_print_last(1), f_print(f_print), f_permute(f_permute)
+	{	
 			// initialization
 			m_rounds = rounds;
 			m_num_of_players = num_of_players;
@@ -64,5 +66,6 @@ class Game
 		void print_manual_payoff();
 		void print_final_result();
 		void dataToFile();
+		int getGameID(){return m_gameid;};
 };
 

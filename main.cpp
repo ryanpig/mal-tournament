@@ -78,16 +78,14 @@ int main(int argc, char** argv)
 
 	// start a game
 	char a{0};
-	bool permutation = set_permute;
-	bool print_flag = set_print_flag;
 	int iterations{1};
 	// allow to iterate player to use the single strategy to eliminate the bias
-	if(permutation) iterations = set_players; 
+	if(set_permute) iterations = set_players; 
 		
 	cout << "---Game start---" << endl;
-	for(int permute = 0; permute < iterations; permute++)
+	for(int permuteid = 0; permuteid < iterations; permuteid++)
 	{
-		Game testgame(set_rounds, set_players, set_print_top, set_print_last, gp, permute, print_flag);
+		Game testgame(permuteid, set_rounds, set_players, set_print_top, set_print_last, gp, permuteid, set_print_top, set_permute);
 		// wait to see basic information
 		// while(a != 'y'){cout << "Please enter y to continue the game" << endl; cin >> a;}
 		// run a single game;

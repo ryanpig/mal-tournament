@@ -35,7 +35,7 @@ void Game::single_step()
 		float regret = regret_cal(p, m_selected_actions);
 		p->m_acc_regrets += regret;		
 		p->m_info.m_acc_regrets += regret;
-		p->acc_regret_history.push_back(p->m_acc_payoffs);
+		p->acc_regret_history.push_back(p->m_acc_regrets);
 	}
 	
 	// data out
@@ -99,13 +99,21 @@ void Game::print_player_info()
 void Game::dataToFile()
 {
 	vector<vector<float>> vecs_acc_regret;
+	vector<vector<int>> vecs_acc_payoff;
+	// vector<vector<float>> vecs_acc_regret;
+	int i{0};
 	for(auto p : m_players)
 	{
 		vecs_acc_regret.push_back(p->acc_regret_history);
+		vecs_acc_payoff.push_back(p->acc_payoff_history);
 	}
-	// io_Handler.writeToCSV(vec_acc_regret, "regret.csv");
-	io_Handler.writeVectorsToCSV(vecs_acc_regret, "regret.csv");
-	io_Handler.writeTwoVectorsToCSV(m_players[0]->acc_payoff_history, m_players[1]->acc_payoff_history, "acc_payoffs.csv");
+	
+	vector<string> vec_type{"regret", "acc_payoffs", "action_history"};
+
+	string fname = vec_type[0] + std::to_string(getGameID()) + ".csv";
+	io_Handler.writeVectorsToCSV(vecs_acc_regret, fname);
+	fname = vec_type[1] + std::to_string(getGameID()) + ".csv";
+	io_Handler.writeVectorsToCSV(vecs_acc_payoff, fname);
 	io_Handler.writeTwoVectorsToCSV(m_players[0]->action_history, m_players[1]->action_history, "action_history.csv");
 }
 
