@@ -13,6 +13,8 @@ int main(int argc, char** argv)
 	int set_print_last = PRINT_LAST;
 	int set_players = NUM_OF_PLAYERS;
 	int set_actions = NUM_OF_ACTIONS;
+	bool set_print_flag = true;
+	bool set_permute = false;
 
 	// command line parser
 	namespace po = boost::program_options;
@@ -24,6 +26,8 @@ int main(int argc, char** argv)
 	("players,p", po::value<int>()->required(), "the number of players in a game")
 	("print_top,t", po::value<int>()->required(), "print top n rounds info")
 	("print_last,l", po::value<int>()->required(), "print last n rounds info")
+	("print_flag,z", po::value<bool>()->required(), "true to print more info.") //TODO:change to logging module 
+	("permute,y", po::value<bool>()->required(), "run permutation of payoffs.")
 	;
 	variables_map vm;
 
@@ -48,7 +52,13 @@ int main(int argc, char** argv)
 		  set_actions = vm["actions"].as<int>();
 		if (vm.count("players"))
 		  set_players = vm["players"].as<int>();
+		if (vm.count("print_flag"))
+		  set_print_flag = vm["print_flag"].as<bool>();
+		if (vm.count("permute"))
+		  set_permute = vm["permute"].as<bool>();
+
 		cout << "CMD, rounds:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players << endl;
+		cout << "print flag:" << set_print_flag << ", permute flag:" << set_permute << endl; 
 	}
 	catch(exception& e) {
 		std::cerr << e.what() << "\n";
@@ -68,14 +78,14 @@ int main(int argc, char** argv)
 
 	// start a game
 	char a{0};
-	bool permutation = true;
-	bool print_flag = false;
-	int iteration{0};
+	bool permutation = set_permute;
+	bool print_flag = set_print_flag;
+	int iterations{1};
 	// allow to iterate player to use the single strategy to eliminate the bias
-	if(permutation) iteration = set_players; 
+	if(permutation) iterations = set_players; 
 		
 	cout << "---Game start---" << endl;
-	for(int permute = 0; permute < set_players; permute++)
+	for(int permute = 0; permute < iterations; permute++)
 	{
 		Game testgame(set_rounds, set_players, set_print_top, set_print_last, gp, permute, print_flag);
 		// wait to see basic information

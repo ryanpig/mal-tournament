@@ -13,58 +13,64 @@ void Game::single_step()
 		// exec player's algorithm
 		m_selected_actions.push_back(player->select_action());
 	}
-	// calculate payoffs by looking up the matrix 
-	// TODO: adaptive to n actions
-	// int ind = m_selected_actions[0] + m_selected_actions[1] * NUM_OF_ACTIONS;
+
+	// payoffs calculation 
 	vector<float> cur_payoffs = getPayoffs();
-	// cout << "action(p0):" << m_selected_actions[0] << ", action(p1):" << m_selected_actions[1] << ",ind:" << ind << endl;
+
+	// store data to each player
 	for(int i=0; i< m_num_of_players; i++)
 	{
 		Player *p = m_players[i];
-		//reward for player i
 		// int reward = mat_payoffs[ind][i];
 		int reward = cur_payoffs[i]; 
-		//store to m_info by selected action
+		// store to m_info : accumulated payoffs by selected action, counts by selected action
 	  p->m_info.m_acc_payoffs_by_action[p->current_action] += reward;
 		p->m_info.m_counts_by_action[p->current_action] += 1;
-		//store to player data member for all actions 
+		// store accumulated payoffs 
 	  p->m_acc_payoffs += reward;
+		// store payoff and accumulated payoffs history
 		p->payoff_history.push_back(reward);
 		p->acc_payoff_history.push_back(p->m_acc_payoffs);
-	   	
-		// DEBUG
-		// cout << "player " << i << " get " << mat_payoffs[ind][i] << endl;
+		// store accumulated regret
+		float regret = regret_cal(p, m_selected_actions);
+		p->m_acc_regrets += regret;		
+		p->m_info.m_acc_regrets += regret;
 	}
-
-	// regret calcuation (regret = reward of the best action - reward of the current action
-	// assume player 1 play UCB , and calculate regret for player 1
-	// 2 player version,  TODO: for n players
-	auto f_regret_cal = [](int player_index, int my_action, int opp_action, int &acc_regret){
-		int ind = opp_action + my_action * NUM_OF_ACTIONS; 		
-		// vector<float> cur_payoffs = getPayoffs();
-		int cur_reward = mat_payoffs[ind][player_index];
-		// int cur_reward = cur_payoffs[player_index]; 
-		int	max = cur_reward; 
-		// find the best action		
-		for(int i = 0; i < NUM_OF_ACTIONS; i++)
-		{
-		  ind = opp_action + i * NUM_OF_ACTIONS; //TODO: assume player 1 use no-regret so that evaluating its diff. actions 
-			// int tmp = mat_payoffs[ind][player_index];
-			int tmp = mat_payoffs[ind][player_index]; // TODO: change opp_action to all n opponets actions
-			if(tmp > cur_reward)
-				max = tmp;
-		}
-		acc_regret += max - cur_reward;
-	};
-	int my_ind = 1;
-	int opp_ind = 0;
-	f_regret_cal(my_ind, m_selected_actions[my_ind], m_selected_actions[opp_ind], m_players[my_ind]->m_info.m_acc_regret);
-	vec_acc_regret.push_back(m_players[my_ind]->m_info.m_acc_regret);
 	
-	//show result
+	// data out
+	vec_acc_regret.push_back(m_players[0]->m_info.m_acc_regrets);
+	// show result
 	if(f_print)
 		print_player_info();
 	
+}
+// regret calculation
+// regret calcuation (regret = reward of the best action - reward of the current action
+float Game::regret_cal(Player *p, vector<int> &select_actions)
+{
+	float regret{0};
+	int pid = p->index;
+	int action_size = p->getActionSize(); 
+	vector<int> acts;
+	acts = select_actions; // using copy assignment
+
+	// set initial value of current reward and maximum reward
+	float cur_reward = getPayoffs()[pid];
+	float max = cur_reward; 
+
+	// find the best action		
+	for(int i = 0; i < action_size; i++)
+	{
+		vector<int> actions =	acts; 
+		acts[pid] = i;
+		float tmp = m_game_parser->queryByVec(acts)[pid];
+		if(tmp > cur_reward)
+			max = tmp;
+	}
+	regret += max - cur_reward;
+	// debug
+	// cout << "regret:" << regret << ", max:" << max << ", current:" << cur_reward << endl;
+	return regret;
 }
 
 // print each player's action history, payoff history, and acc_payoff 
@@ -124,16 +130,29 @@ void Game::print_manual_payoff()
 
 void Game::print_final_result()
 {
+	string padding  = "         ";
+	string padding1 = "Avg. Pay."; 
+	string padding2 = "Avg. Reg."; 
 	cout << "---FINAL---" << endl;
+	cout << padding;
 	for(auto p : m_players)
 		cout << strategy_Mgr.getname(p->current_strategy->type) << ",   "; 
 	cout << endl;
+	// accumulated payoffs table
+	cout << padding1;
 	for(auto p : m_players)
 	{
-		float acc_payoff = (float)(p->m_acc_payoffs) / m_cur_round;
-		cout << acc_payoff << " ,";
+		float avg_payoff = (float)(p->m_acc_payoffs) / m_cur_round;
+		cout << avg_payoff << " ,";
 	}
 	cout << endl;
+	cout << padding2;
+	// accumulated regrets table
+	for(auto p : m_players)
+	{
+		float avg_regrets = (float)(p->m_acc_regrets) / m_cur_round;
+		cout << avg_regrets << " ,";
+	}
 
 	cout << "----------" << endl;
 	

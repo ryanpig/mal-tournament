@@ -56,11 +56,13 @@ class Game
 		}
 
 		void single_step();
-		void print_player_info();
-		void dataToFile();
 		void run();
+		float regret_cal(Player *p, vector<int> &select_actions);
+			
+		// print
+		void print_player_info();
 		void print_manual_payoff();
 		void print_final_result();
-			
+		void dataToFile();
 };
 

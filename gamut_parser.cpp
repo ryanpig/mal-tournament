@@ -116,14 +116,25 @@ bool GameParser::parser(string filename)
 vector<float> GameParser::queryByVec(vector<int> &vec_query) const
 {
 	int ind = getIndex(vec_query);
-	if(indexCheck(ind))
-		return m_matrix[ind];
-	else{
-		printVec(vec_query);
-		cerr << "ind:" << ind << " exceeds max " << m_index_max << endl;
-		return m_matrix[0];
+	try
+	{
+		if(indexCheck(ind))
+		{
+			return m_matrix[ind];
+		}
+		else
+		{
+			printVec(vec_query);
+			cerr << "ind:" << ind << " exceeds max " << m_index_max << endl;
+			// return m_matrix[0];
+			throw ind;
+		}
 	}
-}
+		catch(const std::exception &e)
+		{
+			cerr << "ERROR:" << "out of range of index" << " ," << e.what() << endl;
+		}
+	}
 
 // return index by a given action vector
 int GameParser::getIndex(vector<int> &vec_query) const{
