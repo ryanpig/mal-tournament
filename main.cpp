@@ -68,17 +68,22 @@ int main(int argc, char** argv)
 
 	// start a game
 	char a{0};
+	bool permutation = true;
+	bool print_flag = false;
+	int iteration{0};
+	// allow to iterate player to use the single strategy to eliminate the bias
+	if(permutation) iteration = set_players; 
+		
 	cout << "---Game start---" << endl;
-	Game testgame(set_rounds, set_players, set_print_top, set_print_last, gp);
-	// wait to see basic information
-	while(a != 'y'){cout << "Please enter y to continue the game" << endl; cin >> a;}
-	// loop m rounds games
-	for(int i=0;i<testgame.m_rounds;i++)
+	for(int permute = 0; permute < set_players; permute++)
 	{
-	  testgame.single_step();	
+		Game testgame(set_rounds, set_players, set_print_top, set_print_last, gp, permute, print_flag);
+		// wait to see basic information
+		// while(a != 'y'){cout << "Please enter y to continue the game" << endl; cin >> a;}
+		// run a single game;
+		testgame.run();
+		//statistic analysis
+		// cout << "---Save data to the CSV file ---" << endl;
+		testgame.dataToFile();
 	}
-
-	//statistic analysis
-	cout << "---Save data to the CSV file ---" << endl;
-	testgame.dataToFile();
 }

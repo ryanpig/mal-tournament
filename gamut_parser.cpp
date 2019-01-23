@@ -244,7 +244,7 @@ void GameParser::traverseMat() const
 		epos = 0;
 		// each digit check
 		while(!flag_plus){
-			//if current digit is smaller than its max value, the overflow occurrs.  
+			//if current digit is larger than its max value, the overflow occurrs.  
 			if((cur[epos] + 1) <= max[epos])
 			{
 				// no overflow
@@ -254,7 +254,7 @@ void GameParser::traverseMat() const
 				}else{
 					// overflow
 					cur[epos]++;
-					// set previous digis to 0;
+					// set previous digits to 0;
 					resetZero(cur,epos);
 					overflow = false;
 					flag_plus = true;

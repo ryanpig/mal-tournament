@@ -17,7 +17,7 @@ int Strategy_UCB1::exec(Info &inf)
 		initial_counts++;
 		if(initial_counts == inf.m_action_size)
 			initial_flag = false;
-		cout << "select_action(ini):" << initial_counts -1 << endl;
+		// cout << "select_action(ini):" << initial_counts -1 << endl;
 		// each action has to be played once
 		return initial_counts - 1;
 	}

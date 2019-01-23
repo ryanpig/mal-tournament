@@ -20,7 +20,7 @@ class Player
 		// constructor
 		Player(StrategyType strategy_type, int ind, int action_size) : m_acc_payoffs(0)
 		{
-			cout << "Player " << ind << ", ";
+			// cout << "Player " << ind << ", ";
 			current_strategy = strategy_Mgr.createNewStrategy(strategy_type, action_size);
 			index = ind;
 			m_info.m_action_size = action_size;

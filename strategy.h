@@ -59,7 +59,7 @@ class Strategy_Random : public Strategy
 		std::default_random_engine eng;
 		Strategy_Random(int act) : Strategy(0, act, StrategyType::Random)
 		{
-			cout << "Strategy Random is selected." << endl;
+			// cout << "Strategy Random is selected." << endl;
 			uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
 			eng.seed(seed);
 		}
@@ -84,7 +84,7 @@ class Strategy_UCB1 : public Strategy
 		// Constructor
 		Strategy_UCB1(int act) : Strategy(1, act, StrategyType::UCB1), initial_counts(0), initial_flag(true)
 		{
-			cout << "Strategy UCB1 is selected." << endl;
+			// cout << "Strategy UCB1 is selected." << endl;
 		}
 
 		int exec(Info &inf);

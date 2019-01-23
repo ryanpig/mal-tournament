@@ -62,7 +62,8 @@ void Game::single_step()
 	vec_acc_regret.push_back(m_players[my_ind]->m_info.m_acc_regret);
 	
 	//show result
-	print_player_info();
+	if(f_print)
+		print_player_info();
 	
 }
 
@@ -94,4 +95,46 @@ void Game::dataToFile()
 	io_Handler.writeToCSV(vec_acc_regret, "regret.csv");
 	io_Handler.writeVectorsToCSV(m_players[0]->acc_payoff_history, m_players[1]->acc_payoff_history, "acc_payoffs.csv");
 	io_Handler.writeVectorsToCSV(m_players[0]->action_history, m_players[1]->action_history, "action_history.csv");
+}
+
+void Game::run()
+{
+	for(int i=0;i<m_rounds;i++)
+	{
+	  single_step();	
+	}
+	print_final_result();
+}
+
+void Game::print_manual_payoff()
+{
+	// DEBUG: Use manual payoff matrix
+	for(int i = 0; i < m_num_of_players; i++)
+	{
+		cout << "--Payoff of player " << i << endl;
+		for(int j = 0; j < m_num_of_players * NUM_OF_ACTIONS;j++)
+		{
+			// cout << "i:" << i << ", j:" << j << ", payoff:" << mat_payoffs[j][i] << endl; 
+			cout << mat_payoffs[j][i] << "," ;
+			if(j % NUM_OF_ACTIONS == 1)
+				cout << endl;
+		}
+	}
+}
+
+void Game::print_final_result()
+{
+	cout << "---FINAL---" << endl;
+	for(auto p : m_players)
+		cout << strategy_Mgr.getname(p->current_strategy->type) << ",   "; 
+	cout << endl;
+	for(auto p : m_players)
+	{
+		float acc_payoff = (float)(p->m_acc_payoffs) / m_cur_round;
+		cout << acc_payoff << " ,";
+	}
+	cout << endl;
+
+	cout << "----------" << endl;
+	
 }
