@@ -1,10 +1,6 @@
-#  import matplotlib
-#  matplotlib.use("agg")
-#  import tkinter
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # use Pycharm...
 import numpy as np
 import os
-#  import csv
 import pandas as pd
 
 def plot_two_arrs(arr1,arr2,xl1='xlabel', yl1='y1label',yl2='y2label', leg1='legend1', leg2='legend2'):
@@ -62,7 +58,11 @@ def plot_n_arrs(arr,xl1='xlabel', yl1='y1label', leg1='legend'):
     plt.show()
 # TESTING 
 # configuration
-numberGames = 3
+# find how many games
+filename = 'regret' + str(0) + '.csv'
+df = pd.read_csv(filename)
+numberGames = df.shape[1] - 1
+# visualize n games
 for i in range(numberGames):
     filename = 'regret' + str(i) + '.csv'
     csv_reader(filename, "rounds", "acc_regrets", "player")
