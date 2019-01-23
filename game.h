@@ -18,7 +18,7 @@ class Game
 		//Printing parameter
 		int m_print_top;
 		int m_print_last;
-		vector<int> vec_acc_regret;
+		// vector<int> vec_acc_regret;
 		GameParser *m_game_parser;
 		vector<float> getPayoffs(){return m_game_parser->queryByVec(m_selected_actions);};
 		bool f_print;

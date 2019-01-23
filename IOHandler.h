@@ -15,12 +15,30 @@ static class IOHandler
 		}
 
 		template<typename T>
-		void writeVectorsToCSV(vector<T> &vec1, vector<T> &vec2, string filename){
+		void writeTwoVectorsToCSV(vector<T> &vec1, vector<T> &vec2, string filename){
 			of.open(filename);
 			assert(vec1.size() == vec2.size());
 			for(size_t i = 0; i < vec1.size(); i++)	
 			{
 				of << vec1[i] << "," << vec2[i] << endl;	
+			}
+			of.close();
+		}
+
+		template<typename T>
+		void writeVectorsToCSV(vector<vector<T>> &vecs, string filename){
+			of.open(filename);
+			// assert(vec1.size() == vec2.size());
+			for(size_t i = 0; i < vecs.size(); i++)	// number of players
+				of << "plyaer" << i << ",";
+			of << endl;
+			for(size_t j = 0; j < vecs[0].size(); j++)  // mumber of rounds
+			{
+				for(size_t i = 0; i < vecs.size(); i++)	// number of players
+				{
+					of << vecs[i][j] << ","; 	
+				}
+				of << endl;
 			}
 			of.close();
 		}

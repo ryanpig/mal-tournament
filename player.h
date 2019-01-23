@@ -13,9 +13,10 @@ class Player
 		float m_acc_regrets;
 
 		int current_action; // not neccessary
-		vector<int> payoff_history; //debug
-		vector<int> acc_payoff_history; //debug
-		vector<int> action_history; //debug
+		vector<int> payoff_history; 
+		vector<int> acc_payoff_history; 
+		vector<int> action_history; 
+		vector<float> acc_regret_history; 
 
 		Strategy* current_strategy;
 		Info m_info;
@@ -25,9 +26,6 @@ class Player
 		{
 			// cout << "Player " << ind << ", ";
 			current_strategy = strategy_Mgr.createNewStrategy(strategy_type, action_size);
-			// m_info.m_action_size = action_size;
-			// m_info.m_acc_payoffs_by_action.resize(action_size,0);
-			// m_info.m_counts_by_action.resize(action_size,0);
 		}
 
 		// return an action by its strategy
