@@ -37,20 +37,24 @@ def two_vectors_visualization(filename, split=True):
 
 def csv_reader(filename, x, y, l):
     data = []
-    df = pd.read_csv(filename)
+    df = pd.read_csv(filename, delimiter=',', dtype=np.float64)
     col_len = df.shape[1] - 1
+    row_len = df.shape[0] - 1
     for i in range(col_len):
         data.append(df.iloc[:,i])
     #  print(data)    
     plot_n_arrs(data, x, y, l)
 def plot_n_arrs(arr,xl1='xlabel', yl1='y1label', leg1='legend'):
-    players = len(arr)
+    cols = len(arr)
     x = range(0, len(arr[0]))
+    print("cols:{0}, len of arr:{1}".format(cols, x))
 
     plt.ylabel(yl1)
     plt.xlabel(xl1)
-    color = ['r','b','y','c','m','g','k']
-    for i in range(players):
+    color = ['r','b','y','c','m','g','k', 'r,','b,','y,']
+    while cols > len(color):
+        color = color + color
+    for i in range(cols):
         str_leg = leg1 + str(i)
         plt.plot(x, arr[i], color[i], label=str_leg)
 
@@ -66,6 +70,9 @@ numberGames = df.shape[1] - 1
 for i in range(numberGames):
     filename = 'regret' + str(i) + '.csv'
     csv_reader(filename, "rounds", "acc_regrets", "player")
+
+#  filename = 'EXP3_probs' + str(0) + '.csv'
+#  csv_reader(filename, "rounds", "probability", "action")
 #  filename = 'acc_payoffs.csv'
 #  two_vectors_visualization(filename, split=False)
 #  filename = 'action_history.csv'

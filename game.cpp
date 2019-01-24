@@ -100,22 +100,45 @@ void Game::print_player_info()
 
 void Game::dataToFile()
 {
+	// Game data
 	vector<vector<float>> vecs_acc_regret;
 	vector<vector<int>> vecs_acc_payoff;
-	// vector<vector<float>> vecs_acc_regret;
+	// Algorithm data
+	vector<vector<float>> vec_weights;
+	vector<vector<float>> vec_probs; 
+
+	// retrieve data
 	for(auto p : m_players)
 	{
 		vecs_acc_regret.push_back(p->acc_regret_history);
 		vecs_acc_payoff.push_back(p->acc_payoff_history);
+
+		// EXP3
+		if(p->getCurStrategyType() == StrategyType::EXP3)
+		{
+			Strategy_EXP3 *ptr_exp3 = static_cast<Strategy_EXP3*>(p->current_strategy);
+			vec_weights = std::move(ptr_exp3->weights_history);
+			vec_probs = std::move(ptr_exp3->probs_history);
+		}
 	}
 	
+	// type definition
 	vector<string> vec_type{"regret", "acc_payoffs", "action_history"};
+	vector<string> vec_exp3_type{"weights", "probs"};
 
+	// write game data
 	string fname = vec_type[0] + std::to_string(getGameID()) + ".csv";
 	io_Handler.writeVectorsToCSV(vecs_acc_regret, fname);
 	fname = vec_type[1] + std::to_string(getGameID()) + ".csv";
 	io_Handler.writeVectorsToCSV(vecs_acc_payoff, fname);
-	io_Handler.writeTwoVectorsToCSV(m_players[0]->action_history, m_players[1]->action_history, "action_history.csv");
+	fname = vec_type[2] + std::to_string(getGameID()) + ".csv";
+	io_Handler.writeTwoVectorsToCSV(m_players[0]->action_history, m_players[1]->action_history, fname);
+	// write algorithm data
+	fname = "EXP3_" + vec_exp3_type[0] + std::to_string(getGameID()) + ".csv";
+	io_Handler.writeAlgoVectorsToCSV(vec_weights, fname);
+	fname = "EXP3_" + vec_exp3_type[1] + std::to_string(getGameID()) + ".csv";
+	io_Handler.writeAlgoVectorsToCSV(vec_probs, fname);
+
 }
 
 void Game::run()

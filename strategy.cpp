@@ -74,6 +74,9 @@ int Strategy_EXP3::exec(Info &inf)
 	float scaledReward = (reward - rewardMin) / (rewardMax - rewardMin);
 	float estimated_reward = scaledReward / probs[last_action]; 
 	weights[last_action] *= exp(gamma * estimated_reward / weights.size());
+	// for output
+	weights_history.push_back(weights);
+	probs_history.push_back(probs);
 	// TODO: check this compared to normalization
   // check if any weight is too large to be out of range
 	checkMaxRange(weights, 0.5, 1000000000.0f);
@@ -81,13 +84,13 @@ int Strategy_EXP3::exec(Info &inf)
 	//debug
 	bool m_f_print = false;
 	// cout << "last reward:" << reward << endl;
-	if(inf.m_cur_round % 1000 == 0 && m_f_print == true){
-	cout << "rounds:" << inf.m_cur_round << endl;
-	cout << "probs:";
-	strategy_Mgr.printVec(probs);
-	cout << "weights:";
-	strategy_Mgr.printVec(weights);
-	cout << "last act:" << last_action << ", weight:" << weights[last_action] << ", estimated_reward:"<< estimated_reward << ", exp:" << exp(gamma * estimated_reward / weights.size()) << endl;
+	if(inf.m_cur_round % 5000 == 0 && m_f_print == true){
+		cout << "rounds:" << inf.m_cur_round << endl;
+		cout << "probs:";
+		strategy_Mgr.printVec(probs);
+		cout << "weights:";
+		strategy_Mgr.printVec(weights);
+		cout << "last act:" << last_action << ", weight:" << weights[last_action] << ", estimated_reward:"<< estimated_reward << ", exp:" << exp(gamma * estimated_reward / weights.size()) << endl;
 
 	}
 	// draw a action based on weights
@@ -103,6 +106,8 @@ void Strategy_EXP3::prob_distr_calc()
 	float b = gamma / weights.size();
   for(size_t i = 0; i < weights.size(); i++){
 		probs[i] = a * weights[i] + b;
+		if(probs[i] < 0.0f || probs[i] > 1.0f)
+			cerr << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
 	}
 }
 

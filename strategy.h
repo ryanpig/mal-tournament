@@ -103,6 +103,7 @@ class Strategy_EXP3: public Strategy
 		vector<float> weights;
 		vector<float> probs;
 		vector<vector<float>> weights_history;
+		vector<vector<float>> probs_history;
 		float gamma; // TODO: tunnable parameter
 		default_random_engine random_eng;
 

@@ -36,7 +36,25 @@ static class IOHandler
 			{
 				for(size_t i = 0; i < vecs.size(); i++)	// number of players
 				{
-					of << vecs[i][j] << ","; 	
+					of << std::to_string(vecs[i][j]) << ","; 	
+				}
+				of << endl;
+			}
+			of.close();
+		}
+
+		// WARNING , the index of i and j are swapped from the wreiteVectorsToCSV function!!!
+		template<typename T>
+		void writeAlgoVectorsToCSV(vector<vector<T>> &vecs, string filename){
+			of.open(filename);
+			for(size_t i = 0; i < vecs[0].size(); i++)	// number of actions 
+				of << "action" << i << ",";
+			of << endl;
+			for(size_t j = 0; j < vecs.size(); j++)  // mumber of rounds
+			{
+				for(size_t i = 0; i < vecs[0].size(); i++)	// number of actions 
+				{
+					of << std::to_string(vecs[j][i]) << ","; 	
 				}
 				of << endl;
 			}

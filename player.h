@@ -38,6 +38,7 @@ class Player
 		void print_payoff_history(){for(auto i: payoff_history){cout<<i<<"-- ";} cout<<endl;}
 		void print_acc_regret(){ cout << "Accumulated Regrets:" << m_info.m_acc_regrets << endl;}
 		int getActionSize(){return m_action_size;}
+		StrategyType getCurStrategyType(){return current_strategy->type;}
 };
 
 
