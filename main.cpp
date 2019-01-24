@@ -15,6 +15,7 @@ int main(int argc, char** argv)
 	int set_actions = NUM_OF_ACTIONS;
 	bool set_print_flag = true;
 	bool set_permute = false;
+	int set_main_strategy = 1;
 
 	// command line parser
 	namespace po = boost::program_options;
@@ -28,6 +29,7 @@ int main(int argc, char** argv)
 	("print_last,l", po::value<int>()->required(), "print last n rounds info")
 	("print_flag,z", po::value<bool>()->required(), "true to print more info.") //TODO:change to logging module 
 	("permute,y", po::value<bool>()->required(), "run permutation of payoffs.")
+	("strategy,s", po::value<int>()->required(), "set main strategy for comparison, e.g. 0:random, 1:UCB1, 2:EXP3")
 	;
 	variables_map vm;
 
@@ -56,6 +58,8 @@ int main(int argc, char** argv)
 		  set_print_flag = vm["print_flag"].as<bool>();
 		if (vm.count("permute"))
 		  set_permute = vm["permute"].as<bool>();
+		if (vm.count("actions"))
+		  set_actions = vm["actions"].as<int>(); if (vm.count("strategy")) set_main_strategy = vm["strategy"].as<int>();
 
 		cout << "CMD, rounds:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players << endl;
 		cout << "print flag:" << set_print_flag << ", permute flag:" << set_permute << endl; 
@@ -82,7 +86,14 @@ int main(int argc, char** argv)
 	// allow to iterate player to use the single strategy to eliminate the bias
 	if(set_permute) iterations = set_players; 
 	// StrategyType s_type = StrategyType::UCB1;
-	StrategyType s_type = StrategyType::EXP3;
+	StrategyType s_type; 
+	switch(set_main_strategy)
+	{
+		case 0: s_type = StrategyType::Random;break;
+		case 1: s_type = StrategyType::UCB1;break;
+		case 2: s_type = StrategyType::EXP3;break;
+		default:s_type = StrategyType::Random;
+	}
 		
 	cout << "---Game start---" << endl;
 	for(int permuteid = 0; permuteid < iterations; permuteid++)
