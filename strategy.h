@@ -118,6 +118,7 @@ class Strategy_EXP3: public Strategy
 		int exec(Info &inf);
 		void prob_distr_calc();
 		int draw_action();
+		void checkMaxRange(vector<float> &w, float factor, float thres);
 };
 
 // Compostion: all common apis can be put here rather than in pure Strategy class
@@ -145,4 +146,5 @@ static class Strategy_Mgr
 
 		template<typename T>
 		void printVec(vector<T> &v){for(auto e : v) cout<<e<<" ,"; cout << endl;};
+
 } strategy_Mgr;
