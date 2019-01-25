@@ -106,6 +106,7 @@ void Game::dataToFile()
 	// Algorithm data
 	vector<vector<float>> vec_weights;
 	vector<vector<float>> vec_probs; 
+	bool writeEXP3 = false;
 
 	// retrieve data
 	for(auto p : m_players)
@@ -119,6 +120,7 @@ void Game::dataToFile()
 			Strategy_EXP3 *ptr_exp3 = static_cast<Strategy_EXP3*>(p->current_strategy);
 			vec_weights = std::move(ptr_exp3->weights_history);
 			vec_probs = std::move(ptr_exp3->probs_history);
+			writeEXP3 = true;
 		}
 	}
 	
@@ -133,11 +135,14 @@ void Game::dataToFile()
 	io_Handler.writeVectorsToCSV(vecs_acc_payoff, fname);
 	fname = vec_type[2] + std::to_string(getGameID()) + ".csv";
 	io_Handler.writeTwoVectorsToCSV(m_players[0]->action_history, m_players[1]->action_history, fname);
-	// write algorithm data
-	fname = "EXP3_" + vec_exp3_type[0] + std::to_string(getGameID()) + ".csv";
-	io_Handler.writeAlgoVectorsToCSV(vec_weights, fname);
-	fname = "EXP3_" + vec_exp3_type[1] + std::to_string(getGameID()) + ".csv";
-	io_Handler.writeAlgoVectorsToCSV(vec_probs, fname);
+	if(writeEXP3)
+	{
+		// write algorithm data
+		fname = "EXP3_" + vec_exp3_type[0] + std::to_string(getGameID()) + ".csv";
+		io_Handler.writeAlgoVectorsToCSV(vec_weights, fname);
+		fname = "EXP3_" + vec_exp3_type[1] + std::to_string(getGameID()) + ".csv";
+		io_Handler.writeAlgoVectorsToCSV(vec_probs, fname);
+	}
 
 }
 
