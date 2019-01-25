@@ -107,7 +107,7 @@ void Strategy_EXP3::prob_distr_calc()
   for(size_t i = 0; i < weights.size(); i++){
 		probs[i] = a * weights[i] + b;
 		if(probs[i] < 0.0f || probs[i] > 1.0f)
-			cerr << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
+			LOG(ERROR) << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
 	}
 }
 

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <algorithm>
 #include "math_utility.h"
+#include "common.h"
 
 using namespace std;
 

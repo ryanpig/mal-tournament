@@ -1,12 +1,19 @@
 #include <boost/program_options.hpp>
 #include <chrono>
 #include "main.h"
+// #include "easylogging++.h"
+INITIALIZE_EASYLOGGINGPP
 
 
 using namespace boost::program_options;
 
 int main(int argc, char** argv)
 {
+	// logging library configuration
+	logging_configuration();
+	LOG(INFO) << "sss";
+	LOG(ERROR) << "error!";
+
 	// configuration variables
 	int set_rounds = NUM_OF_ROUNDS; 
 	int set_print_top = PRINT_TOP;
