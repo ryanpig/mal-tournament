@@ -154,12 +154,13 @@ int Strategy_EXP3::draw_action()
 	return 0;
 }
 
-// enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, BrFP, Markov}; 
 int Strategy_Satisficing::exec(Info &inf)
 {
 	int select_action{0};
+	// retrive info from previous action/reward
 	float current_reward = inf.last_reward; 	
 	int current_action = inf.last_action;
+	// calculate
 	m_aspiration_level = 0.95f * m_aspiration_level + 0.05 * current_reward;
 	select_action = current_reward < m_aspiration_level ? m_rng.getInt(0, action_size - 1) : current_action; 
 	// debug:
@@ -170,6 +171,31 @@ int Strategy_Satisficing::exec(Info &inf)
 int Strategy_EGreedy::exec(Info &inf)
 {
 	int select_action{0};
+	if(inf.m_cur_round < m_rounds_initial)
+		select_action = m_rng.getInt(0, action_size - 1);
+	else
+	{
+		// action w/ maximum reward
+		float max{0.0f};
+		int max_reward_action{0};
+		vector<float> vec_avg(action_size, 0.0f);
+		// find action w/ max average rewards
+		for(size_t i = 0; i < inf.m_acc_payoffs_by_action.size(); i++){
+			float acc = inf.m_acc_payoffs_by_action[i];
+			int count = inf.m_counts_by_action[i];
+			if(inf.m_counts_by_action[i] == 0)
+				vec_avg[i] = 0.0f;
+			else
+				vec_avg[i] = acc / count; 
+		}
+		auto it  = max_element(vec_avg.begin(), vec_avg.end());
+		max = *it;
+		max_reward_action = it - vec_avg.begin();
+		select_action = (m_rng.getReal() < 0.1) ? m_rng.getInt(0, action_size -1) : max_reward_action;
+		//debug:
+		// cout << "max:"<< max << ", max(act):" << max_reward_action << ", select_action:" << select_action << endl;
+	}
+
 	return select_action;
 }
 

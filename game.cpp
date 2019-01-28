@@ -22,7 +22,7 @@ void Game::single_step()
 	{
 		Player *p = m_players[i];
 		// int reward = mat_payoffs[ind][i];
-		int reward = cur_payoffs[i]; 
+		float reward = cur_payoffs[i]; 
 		// store to m_info : accumulated payoffs by selected action, counts by selected action
 	  p->m_info.m_acc_payoffs_by_action[p->current_action] += reward;
 		p->m_info.m_counts_by_action[p->current_action] += 1;

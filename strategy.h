@@ -18,7 +18,7 @@ class Info
 		int m_action_size;
 		vector<int> my_history; // last m steps
 		vector<Info*> opp_history; //TODO: using vector<Info*> 
-		vector<int> m_acc_payoffs_by_action;
+		vector<float> m_acc_payoffs_by_action;
 		vector<int> m_counts_by_action;
 		float m_acc_regrets;
 		int m_cur_round;
@@ -27,7 +27,7 @@ class Info
 
 		// constructor 
 		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f){
-			m_acc_payoffs_by_action.resize(action_size,0);
+			m_acc_payoffs_by_action.resize(action_size,0.0f);
 			m_counts_by_action.resize(action_size,0);
 		}
 		void print_history()
@@ -135,6 +135,8 @@ class Strategy_EGreedy: public Strategy
 {
 	public:		
 		// variables
+		RNG m_rng;
+		int m_rounds_initial = 20; // always exploration to initialize average payoffs
 		// constructor
 		Strategy_EGreedy(int act) : Strategy(act, StrategyType::EGreedy)
 		{
@@ -238,6 +240,7 @@ static class Strategy_Mgr
 			else if(type == StrategyType::UCB1) return new Strategy_UCB1(action_size);
 			else if(type ==  StrategyType::EXP3) return new Strategy_EXP3(action_size);
 			else if(type ==  StrategyType::Satisficing) return new Strategy_Satisficing(action_size);
+			else if(type ==  StrategyType::EGreedy) return new Strategy_EGreedy(action_size);
 			else {
 				cerr << "strategy type is not supported!" << endl;
 				return nullptr;
