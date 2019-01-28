@@ -207,6 +207,19 @@ int Strategy_EGreedy::exec(Info &inf)
 int Strategy_NGreedy::exec(Info &inf)
 {
 	int select_action{0};
+	if(inf.m_cur_round <= m_rounds_initial)
+		select_action = m_rng.getInt(0, action_size - 1);
+	else
+	{
+		float r = m_rng.getReal();
+		float threshold = (float)(inf.m_action_size) / (float)(inf.m_cur_round);
+		// select_action = (m_rng.getReal() < (inf.m_action_size / inf.m_cur_round)) ? m_rng.getInt(0, action_size -1) : argmax_pick(inf);
+		select_action = (r < threshold) ? m_rng.getInt(0, action_size -1) : argmax_pick(inf);
+		//debug:
+		// cout << inf.m_action_size << ", " << inf.m_cur_round << endl;
+		// cout << "prob:"<< r << ", threshold:" << threshold << "max_act:" <<  argmax_pick(inf) << ", select_action:" << select_action << endl;
+	}
+
 	return select_action;
 }
 

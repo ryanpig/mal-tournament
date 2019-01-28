@@ -150,6 +150,8 @@ class Strategy_NGreedy: public Strategy
 {
 	public:		
 		// variables
+		RNG m_rng;
+		int m_rounds_initial = 1; // always exploration to initialize average payoffs
 		// constructor
 		Strategy_NGreedy(int act) : Strategy(act, StrategyType::NGreedy)
 		{
@@ -241,6 +243,7 @@ static class Strategy_Mgr
 			else if(type ==  StrategyType::EXP3) return new Strategy_EXP3(action_size);
 			else if(type ==  StrategyType::Satisficing) return new Strategy_Satisficing(action_size);
 			else if(type ==  StrategyType::EGreedy) return new Strategy_EGreedy(action_size);
+			else if(type ==  StrategyType::NGreedy) return new Strategy_NGreedy(action_size);
 			else {
 				cerr << "strategy type is not supported!" << endl;
 				return nullptr;
@@ -254,6 +257,8 @@ static class Strategy_Mgr
 			else
 				return "Out of range of StrategyType";
 		}
+
+		void listAllStrategies(){for(size_t i = 0; i < vec_strategy_type.size(); i++) cout << vec_strategy_type[i] << " = " << i << " ; ";}
 
 		template<typename T>
 		void printVec(vector<T> &v){for(auto e : v) cout<<e<<" ,"; cout << endl;};

@@ -49,6 +49,8 @@ int main(int argc, char** argv)
 
 		if (vm.count("help")) {  
 			std::cout << desc << "\n";
+			strategy_Mgr.listAllStrategies();
+			std::cout << std::endl;
 				return 0;
 		}
 		if (vm.count("rounds"))
