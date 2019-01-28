@@ -1,6 +1,27 @@
 
 #include "strategy.h"
 
+inline int argmax_pick(Info &inf)
+{
+	// action w/ maximum reward
+	float max{0.0f};
+	int max_reward_action{0};
+	vector<float> vec_avg(inf.m_action_size, 0.0f);
+	// find action w/ max average rewards
+	for(size_t i = 0; i < inf.m_acc_payoffs_by_action.size(); i++){
+		float acc = inf.m_acc_payoffs_by_action[i];
+		int count = inf.m_counts_by_action[i];
+		if(inf.m_counts_by_action[i] == 0)
+			vec_avg[i] = 0.0f;
+		else
+			vec_avg[i] = acc / count; 
+	}
+	auto it  = max_element(vec_avg.begin(), vec_avg.end());
+	max = *it;
+	max_reward_action = it - vec_avg.begin();
+	return max_reward_action;
+}
+
 int Strategy_Random::exec(Info &inf)
 {
 		// std::uniform_int_distribution<int> distr(0, action_size - 1);
@@ -175,25 +196,9 @@ int Strategy_EGreedy::exec(Info &inf)
 		select_action = m_rng.getInt(0, action_size - 1);
 	else
 	{
-		// action w/ maximum reward
-		float max{0.0f};
-		int max_reward_action{0};
-		vector<float> vec_avg(action_size, 0.0f);
-		// find action w/ max average rewards
-		for(size_t i = 0; i < inf.m_acc_payoffs_by_action.size(); i++){
-			float acc = inf.m_acc_payoffs_by_action[i];
-			int count = inf.m_counts_by_action[i];
-			if(inf.m_counts_by_action[i] == 0)
-				vec_avg[i] = 0.0f;
-			else
-				vec_avg[i] = acc / count; 
-		}
-		auto it  = max_element(vec_avg.begin(), vec_avg.end());
-		max = *it;
-		max_reward_action = it - vec_avg.begin();
-		select_action = (m_rng.getReal() < 0.1) ? m_rng.getInt(0, action_size -1) : max_reward_action;
+		select_action = (m_rng.getReal() < 0.1) ? m_rng.getInt(0, action_size -1) : argmax_pick(inf);
 		//debug:
-		// cout << "max:"<< max << ", max(act):" << max_reward_action << ", select_action:" << select_action << endl;
+		// cout << "max:"<< max << ", max(act):" << argmax_pick(inf) << ", select_action:" << select_action << endl;
 	}
 
 	return select_action;
