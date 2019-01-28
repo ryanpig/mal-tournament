@@ -116,7 +116,7 @@ class Strategy_Satisficing: public Strategy
 {
 	public:		
 		// variables
-		float m_aspiration_level = 11.0;
+		float m_aspiration_level = 50.0; // set to average of the range of rewards (0,100) / 2
 		float m_current_reward = 0.0;
 		int m_current_action = 0;
 		RNG m_rng;

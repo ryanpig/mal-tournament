@@ -157,10 +157,14 @@ int Strategy_EXP3::draw_action()
 // enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, BrFP, Markov}; 
 int Strategy_Satisficing::exec(Info &inf)
 {
+	int select_action{0};
 	float current_reward = inf.last_reward; 	
 	int current_action = inf.last_action;
 	m_aspiration_level = 0.95f * m_aspiration_level + 0.05 * current_reward;
-	return current_reward < m_aspiration_level ? m_rng.getInt(0, action_size - 1) : current_action; 
+	select_action = current_reward < m_aspiration_level ? m_rng.getInt(0, action_size - 1) : current_action; 
+	// debug:
+	// cout << "m_aspiration_level:" << m_aspiration_level << ", current_reward:" << current_reward << ", pre_act:" << current_action << ", new:" << select_action << endl;
+	return select_action;
 }
 
 int Strategy_EGreedy::exec(Info &inf)
