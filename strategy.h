@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "math_utility.h"
 #include "common.h"
+#include "random_user.h"
 
 using namespace std;
 
@@ -59,12 +60,13 @@ class Strategy_Random : public Strategy
 	public:		
 		// using Strategy::Strategy;
 		// equivalent to Str_random() : Strategy() {}
-		std::default_random_engine eng;
+		RNG m_rng;
+		// std::default_random_engine eng;
 		Strategy_Random(int act) : Strategy(act, StrategyType::Random)
 		{
 			// cout << "Strategy Random is selected." << endl;
-			uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
-			eng.seed(seed);
+			// uint seed = std::chrono::steady_clock::now().time_since_epoch().count();
+			// eng.seed(seed);
 		}
 		~Strategy_Random(){}	
 		// Functions
@@ -114,6 +116,11 @@ class Strategy_Satisficing: public Strategy
 {
 	public:		
 		// variables
+		float m_aspiration_level = 11.0;
+		float m_current_reward = 0.0;
+		int m_current_action = 0;
+		RNG m_rng;
+
 		// constructor
 		Strategy_Satisficing(int act) : Strategy(act, StrategyType::Satisficing)
 		{
@@ -225,23 +232,24 @@ class Strategy_Markov: public Strategy
 static class Strategy_Mgr
 {
 	public:
-		static Strategy* createNewStrategy(StrategyType type, int action_size) {
+		vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "BrFP", "Markov"}; 
+		Strategy* createNewStrategy(StrategyType type, int action_size) {
 			if(type == StrategyType::Random) return new Strategy_Random(action_size); 
 			else if(type == StrategyType::UCB1) return new Strategy_UCB1(action_size);
 			else if(type ==  StrategyType::EXP3) return new Strategy_EXP3(action_size);
+			else if(type ==  StrategyType::Satisficing) return new Strategy_Satisficing(action_size);
 			else {
 				cerr << "strategy type is not supported!" << endl;
 				return nullptr;
 			}
 		}
-		string getname(StrategyType type){
-			switch(type){
-				case StrategyType::Random: return "Random";break;
-				case StrategyType::UCB1: return "UCB1";break;
-				case StrategyType::EXP3: return "EXP3";break;
-			  default: return "Unknown Strategy";													
-			}
 
+		string getname(StrategyType type){
+			int index = static_cast<int>(type);
+			if(index < (int)vec_strategy_type.size())
+				return vec_strategy_type[index];
+			else
+				return "Out of range of StrategyType";
 		}
 
 		template<typename T>

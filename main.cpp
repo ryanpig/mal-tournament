@@ -93,14 +93,7 @@ int main(int argc, char** argv)
 	// allow to iterate player to use the single strategy to eliminate the bias
 	if(set_permute) iterations = set_players; 
 	// StrategyType s_type = StrategyType::UCB1;
-	StrategyType s_type; 
-	switch(set_main_strategy)
-	{
-		case 0: s_type = StrategyType::Random;break;
-		case 1: s_type = StrategyType::UCB1;break;
-		case 2: s_type = StrategyType::EXP3;break;
-		default:s_type = StrategyType::Random;
-	}
+	StrategyType s_type  = static_cast<StrategyType>(set_main_strategy); 
 		
 	LOG(INFO) << "---Game start---" << endl;
 	for(int permuteid = 0; permuteid < iterations; permuteid++)

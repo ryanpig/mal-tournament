@@ -1,10 +1,11 @@
 
 #include "strategy.h"
 
-int Strategy_Random::exec(Info &info)
+int Strategy_Random::exec(Info &inf)
 {
-		std::uniform_int_distribution<int> distr(0, action_size - 1);
-		int choice = distr(eng);
+		// std::uniform_int_distribution<int> distr(0, action_size - 1);
+		// int choice = distr(eng);
+		int choice = m_rng.getInt(0, action_size - 1);
 		return choice; 
 }
 
@@ -156,8 +157,10 @@ int Strategy_EXP3::draw_action()
 // enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, BrFP, Markov}; 
 int Strategy_Satisficing::exec(Info &inf)
 {
-	int select_action{0};
-	return select_action;
+	float current_reward = inf.last_reward; 	
+	int current_action = inf.last_action;
+	m_aspiration_level = 0.95f * m_aspiration_level + 0.05 * current_reward;
+	return current_reward < m_aspiration_level ? m_rng.getInt(0, action_size - 1) : current_action; 
 }
 
 int Strategy_EGreedy::exec(Info &inf)
