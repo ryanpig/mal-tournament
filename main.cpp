@@ -11,8 +11,8 @@ int main(int argc, char** argv)
 {
 	// logging library configuration
 	logging_configuration();
-	LOG(INFO) << "sss";
-	LOG(ERROR) << "error!";
+	LOG(INFO) << "Logging start!";
+	LOG(ERROR) << "Error Print Test!";
 
 	// configuration variables
 	int set_rounds = NUM_OF_ROUNDS; 
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
 
 	// parsing arguments
-	cout << "---Start to parse commandline arguments---" << endl;
+	LOG(INFO) << "---Start to parse commandline arguments---" << endl;
 	try
  	{
 		store(parse_command_line(argc, argv, desc), vm);
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 	cout << endl;
 
 	// generate a new game from Gamut
-	cout << "---Generate a game from Gamut ---" << endl;
+	LOG(INFO) << "---Generate a game from Gamut ---" << endl;
 	std::string fname = "RandNew1";
 	process_Mgr.generateGame(fname, set_actions, set_players); // action size, players
 	GameParser gp;
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 		default:s_type = StrategyType::Random;
 	}
 		
-	cout << "---Game start---" << endl;
+	LOG(INFO) << "---Game start---" << endl;
 	for(int permuteid = 0; permuteid < iterations; permuteid++)
 	{
 		Game testgame(permuteid, set_rounds, set_players, set_print_top, set_print_last, gp, permuteid, set_print_top, set_permute, s_type);
@@ -114,4 +114,6 @@ int main(int argc, char** argv)
 		// cout << "---Save data to the CSV file ---" << endl;
 		testgame.dataToFile();
 	}
+
+	LOG(INFO) << "Program End!";
 }

@@ -57,6 +57,8 @@ class Game
 				m_players.push_back(p);
 			}
 		}
+		// deconstructor
+		~Game(){}
 
 		void single_step();
 		void run();

@@ -28,6 +28,8 @@ class Player
 			current_strategy = strategy_Mgr.createNewStrategy(strategy_type, action_size);
 		}
 
+		// deconstructor
+		~Player(){}
 		// return an action by its strategy
 		int select_action();
 

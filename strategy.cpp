@@ -1,6 +1,13 @@
 
 #include "strategy.h"
 
+int Strategy_Random::exec(Info &info)
+{
+		std::uniform_int_distribution<int> distr(0, action_size - 1);
+		int choice = distr(eng);
+		return choice; 
+}
+
 // Action selection based on maximizing (Xavg[i] + optimized term)
 //	1. average observed rewards of action i (Xavg[i]) = accumulated payoffs of action i / the number of iterations t
 //	2. optimized term = math.sqrt(2*log(t)/ni)  (ni: the number that the action i has been played)
@@ -145,3 +152,53 @@ int Strategy_EXP3::draw_action()
 	}
 	return 0;
 }
+
+// enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, BrFP, Markov}; 
+int Strategy_Satisficing::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_EGreedy::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_NGreedy::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_Softmax::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_NoRegret::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_FP::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_BrFP::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
+int Strategy_Markov::exec(Info &inf)
+{
+	int select_action{0};
+	return select_action;
+}
+
