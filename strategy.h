@@ -166,6 +166,7 @@ class Strategy_Softmax: public Strategy
 {
 	public:		
 		// variables
+		RNG m_rng;
 		// constructor
 		Strategy_Softmax(int act) : Strategy(act, StrategyType::Softmax)
 		{
@@ -244,8 +245,9 @@ static class Strategy_Mgr
 			else if(type ==  StrategyType::Satisficing) return new Strategy_Satisficing(action_size);
 			else if(type ==  StrategyType::EGreedy) return new Strategy_EGreedy(action_size);
 			else if(type ==  StrategyType::NGreedy) return new Strategy_NGreedy(action_size);
+			else if(type ==  StrategyType::Softmax) return new Strategy_Softmax(action_size);
 			else {
-				cerr << "strategy type is not supported!" << endl;
+				LOG(ERROR) << "strategy type is not supported!" << endl;
 				return nullptr;
 			}
 		}

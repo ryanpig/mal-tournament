@@ -18,13 +18,14 @@ float avg(vector<T> &v){
 }
 
 template<typename IterIn, typename IterOut = IterIn>
-void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd)
+void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd, float temp)
 {
 		
 	using VType = typename std::iterator_traits<IterIn>::value_type;
-	VType temperature = 1.0; // default
+	// VType temperature = 1.0; // default
 	// VType temperature = 0.4; // smaller temprature results in more exploitation
 	// VType temperature = 10; // larger temprature results in more exploration 
+	VType temperature = static_cast<VType>(temp);
 
 	//find maximum and minimum value
 	const auto max{*max_element(beg, end)};
@@ -32,16 +33,20 @@ void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd)
 
 	// normalization
 	if(normalizd)
-		transform(beg, end, dest, [&](VType val){return (val - min) / (max - min);});
+		transform(beg, end, dest, [&](VType val){
+				VType a = (val - min) / (max - min);
+				return a;});
+
 	VType exptot{0}; 
+	const auto max_normalized{*max_element(beg, end)}; //FIXED: using normaized maximum value rather than unnormalized one
 
 	// convert value into exp(value)
 	transform(beg, end, dest, [&](VType val){
-		auto ex = exp((val - max) / temperature);
+		auto ex = exp((val - max_normalized) / temperature);
 		exptot += ex; // sum of exp(value) -> Done inside of function
 		return ex;
 	});
-
+	
 	// division
 	transform(beg, end, dest, [&](VType val){
 		return val / exptot;});

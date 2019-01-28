@@ -16,7 +16,12 @@ void Player::print_action_statistic()
 	{
 		float acc = m_info.m_acc_payoffs_by_action[i]; 
 		float count = m_info.m_counts_by_action[i];
-		float avg = acc / count;
+		float avg{0.0}; 
+		if(count == 0){
+			LOG(DEBUG) << "Action counts of " << i << " is 0 " << endl;
+		}else{
+			avg = acc / count;
+		}
 		cout << "action " << i << ":" << acc << "(acc_payoffs), " << count << "(times)," << avg << "(average)" << endl;
 	}
 }

@@ -1,31 +1,50 @@
-
 #include "strategy.h"
 
+// choosing action by probability vector
+inline int choose_by_probability(vector<float> &probs, RNG &rng)
+{
+	float rand_choice = rng.getReal();
+	for(size_t i = 0; i < probs.size(); i++){
+		rand_choice -= probs[i];
+		if(rand_choice < 0.0f)
+			return i;
+	}
+
+	LOG(ERROR) << "wrong operation of choose_by_probability:" <<  endl;
+	strategy_Mgr.printVec(probs);
+	return 0;
+}
+
+// generate average rewards by giving accumulated payfoss and counts by each action
+inline void get_average_vector(vector<float> &in1, vector<int> &in2, vector<float> &out)
+{
+	for(size_t i = 0; i < in1.size(); i++){
+		float acc = in1[i];
+		int count = in2[i];
+		if(count == 0)
+			out[i] = 0.0f;
+		else
+			out[i] = acc / count; 
+	}
+}	
+
+// return action w/ maximum average reward
 inline int argmax_pick(Info &inf)
 {
 	// action w/ maximum reward
 	float max{0.0f};
 	int max_reward_action{0};
 	vector<float> vec_avg(inf.m_action_size, 0.0f);
-	// find action w/ max average rewards
-	for(size_t i = 0; i < inf.m_acc_payoffs_by_action.size(); i++){
-		float acc = inf.m_acc_payoffs_by_action[i];
-		int count = inf.m_counts_by_action[i];
-		if(inf.m_counts_by_action[i] == 0)
-			vec_avg[i] = 0.0f;
-		else
-			vec_avg[i] = acc / count; 
-	}
+	get_average_vector(inf.m_acc_payoffs_by_action, inf.m_counts_by_action, vec_avg);
 	auto it  = max_element(vec_avg.begin(), vec_avg.end());
 	max = *it;
 	max_reward_action = it - vec_avg.begin();
 	return max_reward_action;
 }
 
+
 int Strategy_Random::exec(Info &inf)
 {
-		// std::uniform_int_distribution<int> distr(0, action_size - 1);
-		// int choice = distr(eng);
 		int choice = m_rng.getInt(0, action_size - 1);
 		return choice; 
 }
@@ -225,8 +244,17 @@ int Strategy_NGreedy::exec(Info &inf)
 
 int Strategy_Softmax::exec(Info &inf)
 {
-	int select_action{0};
-	return select_action;
+	// using initialization
+	if(inf.m_cur_round <= inf.m_action_size )
+		return inf.m_cur_round - 1;
+	else{
+		int select_action{0};
+		vector<float> vec_avg(inf.m_action_size, 0.0f);
+		get_average_vector(inf.m_acc_payoffs_by_action, inf.m_counts_by_action, vec_avg);
+		softmax(vec_avg.begin(), vec_avg.end(), vec_avg.begin(), true, 1.0f); // temperature = 1.0f;
+		select_action = choose_by_probability(vec_avg, m_rng);
+		return select_action;
+	}
 }
 
 int Strategy_NoRegret::exec(Info &inf)
