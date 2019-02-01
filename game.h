@@ -64,6 +64,7 @@ class Game
 		void single_step();
 		void run();
 		float regret_cal(Player *p, vector<int> &select_actions);
+		void update_hypo_rewards_by_action(Player *p, vector<int> &select_actions);
 			
 		// print
 		void print_player_info();

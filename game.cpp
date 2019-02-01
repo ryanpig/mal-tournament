@@ -38,6 +38,8 @@ void Game::single_step()
 		p->m_acc_regrets += regret;		
 		p->m_info.m_acc_regrets += regret;
 		p->acc_regret_history.push_back(p->m_acc_regrets);
+		// store accumulated regret by action
+		update_hypo_rewards_by_action(p, m_selected_actions);
 	}
 	
 	// data out
@@ -46,7 +48,23 @@ void Game::single_step()
 		print_player_info();
 	
 }
-// regret calculation
+// regret calculation (using opposite way, calculate hypothetical rewards)
+void Game::update_hypo_rewards_by_action(Player *p, vector<int> &select_actions)
+{
+	int pid = p->index;
+	int action_size = p->getActionSize(); 
+	vector<int> acts;
+	acts = select_actions; // using copy assignment
+	float cur_reward = getPayoffs()[pid];
+
+	for(int i = 0; i < action_size; i++)
+	{
+		acts[pid] = i;
+		float hypo_reward = m_game_parser->queryByVec(acts)[pid];
+		p->m_info.m_acc_hypo_reward_by_action[i] += hypo_reward - cur_reward;
+	}
+	
+}
 // regret calcuation (regret = reward of the best action - reward of the current action
 float Game::regret_cal(Player *p, vector<int> &select_actions)
 {
