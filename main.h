@@ -19,5 +19,5 @@ void logging_configuration()
 class GameGenerator
 {
 	public:
-		bool run_tournament();
+		bool run_tournament(int total_rounds);
 };

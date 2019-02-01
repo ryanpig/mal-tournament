@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 	
 	if(set_tournament){
 		GameGenerator gg;
-		if(!gg.run_tournament())
+		if(!gg.run_tournament(set_rounds))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 }
 
 
-bool GameGenerator::run_tournament()
+bool GameGenerator::run_tournament(int total_rounds)
 {
 	// access fo available strategies
 	// generate all combinations (e.g Random v.s. Random, Random v.s. UCB1, Random v.s. EXP3 etc)
@@ -138,14 +138,14 @@ bool GameGenerator::run_tournament()
 	// play in the same instance w/ player permutation 
 	//
 	// configuration of each game
-	int set_actions{2}, set_players{2}, set_rounds{1000};
+	int set_actions{2}, set_players{2}, set_rounds{total_rounds};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	size_t total_stratagies = 3; 
+	size_t total_stratagies = 7; 
 	std::string fname = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
-	SQLMgr *db_mgr = SQLMgr::getInstance("result.db", "TESTTABLE");
+	SQLMgr *db_mgr = SQLMgr::getInstance("result2.db", "TESTTABLE");
 	db_mgr->createTable();
 	Strategy_Mgr *str_mgr = &strategy_Mgr;
 	vector<Record> vec_records;
