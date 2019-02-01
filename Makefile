@@ -36,12 +36,16 @@ endif
 # CXXFLAGS += $(FREEIMAGE_CXXFLAGS)
 # LDFLAGS += $(FREEIMAGE_LDFLAGS)
 
+# BOOST program_options library 
 BOOST_ROOT = /usr/local/Cellar/boost/1.67.0_1
-
 BOOST_CXXFLAGS := -I${BOOST_ROOT}/include
 BOOST_LDFLAGS := -L${BOOST_ROOT}/lib -lboost_program_options
 CXXFLAGS += $(BOOST_CXXFLAGS)
 LDFLAGS += $(BOOST_LDFLAGS)
+
+# sqlite 3
+SQLITE3_LDFLAGS := -lsqlite3
+LDFLAGS += $(SQLITE3_LDFLAGS)
 # Collect sources
 CXX_SOURCES := $(wildcard *.cpp)
 

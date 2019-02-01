@@ -7,6 +7,7 @@ INITIALIZE_EASYLOGGINGPP
 
 using namespace boost::program_options;
 
+
 int main(int argc, char** argv)
 {
 	// logging library configuration
@@ -144,7 +145,7 @@ bool GameGenerator::run_tournament()
 	std::string fname = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
-	SQLMgr *db_mgr = SQLMgr.getInstance("result.db", "TESTTABLE");
+	SQLMgr *db_mgr = SQLMgr::getInstance("result.db", "TESTTABLE");
 	db_mgr->selfTest();
 	// db_mgr->createTable();
 
