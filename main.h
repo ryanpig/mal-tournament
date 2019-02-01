@@ -2,6 +2,7 @@
 #include "gamut_parser.h"
 #include "game.h"
 #include "common.h"
+#include "sqlite.h"
 
 void logging_configuration()
 {
