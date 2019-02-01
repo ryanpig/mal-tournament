@@ -24,6 +24,7 @@ void SQLMgr::createTable()
 	string sql = "CREATE TABLE " + m_table + " ("
 									"round INT NOT NULL,"
 									"actions INT NOT NULL,"  
+									"steps INT NOT NULL,"  
 									"players INT NOT NULL,"  
 									"type_p0 TEXT NOT NULL," 
 									"payoff_p0 REAL NOT NULL,"  
@@ -35,7 +36,7 @@ void SQLMgr::createTable()
 
 void SQLMgr::insertRecords(vector<Record> &vec)
 {
-	string header = "INSERT INTO " + m_table + " (round, actions, players, type_p0, payoff_p0, type_p1, payoff_p1) ";
+	string header = "INSERT INTO " + m_table + " (round, actions, players, steps, type_p0, payoff_p0, type_p1, payoff_p1) ";
 	string sql{};
 	for(const auto &v : vec)
 		sql += header + v.makeSQLString(); 
@@ -69,8 +70,8 @@ void SQLMgr::selfTest()
 	// createTable
 	createTable();
 	// insert records
-	const Record sample1{ 0, 2, 2, "random", 65.3, "UCB1", 57.2};
-	const Record sample2{ 1, 2, 2, "random", 65.3, "UCB1", 57.2};
+	const Record sample1{ 0, 2, 2, 1000, "random", 65.3, "UCB1", 57.2};
+	const Record sample2{ 1, 2, 2, 1000, "random", 65.3, "UCB1", 57.2};
 	vector<Record> vec{sample1, sample2};
 	insertRecords(vec);
 	// update record
