@@ -211,8 +211,8 @@ int Strategy_Satisficing::exec(Info &inf)
 int Strategy_EGreedy::exec(Info &inf)
 {
 	int select_action{0};
-	if(inf.m_cur_round < m_rounds_initial)
-		select_action = m_rng.getInt(0, action_size - 1);
+	if(inf.m_cur_round <= inf.m_action_size )
+		return inf.m_cur_round - 1;
 	else
 	{
 		select_action = (m_rng.getReal() < 0.1) ? m_rng.getInt(0, action_size -1) : argmax_pick(inf);
@@ -226,8 +226,8 @@ int Strategy_EGreedy::exec(Info &inf)
 int Strategy_NGreedy::exec(Info &inf)
 {
 	int select_action{0};
-	if(inf.m_cur_round <= m_rounds_initial)
-		select_action = m_rng.getInt(0, action_size - 1);
+	if(inf.m_cur_round <= inf.m_action_size )
+		return inf.m_cur_round - 1;
 	else
 	{
 		float r = m_rng.getReal();
@@ -259,8 +259,17 @@ int Strategy_Softmax::exec(Info &inf)
 
 int Strategy_NoRegret::exec(Info &inf)
 {
-	int select_action{0};
-	return select_action;
+	if(inf.m_cur_round <= inf.m_action_size )
+		return inf.m_cur_round - 1;
+	else{
+		int select_action{0};
+		vector<float> vec = inf.m_acc_hypo_reward_by_action;
+		select_action = max_element(vec.begin(), vec.end()) - vec.begin();
+		//debug:
+		// cout << "hypo reward" << endl;
+		// strategy_Mgr.printVec(vec);
+		return select_action;
+	}
 }
 
 int Strategy_FP::exec(Info &inf)

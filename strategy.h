@@ -21,6 +21,7 @@ class Info
 		vector<float> m_acc_payoffs_by_action;
 		vector<int> m_counts_by_action;
 		float m_acc_regrets;
+		vector<float> m_acc_hypo_reward_by_action;
 		int m_cur_round;
 		int last_action;
 		float last_reward;
@@ -29,6 +30,7 @@ class Info
 		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f){
 			m_acc_payoffs_by_action.resize(action_size,0.0f);
 			m_counts_by_action.resize(action_size,0);
+			m_acc_hypo_reward_by_action.resize(action_size,0);
 		}
 		void print_history()
 		{
@@ -136,7 +138,7 @@ class Strategy_EGreedy: public Strategy
 	public:		
 		// variables
 		RNG m_rng;
-		int m_rounds_initial = 20; // always exploration to initialize average payoffs
+		// int m_rounds_initial = 20; // always exploration to initialize average payoffs
 		// constructor
 		Strategy_EGreedy(int act) : Strategy(act, StrategyType::EGreedy)
 		{
@@ -151,7 +153,7 @@ class Strategy_NGreedy: public Strategy
 	public:		
 		// variables
 		RNG m_rng;
-		int m_rounds_initial = 1; // always exploration to initialize average payoffs
+		// int m_rounds_initial = 1; // always exploration to initialize average payoffs
 		// constructor
 		Strategy_NGreedy(int act) : Strategy(act, StrategyType::NGreedy)
 		{

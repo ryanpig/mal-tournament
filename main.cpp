@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 	// StrategyType s_type = StrategyType::UCB1;
 	StrategyType s_type  = static_cast<StrategyType>(set_main_strategy); 
 	// StrategyType opp_type  = StrategyType::Random;
-	StrategyType opp_type  = StrategyType::UCB1;
+	StrategyType opp_type  = StrategyType::Random;
 		
 	LOG(INFO) << "---Game start---" << endl;
 	for(int permuteid = 0; permuteid < iterations; permuteid++)
@@ -141,7 +141,7 @@ bool GameGenerator::run_tournament(int total_rounds)
 	int set_actions{2}, set_players{2}, set_rounds{total_rounds};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	size_t total_stratagies = 7; 
+	size_t total_stratagies = 8; 
 	std::string fname = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
@@ -151,6 +151,8 @@ bool GameGenerator::run_tournament(int total_rounds)
 	vector<Record> vec_records;
 	// db_mgr->selfTest();
 	// db_mgr->createTable();
+	db_mgr->deleteTable();
+
 	for(size_t i = 0; i < total_stratagies; i++)
 	{
 		for(size_t j = 0; j < total_stratagies; j++)
