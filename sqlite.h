@@ -6,24 +6,24 @@
 using namespace std;
 
 static const string Qu = "'";
-// string header = "INSERT INTO " + table + " (round, actions, players, type_p0, payoff_p0, type_p1, payoff_p1) ";
+// string header = "INSERT INTO " + table + " (round, actions, players, steps, type_p0, payoff_p0, type_p1, payoff_p1) ";
 struct Record
 {
 	public:
-		Record(int round, int actions, int players, string type_p0 ,float payoff_p0, string type_p1, float payoff_p1) :
-			round(round), actions(actions), players(players), type_p0(type_p0), payoff_p0(payoff_p0), type_p1(type_p1), payoff_p1(payoff_p1)
+		Record(int round, int actions, int players, int steps,  string type_p0 ,float payoff_p0, string type_p1, float payoff_p1) :
+			round(round), actions(actions), players(players), steps(steps), type_p0(type_p0), payoff_p0(payoff_p0), type_p1(type_p1), payoff_p1(payoff_p1)
 			{}
 		string makeSQLString() const
 		{
 			string sql{};
 			sql += "VALUES (";
-			sql += to_string(round) + "," + to_string(actions) + "," + to_string(players) + "," + quote(type_p0) + "," + \
-						 to_string(payoff_p0) + "," + quote(type_p1) + "," + to_string(payoff_p1);
+			sql += to_string(round) + "," + to_string(actions) + "," + to_string(players) + "," + to_string(steps) + ","
+				+ quote(type_p0) + "," + to_string(payoff_p0) + "," + quote(type_p1) + "," + to_string(payoff_p1);
 			sql += ");";
 			return sql;
 		}	
 	private:
-		int round, actions, players;
+		int round, actions, players, steps;
 		string type_p0;
 		float payoff_p0;
 		string type_p1;

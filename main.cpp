@@ -146,9 +146,11 @@ bool GameGenerator::run_tournament()
 	vector<float> result;
 	// initializae the database connection
 	SQLMgr *db_mgr = SQLMgr::getInstance("result.db", "TESTTABLE");
-	db_mgr->selfTest();
+	db_mgr->createTable();
+	Strategy_Mgr *str_mgr = &strategy_Mgr;
+	vector<Record> vec_records;
+	// db_mgr->selfTest();
 	// db_mgr->createTable();
-
 	for(size_t i = 0; i < total_stratagies; i++)
 	{
 		for(size_t j = 0; j < total_stratagies; j++)
@@ -171,12 +173,21 @@ bool GameGenerator::run_tournament()
 				Game testgame(permuteid, set_rounds, set_players, 0, 0, gp, permuteid, false, s_type, opp_type);
 				testgame.run();
 				vector<float> tmp = testgame.getFinalResult();
+				Record r{permuteid, set_actions, set_players, set_rounds, 
+					str_mgr->getname(s_type), tmp[0],
+				 	str_mgr->getname(opp_type), tmp[1]};
+				vec_records.push_back(r);
+					
 				// sum_vec = addTwoVectors(sum_vec, tmp);
 				// testgame.dataToFile();
 			}
 			// transform(sum_vec.begin(), sum_vec.end(), sum_vec.begin(), [&](float v){ return v / iterations;});
 		}
 	}
+
+	// Insert to database
+	db_mgr->insertRecords(vec_records);
+	db_mgr->queryAll();
 
 	return true;
 }
