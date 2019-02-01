@@ -23,6 +23,7 @@ int main(int argc, char** argv)
 	bool set_print_flag = true;
 	bool set_permute = false;
 	int set_main_strategy = 1;
+	bool set_tournament = false;
 
 	// command line parser
 	namespace po = boost::program_options;
@@ -37,6 +38,7 @@ int main(int argc, char** argv)
 	("print_flag,z", po::value<bool>()->required(), "true to print more info.") //TODO:change to logging module 
 	("permute,y", po::value<bool>()->required(), "run permutation of payoffs.")
 	("strategy,s", po::value<int>()->required(), "set main strategy for comparison, e.g. 0:random, 1:UCB1, 2:EXP3")
+	("tournament,o", po::value<bool>()->required(), "run tournament.")
 	;
 	variables_map vm;
 
@@ -69,6 +71,8 @@ int main(int argc, char** argv)
 		  set_permute = vm["permute"].as<bool>();
 		if (vm.count("actions"))
 		  set_actions = vm["actions"].as<int>(); if (vm.count("strategy")) set_main_strategy = vm["strategy"].as<int>();
+		if (vm.count("tournament"))
+		  set_tournament = vm["tournament"].as<bool>();
 
 		cout << "CMD, rounds:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players << endl;
 		cout << "print flag:" << set_print_flag << ", permute flag:" << set_permute << endl; 
@@ -77,6 +81,15 @@ int main(int argc, char** argv)
 		std::cerr << e.what() << "\n";
 	}
 	cout << endl;
+	
+	if(set_tournament){
+		GameGenerator gg;
+		if(!gg.run_tournament())
+			LOG(ERROR) << "tournament failed";
+		else
+			LOG(INFO) << "tournament finished";
+		return 0;
+	}
 
 	// generate a new game from Gamut
 	LOG(INFO) << "---Generate a game from Gamut ---" << endl;
@@ -96,11 +109,13 @@ int main(int argc, char** argv)
 	if(set_permute) iterations = set_players; 
 	// StrategyType s_type = StrategyType::UCB1;
 	StrategyType s_type  = static_cast<StrategyType>(set_main_strategy); 
+	// StrategyType opp_type  = StrategyType::Random;
+	StrategyType opp_type  = StrategyType::UCB1;
 		
 	LOG(INFO) << "---Game start---" << endl;
 	for(int permuteid = 0; permuteid < iterations; permuteid++)
 	{
-		Game testgame(permuteid, set_rounds, set_players, set_print_top, set_print_last, gp, permuteid, set_print_top, set_permute, s_type);
+		Game testgame(permuteid, set_rounds, set_players, set_print_top, set_print_last, gp, permuteid, set_print_flag, s_type, opp_type);
 		// wait to see basic information
 		// while(a != 'y'){cout << "Please enter y to continue the game" << endl; cin >> a;}
 		// run a single game;
@@ -111,4 +126,56 @@ int main(int argc, char** argv)
 	}
 
 	LOG(INFO) << "Program End!";
+}
+
+
+bool GameGenerator::run_tournament()
+{
+	// access fo available strategies
+	// generate all combinations (e.g Random v.s. Random, Random v.s. UCB1, Random v.s. EXP3 etc)
+	// create a new game instance (including parsing)
+	// play in the same instance w/ player permutation 
+	//
+	// configuration of each game
+	int set_actions{2}, set_players{2}, set_rounds{1000};
+	int iterations{set_players};
+	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
+	size_t total_stratagies = 3; 
+	std::string fname = "RandTournament";
+	vector<float> result;
+	// initializae the database connection
+	SQLMgr *db_mgr = SQLMgr.getInstance("result.db", "TESTTABLE");
+	db_mgr->selfTest();
+	// db_mgr->createTable();
+
+	for(size_t i = 0; i < total_stratagies; i++)
+	{
+		for(size_t j = 0; j < total_stratagies; j++)
+		{
+			LOG(INFO) << "Game(i,j):" << i << ", " << j;
+			// generate a new game
+			process_Mgr.generateGame(fname, set_actions, set_players); // action size, players
+			GameParser gp;
+			if(!gp.parser(fname + ".game")){
+				cout << "parsing failed" << endl;
+				return -1;
+			}
+			// swap players
+			vector<float> sum_vec(set_players, 0.0);
+			for(int permuteid = 0; permuteid < iterations; permuteid++)
+			{
+				StrategyType s_type  = static_cast<StrategyType>(i); 
+				StrategyType opp_type  = static_cast<StrategyType>(j); 
+
+				Game testgame(permuteid, set_rounds, set_players, 0, 0, gp, permuteid, false, s_type, opp_type);
+				testgame.run();
+				vector<float> tmp = testgame.getFinalResult();
+				// sum_vec = addTwoVectors(sum_vec, tmp);
+				// testgame.dataToFile();
+			}
+			// transform(sum_vec.begin(), sum_vec.end(), sum_vec.begin(), [&](float v){ return v / iterations;});
+		}
+	}
+
+	return true;
 }

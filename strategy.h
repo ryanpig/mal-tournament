@@ -246,6 +246,7 @@ static class Strategy_Mgr
 			else if(type ==  StrategyType::EGreedy) return new Strategy_EGreedy(action_size);
 			else if(type ==  StrategyType::NGreedy) return new Strategy_NGreedy(action_size);
 			else if(type ==  StrategyType::Softmax) return new Strategy_Softmax(action_size);
+			else if(type ==  StrategyType::NoRegret) return new Strategy_NoRegret(action_size);
 			else {
 				LOG(ERROR) << "strategy type is not supported!" << endl;
 				return nullptr;
@@ -261,6 +262,7 @@ static class Strategy_Mgr
 		}
 
 		void listAllStrategies(){for(size_t i = 0; i < vec_strategy_type.size(); i++) cout << vec_strategy_type[i] << " = " << i << " ; ";}
+		vector<string>& getTypeVector(){return vec_strategy_type;}
 
 		template<typename T>
 		void printVec(vector<T> &v){for(auto e : v) cout<<e<<" ,"; cout << endl;};

@@ -12,6 +12,7 @@ LDFLAGS :=
 # To enable debug mode, pass e.g. DEBUG=1 as an extra argument to 'make'.
 ifeq ($(DEBUG),)
 	CXXFLAGS += -O3 -flto
+	CXXFLAGS += -fsanitize=address 
 endif
 
 # Detect platform and enable specific features.

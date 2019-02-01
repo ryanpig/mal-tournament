@@ -23,12 +23,13 @@ class Game
 		GameParser *m_game_parser;
 		vector<float> getPayoffs(){return m_game_parser->queryByVec(m_selected_actions);};
 		bool f_print;
-		bool f_permute;
 		StrategyType main_strategy;
+		StrategyType opp_strategy;
+		vector<float> m_avg_result;
 
 
 		// constructor	
-		Game(int gameid, uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp, int assign_strategy, bool f_print, bool f_permute, StrategyType str_type) : m_gameid(gameid), m_cur_round(0), m_print_top(3), m_print_last(1), f_print(f_print), f_permute(f_permute), main_strategy(str_type)
+		Game(int gameid, uint rounds, uint num_of_players, int print_top, int print_last, GameParser &gp, int assign_strategy, bool f_print, StrategyType main, StrategyType opp) : m_gameid(gameid), m_cur_round(0), m_print_top(3), m_print_last(1), f_print(f_print), main_strategy(main), opp_strategy(opp) 
 	{	
 			// initialization
 			m_rounds = rounds;
@@ -53,7 +54,7 @@ class Game
 				if(player_ind==assign_strategy)
 					p = new Player(main_strategy, player_ind, action_size[player_ind]); 
 				else
-					p = new Player(StrategyType::Random, player_ind, action_size[player_ind]); 
+					p = new Player(opp_strategy, player_ind, action_size[player_ind]); 
 				m_players.push_back(p);
 			}
 		}
@@ -70,5 +71,6 @@ class Game
 		void print_final_result();
 		void dataToFile();
 		int getGameID(){return m_gameid;};
+		vector<float>& getFinalResult(){return m_avg_result;};
 };
 

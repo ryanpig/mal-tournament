@@ -14,3 +14,9 @@ void logging_configuration()
 	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput); 
 	// Now all the loggers will use configuration from file
 }
+
+class GameGenerator
+{
+	public:
+		bool run_tournament();
+};

@@ -3,22 +3,37 @@
 #include <iostream>
 #include <numeric> //accumulate
 #include <math.h> // exp
+#include <functional>
 
 using namespace std;
 
 template<typename T> //int, float
-T sum(vector<T> &v){
+inline T sum(vector<T> &v){
 	return accumulate(v.begin(), v.end(), 0.0f);
 }
 
 // return average of all elements in the array
 template<typename T>
-float avg(vector<T> &v){
+inline float avg(vector<T> &v){
 	return sum(v) / (float)v.size();
 }
 
+// sum of two vectors
+template <typename T>
+inline std::vector<T> addTwoVectors(const std::vector<T>& a, const std::vector<T>& b)
+{
+	assert(a.size() == b.size());
+
+	std::vector<T> result;
+	result.reserve(a.size());
+
+	std::transform(a.begin(), a.end(), b.begin(), 
+	std::back_inserter(result), std::plus<T>());
+	return result;
+}
+
 template<typename IterIn, typename IterOut = IterIn>
-void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd, float temp)
+inline void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd, float temp)
 {
 		
 	using VType = typename std::iterator_traits<IterIn>::value_type;

@@ -187,6 +187,7 @@ void Game::print_final_result()
 	{
 		float avg_payoff = (float)(p->m_acc_payoffs) / m_cur_round;
 		cout << avg_payoff << " ,";
+		m_avg_result.push_back(avg_payoff);
 	}
 	cout << endl;
 	cout << padding2;
