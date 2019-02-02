@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <cassert>
+
 static class IOHandler
 {
 	public:
@@ -17,7 +19,7 @@ static class IOHandler
 		template<typename T>
 		void writeTwoVectorsToCSV(vector<T> &vec1, vector<T> &vec2, string filename){
 			of.open(filename);
-			assert(vec1.size() == vec2.size());
+      assert(vec1.size() == vec2.size());
 			for(size_t i = 0; i < vec1.size(); i++)	
 			{
 				of << vec1[i] << "," << vec2[i] << endl;	
