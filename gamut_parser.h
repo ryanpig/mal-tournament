@@ -2,6 +2,7 @@
 #include <vector>
 #include <numeric>
 #include "process.h"
+#include <cassert>
 
 #pragma once
 using namespace std;

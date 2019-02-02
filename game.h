@@ -2,6 +2,7 @@
 #include "config.h"
 #include "IOHandler.h"
 #include "gamut_parser.h"
+#include <memory>
 
 #pragma once
 //temporary payoff matrix for testing 
@@ -14,7 +15,7 @@ class Game
 		int m_rounds; // the number of rounds in a game
 		int m_num_of_players;
 		int m_cur_round;
-		vector<Player*> m_players; // the number of players in a game
+		vector<unique_ptr<Player>> m_players; // the number of players in a game
 		vector<int> m_selected_actions; // actions selected by each players
 		//Printing parameter
 		int m_print_top;
@@ -50,21 +51,31 @@ class Game
 			vector<int> action_size = m_game_parser->getActionSize();
 			for(int player_ind = 0; player_ind < m_num_of_players; player_ind++)
 			{
-				Player* p;
+        // std::unique_ptr<Player> p;
 				if(player_ind==assign_strategy)
-					p = new Player(main_strategy, player_ind, action_size[player_ind]); 
+        {
+          m_players.push_back(make_unique<Player>(main_strategy, player_ind, action_size[player_ind])); 
+        }
 				else
-					p = new Player(opp_strategy, player_ind, action_size[player_ind]); 
-				m_players.push_back(p);
+        {
+          m_players.push_back(make_unique<Player>(opp_strategy, player_ind, action_size[player_ind])); 
+					// std::unique_ptr<Player> p = std::make_unique<Player>(opp_strategy, player_ind, action_size[player_ind]); 
+          // m_players.push_back(p);
+        }
 			}
 		}
 		// deconstructor
-		~Game(){}
+		~Game()
+    {
+      // m_players.clear(); 
+      // m_game_parser = nullptr;
+    
+    }
 
 		void single_step();
 		void run();
-		float regret_cal(Player *p, vector<int> &select_actions);
-		void update_hypo_rewards_by_action(Player *p, vector<int> &select_actions);
+		float regret_cal(unique_ptr<Player> &p, vector<int> &select_actions);
+		void update_hypo_rewards_by_action(unique_ptr<Player> &p, vector<int> &select_actions);
 			
 		// print
 		void print_player_info();
