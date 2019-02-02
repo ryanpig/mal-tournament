@@ -271,10 +271,38 @@ int Strategy_NoRegret::exec(Info &inf)
 		return select_action;
 	}
 }
-
+// argmax(argmax(opp.actions).avg_payoffs)
 int Strategy_FP::exec(Info &inf)
 {
 	int select_action{0};
+	// find each player's the most frequnet action by action counts
+	vector<int> frequent_actions;
+	for(auto info : inf.opp_history)
+	{
+		vector<int> v = info->m_counts_by_action;
+		int frequent_action = max_element(v.begin(), v.end()) - v.begin();
+		frequent_actions.push_back(frequent_action);
+	}
+	cout << "the most frequent actions for each player" << ends;
+	strategy_Mgr.printVec(frequent_actions);
+
+	// pick the best action based on average payoff of each action
+	float max_payoffs{0.0f};
+	int max_action{0};
+	int pid = 0;
+	// TODO:what's the player index of the player?
+	for(int i = 0; i < inf.m_action_size; i++)
+	{
+		frequent_actions[pid] = i;
+		float payoff = inf.gp->queryByVec(frequent_actions)[pid];
+		if(payoff > max_payoffs)
+		{
+			max_payoffs = payoff;
+			max_action = i;
+		}
+	}
+	select_action = max_action;
+	
 	return select_action;
 }
 

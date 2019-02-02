@@ -20,12 +20,14 @@ class Player
 
 		Strategy* current_strategy;
 		Info m_info;
+		GameParser *gp;
 
 		// constructor
-		Player(StrategyType strategy_type, int ind, int action_size) : m_acc_payoffs(0), index(ind), m_action_size(action_size), m_acc_regrets(0), m_info(action_size)
+		Player(StrategyType strategy_type, int ind, int action_size, GameParser *gp) : m_acc_payoffs(0), index(ind), m_action_size(action_size), m_acc_regrets(0), m_info(action_size), gp(gp)
 		{
 			// cout << "Player " << ind << ", ";
 			current_strategy = strategy_Mgr.createNewStrategy(strategy_type, action_size);
+			m_info.gp = gp;
 		}
 
 		// deconstructor
