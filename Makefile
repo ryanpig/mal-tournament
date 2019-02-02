@@ -25,24 +25,17 @@ else
 	# windows?
 endif
 
-# Find the SDL2 library
-# SDL2_CXXFLAGS := $(shell pkg-config --cflags sdl2)
-# SDL2_LDFLAGS := $(shell pkg-config --libs sdl2)
-# CXXFLAGS += $(SDL2_CXXFLAGS)
-# LDFLAGS += $(SDL2_LDFLAGS)
-# Find the FREEIMAGE library
-# FREEIMAGE_CXXFLAGS :=
-# FREEIMAGE_LDFLAGS := -lfreeimage
-# CXXFLAGS += $(FREEIMAGE_CXXFLAGS)
-# LDFLAGS += $(FREEIMAGE_LDFLAGS)
-
 # BOOST program_options library 
-# BOOST_ROOT = /usr/local/Cellar/boost/1.67.0_1
-BOOST_ROOT = ~/miscellaneous/boost_1_69_0/
-# BOOST_CXXFLAGS := -I${BOOST_ROOT}/include
-BOOST_CXXFLAGS := -I${BOOST_ROOT}/boost
-# BOOST_LDFLAGS := -L${BOOST_ROOT}/lib -lboost_program_options
-BOOST_LDFLAGS := -L${BOOST_ROOT}/stage/lib -lboost_program_options
+ifeq ($(UNAME_VAL),Darwin)
+	BOOST_ROOT = /usr/local/Cellar/boost/1.67.0_1
+	BOOST_CXXFLAGS := -I${BOOST_ROOT}/include
+	BOOST_LDFLAGS := -L${BOOST_ROOT}/lib -lboost_program_options
+else ifeq ($(UNAME_VAL),Linux)
+	BOOST_ROOT = ~/miscellaneous/boost_1_69_0/
+	BOOST_CXXFLAGS := -I${BOOST_ROOT}/boost
+	BOOST_LDFLAGS := -L${BOOST_ROOT}/stage/lib -lboost_program_options
+endif
+
 CXXFLAGS += $(BOOST_CXXFLAGS)
 LDFLAGS += $(BOOST_LDFLAGS)
 

@@ -49,20 +49,25 @@ class Game
 
 			// create n players & set its strategy  
 			vector<int> action_size = m_game_parser->getActionSize();
+			vector<Info*> vec_ptr_infos;
 			for(int player_ind = 0; player_ind < m_num_of_players; player_ind++)
 			{
         // std::unique_ptr<Player> p;
 				if(player_ind==assign_strategy)
         {
-          m_players.push_back(make_unique<Player>(main_strategy, player_ind, action_size[player_ind])); 
+          m_players.push_back(make_unique<Player>(main_strategy, player_ind, action_size[player_ind], m_game_parser)); 
         }
 				else
         {
-          m_players.push_back(make_unique<Player>(opp_strategy, player_ind, action_size[player_ind])); 
-					// std::unique_ptr<Player> p = std::make_unique<Player>(opp_strategy, player_ind, action_size[player_ind]); 
-          // m_players.push_back(p);
+          m_players.push_back(make_unique<Player>(opp_strategy, player_ind, action_size[player_ind], m_game_parser)); 
         }
 			}
+			for(auto &p: m_players)
+				vec_ptr_infos.push_back(&p->m_info);
+
+			// initialize Info for each player
+			for(auto &p : m_players)
+				p->m_info.opp_history = vec_ptr_infos;
 		}
 		// deconstructor
 		~Game()

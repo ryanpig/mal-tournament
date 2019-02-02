@@ -7,6 +7,7 @@
 #include "common.h"
 #include "random_user.h"
 #include <chrono>
+#include "gamut_parser.h"
 
 using namespace std;
 
@@ -20,15 +21,16 @@ class Info
 		vector<int> my_history; // last m steps
 		vector<Info*> opp_history; //TODO: using vector<Info*> 
 		vector<float> m_acc_payoffs_by_action;
-		vector<int> m_counts_by_action;
+		vector<int> m_counts_by_action; // for Softmax, E-Greedy, N-Greedy, UCB1 
 		float m_acc_regrets;
-		vector<float> m_acc_hypo_reward_by_action;
+		vector<float> m_acc_hypo_reward_by_action; //for No-Regret
 		int m_cur_round;
 		int last_action;
 		float last_reward;
+		GameParser *gp;
 
 		// constructor 
-		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f){
+		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f), gp(nullptr){
 			m_acc_payoffs_by_action.resize(action_size,0.0f);
 			m_counts_by_action.resize(action_size,0);
 			m_acc_hypo_reward_by_action.resize(action_size,0);
