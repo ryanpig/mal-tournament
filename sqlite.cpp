@@ -1,6 +1,5 @@
 #include "sqlite.h"
 // callback for sql execution
-SQLMgr *SQLMgr::m_instance = nullptr;
 
 int exe_callback(void *unused, int count, char **data, char **columns)
 {

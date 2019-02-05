@@ -145,7 +145,7 @@ bool GameGenerator::run_tournament(int total_rounds)
 	std::string fname = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
-	SQLMgr *db_mgr = SQLMgr::getInstance("result2.db", "TESTTABLE");
+  auto db_mgr = std::move(SQLMgr::getInstance("result2.db", "TESTTABLE"));
 	db_mgr->createTable();
 	Strategy_Mgr *str_mgr = &strategy_Mgr;
 	vector<Record> vec_records;

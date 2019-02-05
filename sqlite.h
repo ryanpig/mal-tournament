@@ -33,17 +33,13 @@ struct Record
 
 class SQLMgr
 {
+	struct _constructor_tag{ explicit _constructor_tag(){}};
 	public:
-		static SQLMgr* getInstance(string dbname, string current_table)
+		static unique_ptr<SQLMgr>& getInstance(string dbname, string current_table)
 		{
-			if(!m_instance){
-				m_instance = new SQLMgr(dbname);
-				m_instance->setTable(current_table);
-				return m_instance;
-			}else{
-				m_instance->setTable(current_table);
-				return m_instance;
-			}
+			static unique_ptr<SQLMgr> m_instance = make_unique<SQLMgr>(dbname, _constructor_tag());
+			m_instance->setTable(current_table);
+			return m_instance;
 		}
 					
 		void connectToDB(string dbname);
@@ -54,14 +50,9 @@ class SQLMgr
 		void queryAll();
 		void deleteTable();
 		void selfTest();
-
-	private:
-		// variables
-		static SQLMgr *m_instance;
-		sqlite3 *db;
-		string m_table;
 		// hidde constructor for singleton design pattern 
-		SQLMgr(string dbname) : db(nullptr)
+		// BUT, make_unique needs public constructor so we use the private "struct tag" to make workarounds
+		SQLMgr(string dbname, _constructor_tag) : db(nullptr)
 		{
 		 	connectToDB(dbname);
 		}
@@ -71,6 +62,11 @@ class SQLMgr
 			sqlite3_close(db);
 			db = nullptr;
 		}
+
+	private:
+		// variables
+		sqlite3 *db;
+		string m_table;
 		void sqlExeution(string &sql);
 		// int exe_callback(void *unused, int count, char **data, char **columns);
 };
