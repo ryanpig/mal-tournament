@@ -18,7 +18,7 @@ class Player
 		vector<int> action_history; 
 		vector<float> acc_regret_history; 
 
-		Strategy* current_strategy;
+		unique_ptr<Strategy> current_strategy;
 		Info m_info;
 		GameParser *gp;
 
