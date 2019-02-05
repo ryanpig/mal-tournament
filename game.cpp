@@ -134,7 +134,8 @@ void Game::dataToFile()
 		// EXP3
 		if(p->getCurStrategyType() == StrategyType::EXP3)
 		{
-			Strategy_EXP3 *ptr_exp3 = static_cast<Strategy_EXP3*>(p->current_strategy);
+			Strategy* ptr_base = p->current_strategy.get();
+			Strategy_EXP3 *ptr_exp3 = static_cast<Strategy_EXP3*>(ptr_base);
 			vec_weights = std::move(ptr_exp3->weights_history);
 			vec_probs = std::move(ptr_exp3->probs_history);
 			writeEXP3 = true;

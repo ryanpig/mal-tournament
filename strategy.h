@@ -8,6 +8,7 @@
 #include "random_user.h"
 #include <chrono>
 #include "gamut_parser.h"
+#include <memory>
 
 using namespace std;
 
@@ -243,15 +244,16 @@ static class Strategy_Mgr
 {
 	public:
 		vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "BrFP", "Markov"}; 
-		Strategy* createNewStrategy(StrategyType type, int action_size) {
-			if(type == StrategyType::Random) return new Strategy_Random(action_size); 
-			else if(type == StrategyType::UCB1) return new Strategy_UCB1(action_size);
-			else if(type ==  StrategyType::EXP3) return new Strategy_EXP3(action_size);
-			else if(type ==  StrategyType::Satisficing) return new Strategy_Satisficing(action_size);
-			else if(type ==  StrategyType::EGreedy) return new Strategy_EGreedy(action_size);
-			else if(type ==  StrategyType::NGreedy) return new Strategy_NGreedy(action_size);
-			else if(type ==  StrategyType::Softmax) return new Strategy_Softmax(action_size);
-			else if(type ==  StrategyType::NoRegret) return new Strategy_NoRegret(action_size);
+		unique_ptr<Strategy> createNewStrategy(StrategyType type, int action_size) {
+
+			if(type == StrategyType::Random) return make_unique<Strategy_Random>(action_size); 
+			else if(type == StrategyType::UCB1) return make_unique<Strategy_UCB1>(action_size);
+			else if(type ==  StrategyType::EXP3) return make_unique<Strategy_EXP3>(action_size);
+			else if(type ==  StrategyType::Satisficing) return make_unique<Strategy_Satisficing>(action_size);
+			else if(type ==  StrategyType::EGreedy) return make_unique<Strategy_EGreedy>(action_size);
+			else if(type ==  StrategyType::NGreedy) return make_unique<Strategy_NGreedy>(action_size);
+			else if(type ==  StrategyType::Softmax) return make_unique<Strategy_Softmax>(action_size);
+			else if(type ==  StrategyType::NoRegret) return make_unique<Strategy_NoRegret>(action_size);
 			else {
 				LOG(ERROR) << "strategy type is not supported!" << endl;
 				return nullptr;
