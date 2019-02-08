@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 	bool set_print_flag = true;
 	bool set_permute = false;
 	int set_main_strategy = 1;
+	int set_opp_strategy = 0;
 	bool set_tournament = false;
 
 	// command line parser
@@ -39,6 +40,7 @@ int main(int argc, char** argv)
 	("print_flag,z", po::value<bool>()->required(), "true to print more info.") //TODO:change to logging module 
 	("permute,y", po::value<bool>()->required(), "run permutation of payoffs.")
 	("strategy,s", po::value<int>()->required(), "set main strategy for comparison, e.g. 0:random, 1:UCB1, 2:EXP3")
+	("opp_strategy,e", po::value<int>()->required(), "set opponent strategy for comparison, in 2 player game")
 	("tournament,o", po::value<bool>()->required(), "run tournament.")
 	;
 	variables_map vm;
@@ -71,12 +73,18 @@ int main(int argc, char** argv)
 		if (vm.count("permute"))
 		  set_permute = vm["permute"].as<bool>();
 		if (vm.count("actions"))
-		  set_actions = vm["actions"].as<int>(); if (vm.count("strategy")) set_main_strategy = vm["strategy"].as<int>();
+		  set_actions = vm["actions"].as<int>();
+	 	if (vm.count("strategy"))
+		 	set_main_strategy = vm["strategy"].as<int>();
+	 	if (vm.count("opp_strategy"))
+		 	set_opp_strategy = vm["opp_strategy"].as<int>();
 		if (vm.count("tournament"))
 		  set_tournament = vm["tournament"].as<bool>();
 
 		cout << "CMD, rounds:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players << endl;
 		cout << "print flag:" << set_print_flag << ", permute flag:" << set_permute << endl; 
+		cout << "main strategy:" <<  strategy_Mgr.getname(static_cast<StrategyType>(set_main_strategy)) << endl;
+		cout << "opponent strategy:" << strategy_Mgr.getname(static_cast<StrategyType>(set_opp_strategy)) << endl;
 	}
 	catch(exception& e) {
 		std::cerr << e.what() << "\n";
@@ -111,7 +119,7 @@ int main(int argc, char** argv)
 	// StrategyType s_type = StrategyType::UCB1;
 	StrategyType s_type  = static_cast<StrategyType>(set_main_strategy); 
 	// StrategyType opp_type  = StrategyType::Random;
-	StrategyType opp_type  = StrategyType::Random;
+	StrategyType opp_type  = static_cast<StrategyType>(set_opp_strategy);
 		
 	LOG(INFO) << "---Game start---" << endl;
 	for(int permuteid = 0; permuteid < iterations; permuteid++)
