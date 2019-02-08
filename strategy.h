@@ -12,7 +12,7 @@
 
 using namespace std;
 
-enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, BrFP, Markov}; 
+enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, QL, BrFP, Markov}; 
 
 class Info
 {
@@ -29,9 +29,10 @@ class Info
 		int last_action;
 		float last_reward;
 		GameParser *gp;
+		int player_index;
 
 		// constructor 
-		Info(int action_size) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f), gp(nullptr){
+		Info(int action_size, int player_index) : m_action_size(action_size), m_acc_regrets(0), last_action(0), last_reward(0.0f), gp(nullptr), player_index(player_index){
 			m_acc_payoffs_by_action.resize(action_size,0.0f);
 			m_counts_by_action.resize(action_size,0);
 			m_acc_hypo_reward_by_action.resize(action_size,0);
@@ -201,6 +202,7 @@ class Strategy_FP: public Strategy
 {
 	public:		
 		// variables
+		RNG m_rng;
 		// constructor
 		Strategy_FP(int act) : Strategy(act, StrategyType::FP)
 		{
@@ -211,6 +213,19 @@ class Strategy_FP: public Strategy
 		int exec(Info &inf);
 };
 
+class Strategy_QL: public Strategy 
+{
+	public:		
+		// variables
+		// constructor
+		Strategy_QL(int act) : Strategy(act, StrategyType::Markov)
+		{
+			;
+		}
+		~Strategy_QL(){}
+		// functions	
+		int exec(Info &inf);
+};
 class Strategy_BrFP: public Strategy 
 {
 	public:		
@@ -243,7 +258,7 @@ class Strategy_Markov: public Strategy
 static class Strategy_Mgr
 {
 	public:
-		vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "BrFP", "Markov"}; 
+		vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "QL", "BrFP", "Markov"}; 
 		unique_ptr<Strategy> createNewStrategy(StrategyType type, int action_size) {
 
 			if(type == StrategyType::Random) return make_unique<Strategy_Random>(action_size); 
@@ -254,6 +269,8 @@ static class Strategy_Mgr
 			else if(type ==  StrategyType::NGreedy) return make_unique<Strategy_NGreedy>(action_size);
 			else if(type ==  StrategyType::Softmax) return make_unique<Strategy_Softmax>(action_size);
 			else if(type ==  StrategyType::NoRegret) return make_unique<Strategy_NoRegret>(action_size);
+			else if(type ==  StrategyType::FP) return make_unique<Strategy_FP>(action_size);
+			else if(type ==  StrategyType::QL) return make_unique<Strategy_QL>(action_size);
 			else {
 				LOG(ERROR) << "strategy type is not supported!" << endl;
 				return nullptr;
