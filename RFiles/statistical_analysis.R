@@ -22,5 +22,15 @@ new_DF <- tmp1[, c("type_p0", "type_p1")]
 final <- cbind(new_DF,avg_DF)
 boxplot(avg_DF ~ type_p0, data=final, las=2)
 
+
+##bean plot
+library("ggplot2")
+ggplot(final, aes(x=type_p0, y=avg_DF))+geom_boxplot()+geom_violin(fill='lightblue', alpha=0.5)+geom_jitter(position = position_jitter(width = .1))
+
+##?
+library("mosaic")#favstats
+favstats(avg_DF ~ type_p0,data=final)
+
 ## finish 
 dbDisconnect(con)
+

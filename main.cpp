@@ -149,7 +149,7 @@ bool GameGenerator::run_tournament(int total_rounds)
 	int set_actions{2}, set_players{2}, set_rounds{total_rounds};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	size_t total_stratagies = 8; 
+	size_t total_stratagies = 10; 
 	std::string fname = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
