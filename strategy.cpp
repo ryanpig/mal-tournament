@@ -215,7 +215,7 @@ int Strategy_EGreedy::exec(Info &inf)
 		return inf.m_cur_round - 1;
 	else
 	{
-		select_action = (m_rng.getReal() < 0.1) ? m_rng.getInt(0, action_size -1) : argmax_pick(inf);
+		select_action = (m_rng.getReal() < epsilon) ? m_rng.getInt(0, action_size -1) : argmax_pick(inf);
 		//debug:
 		// cout << "max:"<< max << ", max(act):" << argmax_pick(inf) << ", select_action:" << select_action << endl;
 	}
@@ -318,8 +318,54 @@ int Strategy_FP::exec(Info &inf)
 }
 int Strategy_QL::exec(Info &inf)
 {
-	int select_action{0};
-	return select_action;
+	int current_state = inf.last_action;
+	int reward = inf.last_reward;
+	auto find_maxQ = [](vector<float> &v){ return max_element(v.begin(), v.end());};
+	auto count_maxQ = [](vector<float> &v, float max_value){ return std::count(v.begin(), v.end(), max_value);};
+	int best_action{0};
+	
+	// get max Q
+	auto iter_maxQ = find_maxQ(q_history);
+	auto beg = q_history.begin();
+	auto end = q_history.end();
+	float maxQ = *iter_maxQ;
+	int counts_of_max = count_maxQ(q_history, maxQ);
+
+	// deploy e-greedy policy w/ decreasing epsilon
+	if(m_rng.getReal() < epsilon)
+	{
+		best_action = m_rng.getInt(0, action_size - 1);
+		// LOG(DEBUG) << "random action:" << best_action ;
+	}
+	else
+	{
+		// branch by found maximum counts
+		if(counts_of_max == 1)
+		{
+		  best_action = iter_maxQ - beg;
+			// LOG(DEBUG) << "choose action by best Q:" << best_action ; 
+		}else if (counts_of_max >= 1)
+		{
+			vector<int> matches;			
+			for(auto it = beg; it != end; it++)
+				if(*it == maxQ) 
+					matches.push_back(it - beg);
+			best_action = matches[m_rng.getInt(0, matches.size() - 1)];
+			// LOG(DEBUG) << "maxQ:" << maxQ << ", choose" << best_action << " due to more than 2 maximum values" ;
+		}
+	}
+
+	// LOG(DEBUG) << "before Q-matrix: "; 
+	// strategy_Mgr.printVec(q_history);
+	
+	// update q-matrix (NOTE: check if the maxQ is needed to set to 1 )
+	q_history[current_state] = learning_rate * (reward + discount_factor * 1) + (1 - learning_rate) * q_history[current_state];
+
+	// LOG(DEBUG) << "update Q-matrix: ";
+	// strategy_Mgr.printVec(q_history);
+
+	epsilon *= decreasing_exploration;
+	return best_action;
 }
 
 int Strategy_BrFP::exec(Info &inf)

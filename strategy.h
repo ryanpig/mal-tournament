@@ -143,6 +143,7 @@ class Strategy_EGreedy: public Strategy
 	public:		
 		// variables
 		RNG m_rng;
+		float epsilon = 0.1f;
 		// int m_rounds_initial = 20; // always exploration to initialize average payoffs
 		// constructor
 		Strategy_EGreedy(int act) : Strategy(act, StrategyType::EGreedy)
@@ -217,10 +218,18 @@ class Strategy_QL: public Strategy
 {
 	public:		
 		// variables
+		RNG m_rng;
+		float learning_rate = 0.1; // learning rate
+		float discount_factor = 0.9; // discount factor , close to 1 
+		float epsilon = 0.5; // e-greedy policy
+		float decreasing_exploration = 0.9;
+		vector<float> q_history;		
+
 		// constructor
-		Strategy_QL(int act) : Strategy(act, StrategyType::Markov)
+		Strategy_QL(int act) : Strategy(act, StrategyType::QL)
 		{
-			;
+			// initialize q_matrix
+			q_history.resize(action_size, 0.0f);
 		}
 		~Strategy_QL(){}
 		// functions	
