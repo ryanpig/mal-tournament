@@ -1,6 +1,7 @@
 #include <sqlite3.h>
 #include <iostream>
 #include <vector>
+#include <memory>
 #define UNUSED(x) (void)(x)
 #pragma once
 using namespace std;
