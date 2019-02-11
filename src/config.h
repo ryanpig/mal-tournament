@@ -5,3 +5,4 @@
 #define NUM_OF_ROUNDS 10000
 #define NUM_OF_PLAYERS 2
 #define NUM_OF_ACTIONS 2
+#define SQLITE_DB_PATH "Result/result2.db"

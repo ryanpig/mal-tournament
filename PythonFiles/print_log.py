@@ -63,17 +63,18 @@ def plot_n_arrs(arr,xl1='xlabel', yl1='y1label', leg1='legend'):
 # TESTING 
 # configuration
 # find how many games
-filename = 'regret' + str(0) + '.csv'
+folder = '../'
+filename = folder + 'regret' + str(0) + '.csv'
 df = pd.read_csv(filename)
 numberGames = df.shape[1] - 1
 # visualize n games
 for i in range(numberGames):
-    filename = 'regret' + str(i) + '.csv'
+    filename = folder + 'regret' + str(i) + '.csv'
     csv_reader(filename, "rounds", "acc_regrets", "player")
 
-#  filename = 'EXP3_probs' + str(0) + '.csv'
+#  filename = folder + 'EXP3_probs' + str(0) + '.csv'
 #  csv_reader(filename, "rounds", "probability", "action")
-#  filename = 'acc_payoffs.csv'
+#  filename = folder + 'acc_payoffs.csv'
 #  two_vectors_visualization(filename, split=False)
-#  filename = 'action_history.csv'
+#  filename = folder + 'action_history.csv'
 #  two_vectors_visualization(filename, split=True)

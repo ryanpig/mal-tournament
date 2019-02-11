@@ -2,6 +2,7 @@
 TARGET := mal 
 # The directory in which to put compilation artifacts
 OBJDIR := .objs
+SRC_DIR = src
 
 # Compiler choice and base flags
 CXX := g++ -fdiagnostics-color=always
@@ -43,11 +44,11 @@ LDFLAGS += $(BOOST_LDFLAGS)
 SQLITE3_LDFLAGS := -lsqlite3
 LDFLAGS += $(SQLITE3_LDFLAGS)
 # Collect sources
-CXX_SOURCES := $(wildcard *.cpp)
+CXX_SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 
 # Compute necessary compilation artifacts
-OBJ_FILES := $(patsubst %.cpp,$(OBJDIR)/%.o,$(CXX_SOURCES))
-DEP_FILES := $(patsubst %.cpp,$(OBJDIR)/%.d,$(CXX_SOURCES))
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJDIR)/%.o,$(CXX_SOURCES))
+DEP_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJDIR)/%.d,$(CXX_SOURCES))
 
 
 # Generic targets
@@ -64,12 +65,12 @@ $(TARGET): $(OBJ_FILES)
 	@echo LD $@
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	@echo CXX $<
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJDIR)/%.d: %.cpp
+$(OBJDIR)/%.d: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	@echo DEP $<
 	@$(CXX) -MT $(OBJDIR)/$*.o -MM $(CXXFLAGS) $< >$@

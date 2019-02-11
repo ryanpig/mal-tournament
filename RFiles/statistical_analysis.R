@@ -1,6 +1,6 @@
 library("RSQLite")
 # connect to the sqlite file
-con <- dbConnect(drv=RSQLite::SQLite(), dbname="~/CppProj/thesis_proj/result2.db")
+con <- dbConnect(drv=RSQLite::SQLite(), dbname="../Result/result2.db")
 tables <- dbListTables(con)
 
 ## exclude sqlite_sequence (contains table information)
