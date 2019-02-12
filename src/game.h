@@ -83,11 +83,11 @@ class Game
 		void update_hypo_rewards_by_action(unique_ptr<Player> &p, vector<int> &select_actions);
 			
 		// print
-		void print_player_info();
-		void print_manual_payoff();
-		void print_final_result();
-		void dataToFile();
-		int getGameID(){return m_gameid;};
-		vector<float>& getFinalResult(){return m_avg_result;};
+		void print_player_info() const;
+		void print_manual_payoff() const;
+		void print_final_result() ; // save final result in m_avg_result
+		void dataToFile() const;
+		int getGameID() const {return m_gameid;};
+		const vector<float>& getFinalResult() const {return m_avg_result;};
 };
 

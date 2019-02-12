@@ -93,7 +93,7 @@ float Game::regret_cal(unique_ptr<Player> &p, vector<int> &select_actions)
 }
 
 // print each player's action history, payoff history, and acc_payoff 
-void Game::print_player_info()
+void Game::print_player_info() const
 {
   if(m_cur_round <= m_print_top || m_cur_round > m_rounds - m_print_last)
 	{
@@ -115,7 +115,7 @@ void Game::print_player_info()
 	}
 }
 
-void Game::dataToFile()
+void Game::dataToFile() const
 {
 	// Game data
 	vector<vector<float>> vecs_acc_regret;
@@ -173,7 +173,7 @@ void Game::run()
 	print_final_result();
 }
 
-void Game::print_manual_payoff()
+void Game::print_manual_payoff() const
 {
 	// DEBUG: Use manual payoff matrix
 	for(int i = 0; i < m_num_of_players; i++)
@@ -189,7 +189,7 @@ void Game::print_manual_payoff()
 	}
 }
 
-void Game::print_final_result()
+void Game::print_final_result() 
 {
 	string padding  = "         ";
 	string padding1 = "Avg. Pay."; 

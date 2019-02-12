@@ -8,7 +8,7 @@ int Player::select_action()
 	return current_action;
 }
 
-void Player::print_action_statistic()
+void Player::print_action_statistic() const
 {
 	// print all action relevant information 
 	cout << "Actions info:" << endl;
