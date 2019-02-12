@@ -55,7 +55,7 @@ class Strategy
 		// agent, that may or may not use opponenet(s)' information, executes the strategy to select its action. 
 		virtual int exec(Info &i) = 0;
 		virtual ~Strategy(){}
-		int get_index(){return type;}
+		int get_index() const {return type;}
 	  int action_size;
 		StrategyType type;
 };
@@ -77,7 +77,7 @@ class Strategy_Random : public Strategy
 		}
 		~Strategy_Random(){}	
 		// Functions
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 static const float constant1 = 1 + (M_PI * M_PI / 3);
@@ -91,7 +91,7 @@ class Strategy_UCB1 : public Strategy
 		Strategy_UCB1(int act) : Strategy(act, StrategyType::UCB1), initial_counts(0), initial_flag(true){;}
 		~Strategy_UCB1(){}
 		// Functions
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_EXP3: public Strategy 
@@ -113,7 +113,7 @@ class Strategy_EXP3: public Strategy
 		}
 		~Strategy_EXP3(){}
 		// Functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 		void prob_distr_calc();
 		int draw_action();
 		void checkMaxRange(vector<float> &w, float factor, float thres);
@@ -135,7 +135,7 @@ class Strategy_Satisficing: public Strategy
 		}
 		~Strategy_Satisficing(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_EGreedy: public Strategy 
@@ -151,7 +151,7 @@ class Strategy_EGreedy: public Strategy
 			;
 		}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_NGreedy: public Strategy 
@@ -167,7 +167,7 @@ class Strategy_NGreedy: public Strategy
 		}
 		~Strategy_NGreedy(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_Softmax: public Strategy 
@@ -182,7 +182,7 @@ class Strategy_Softmax: public Strategy
 		}
 		~Strategy_Softmax(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_NoRegret: public Strategy 
@@ -196,7 +196,7 @@ class Strategy_NoRegret: public Strategy
 		}
 		~Strategy_NoRegret(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_FP: public Strategy 
@@ -211,7 +211,7 @@ class Strategy_FP: public Strategy
 		}
 		~Strategy_FP(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_QL: public Strategy 
@@ -233,7 +233,7 @@ class Strategy_QL: public Strategy
 		}
 		~Strategy_QL(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 class Strategy_BrFP: public Strategy 
 {
@@ -246,7 +246,7 @@ class Strategy_BrFP: public Strategy
 		}
 		~Strategy_BrFP(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 class Strategy_Markov: public Strategy 
@@ -260,14 +260,14 @@ class Strategy_Markov: public Strategy
 		}
 		~Strategy_Markov(){}
 		// functions	
-		int exec(Info &inf);
+		int exec(Info &inf) override;
 };
 
 // Compostion: all common apis can be put here rather than in pure Strategy class
 static class Strategy_Mgr
 {
 	public:
-		vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "QL", "BrFP", "Markov"}; 
+		const vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "QL", "BrFP", "Markov"}; 
 		unique_ptr<Strategy> createNewStrategy(StrategyType type, int action_size) {
 
 			if(type == StrategyType::Random) return make_unique<Strategy_Random>(action_size); 
@@ -286,7 +286,7 @@ static class Strategy_Mgr
 			}
 		}
 
-		string getname(StrategyType type){
+		string getname(StrategyType type) const {
 			int index = static_cast<int>(type);
 			if(index < (int)vec_strategy_type.size())
 				return vec_strategy_type[index];
@@ -294,10 +294,10 @@ static class Strategy_Mgr
 				return "Out of range of StrategyType";
 		}
 
-		void listAllStrategies(){for(size_t i = 0; i < vec_strategy_type.size(); i++) cout << vec_strategy_type[i] << " = " << i << " ; ";}
-		vector<string>& getTypeVector(){return vec_strategy_type;}
+		void listAllStrategies() const {for(size_t i = 0; i < vec_strategy_type.size(); i++) cout << vec_strategy_type[i] << " = " << i << " ; ";}
+		const vector<string>& getTypeVector() const {return vec_strategy_type;}
 
 		template<typename T>
-		void printVec(vector<T> &v){for(auto e : v) cout<<e<<" ,"; cout << endl;};
+		void printVec(vector<T> &v) const {for(auto e : v) cout<<e<<" ,"; cout << endl;};
 
 } strategy_Mgr;
