@@ -27,6 +27,7 @@ Build the test bed for multi-agent learning (MAL) and bandit algorithms w/ vario
 
 
 # Screen shot
-<img src="Result/50000rounds.png">
-box plot in R code
+<p><img src="Result/10000rounds_10strs.png" width=200>
+<img src="Result/100000rounds_10.png" width=200></p>
+bean/box plot by R (left:10000 iterations , right:100000 iterations)
 
