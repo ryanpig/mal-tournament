@@ -1,4 +1,12 @@
 // Goals: Test all types of game can be generated correctly
+// Guide:
+//  Test case is supposed to be as small as possible.
+//  Each test only evaluates a simple idea, which avoids crossed effect.
+// Toolbox:
+//  1. Using fixtures if tests share similar configuration. (TEST_F) 
+//  2. Using SetUp(), TearDown() etc to initialize some variables
+//  3. More -> Google Test Prime document
+
 #include "process.h"
 #include "gamut_parser.h"
 #include "gametype.h"
