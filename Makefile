@@ -16,14 +16,14 @@ TARGET_TEST := unittest
 # Disable optimisation in debug mode.
 # To enable debug mode, pass e.g. DEBUG=1 as an extra argument to 'make'.
 ifeq ($(DEBUG),)
-	CXXFLAGS += -O3 -flto
+	CXXFLAGS += -O3 
 	CXXFLAGS += -fsanitize=address 
 endif
 
 # Detect platform and enable specific features.
 UNAME_VAL := $(shell uname)
 ifeq ($(UNAME_VAL),Darwin)
-	CXXFLAGS += -DHAVE_SIGACTION
+	CXXFLAGS += -DHAVE_SIGACTION -flto
 else ifeq ($(UNAME_VAL),Linux)
 	CXXFLAGS += -DHAVE_SIGACTION
 else
@@ -52,7 +52,8 @@ LDFLAGS += $(SQLITE3_LDFLAGS)
 CXXFLAGS_TEST := $(CXXFLAGS)
 LDFLAGS_TEST  := $(LDFLAGS)
 # Google Test libraries/headers
-GTEST_LIBS = libgtest.a libgtest_main.a
+# GTEST_LIBS = libgtest.a libgtest_main.a
+GTEST_LIBS = libgtest.a 
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
@@ -99,15 +100,16 @@ gtest-all.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
             $(GTEST_DIR)/src/gtest-all.cc
 
-gtest_main.o : $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest_main.cc
+# gtest_main.o : $(GTEST_SRCS_)
+#   $(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
+#             $(GTEST_DIR)/src/gtest_main.cc
 
 libgtest.a : gtest-all.o
+	@echo flags  $(ARFLAGS)
 	$(AR) $(ARFLAGS) $@ $^
 
-libgtest_main.a : gtest-all.o gtest_main.o
-	$(AR) $(ARFLAGS) $@ $^
+# libgtest_main.a : gtest-all.o gtest_main.o
+#   $(AR) $(ARFLAGS) $@ $^
 
 # Compilation rules
 $(TARGET): $(OBJ_FILES)
@@ -133,7 +135,8 @@ OBJ_FILTER := $(filter-out $(OBJDIR)/main.o, $(OBJ_FILES))
 $(TARGET_TEST): $(OBJ_FILES_TEST) $(OBJ_FILTER) $(GTEST_LIBS) 
 	@echo link objects: $^
 	@echo LD $@
-	@$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread -o $@ $^ $(LDFLAGS_TEST)
+	# @$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread -o $@ $^ $(LDFLAGS_TEST)
+	@$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -L$(GTEST_LIB_DIR) -lpthread -o $@ $^ $(LDFLAGS_TEST)
 	
 
 
