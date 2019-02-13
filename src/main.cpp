@@ -1,12 +1,12 @@
 #include <boost/program_options.hpp>
 #include <chrono>
 #include "main.h"
-// #include "easylogging++.h"
-INITIALIZE_EASYLOGGINGPP
+#include "common.h"
 
 
 using namespace boost::program_options;
 
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv)
 {

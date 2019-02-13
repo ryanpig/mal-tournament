@@ -13,6 +13,8 @@ using namespace std;
 
 void Process_Mgr::generateGame(string fname, int actions, int players)
 {
+  // self test of available type of games
+  selfTest();
 	// filename flag
 	string filename = fname;
 	filename += ".game";
@@ -67,3 +69,11 @@ inline bool Process_Mgr::file_exist(const std::string& name) {
 	struct stat buffer;   
 	return (stat (name.c_str(), &buffer) == 0); 
 }
+
+void Process_Mgr::selfTest(){
+  auto gtm = std::move(GameTypeMgr::getInstance());
+  cout << "available type of games" << endl;
+  for(auto &e : gtm->getCollection())
+    cout << e.name << endl;
+}
+
