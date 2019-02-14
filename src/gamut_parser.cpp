@@ -105,11 +105,12 @@ bool GameParser::parser(string filename)
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
 	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) {
 		m_index_max = multi(m_act_dim);
-		cout << "Parsing successfully!" << endl;
+		LOG(INFO) << "Parsing succeeded!";
+    return true;
 	}else{
-		cerr << "Parsing error: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << endl;
+		LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size();
+    return false;
 	}
-	return true;
 }
 
 // query payoff vector by a given action vector
@@ -125,14 +126,15 @@ vector<float> GameParser::queryByVec(vector<int> &vec_query) const
 		else
 		{
 			printVec(vec_query);
-			cerr << "ind:" << ind << " exceeds max " << m_index_max << endl;
+			LOG(ERROR) << "ind:" << ind << " exceeds max " << m_index_max;
 			// return m_matrix[0];
 			throw ind;
 		}
 	}
 		catch(const std::exception &e)
 		{
-			cerr << "ERROR:" << "out of range of index" << " ," << e.what() << endl;
+			LOG(ERROR) << "ERROR:" << "Out of range of index" << " ," << e.what();
+      return vector<float>{};
 		}
 	}
 

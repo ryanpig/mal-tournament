@@ -1,58 +1,42 @@
-
 #include "process.h"
 #include <unistd.h>
 #include <chrono>
 #include <thread>
 
-
 using namespace std;
-/* for test */
-// int main()
-// {
-//   process_Mgr.generateGame("Rand2", 3, 4);
-// }
 
-void Process_Mgr::generateGame(string fname, GameType &gt)
+bool Process_Mgr::generateGame(string fname, GameType &gt)
 {
-  cout << "received" << endl;
+  cout << "generating games...." << endl;
   int final_actions = gt.actions;
   int final_players = gt.players;
 
   // find the GameType by its name
   auto gtm = std::move(GameTypeMgr::getInstance());
   const auto& findtype = [&](const GameType &g){
-  for(const auto &e : gtm->getCollection()){
-    if(e.name == g.name)
-       return e;
-  }
-  cout << "Not found" << endl;
+    for(const auto &e : gtm->getCollection()){
+      if(e.name == g.name)
+         return e; }
+    return GameType{"empty",0,0,false,false};
   };
+
   const GameType found = findtype(gt);
+  if(found.name == "empty")
+  {
+    LOG(ERROR) << "can't find " << gt.name << " from the available game list";
+    return false;
+  }
   // set final values
   if(!found.allow_more_actions)
     final_actions = found.actions;
   if(!found.allow_more_players)
     final_players = found.players;
   
-  // testing
-  string cmd_getParamInfo;
-  string name;
-  // gtm.initAvailableGames();
-  for(auto s : gtm->getGameLists())
-  {
-    cmd_getParamInfo = "java -jar gamut.jar -helpgame " + s;
-    cout << cmd_getParamInfo << endl;
-	  string result = process_Mgr.cmd_exec(cmd_getParamInfo);
-    cout << result << endl;
-  }
-
-  //
 	string filename = fname;
 	filename += ".game";
   string output_flag = " -f " + filename; 
 	// action flag
 	string game_flag = " -actions " + std::to_string(final_actions);
-	// string game_flag = " -actions 2 3 5 4" ;
 	// player flag
 	game_flag += " -players " + std::to_string(final_players);
 	
@@ -60,27 +44,18 @@ void Process_Mgr::generateGame(string fname, GameType &gt)
 	bool r = process_Mgr.file_exist(filename);
 	if(r)
 		string res = process_Mgr.cmd_exec("rm " + filename);
-	// command w/ a file flag
-	// string cmd = "java -jar gamut.jar -g RandomGame -actions 3 -players 2 -output GambitOutput -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
+	// flag setting
 	string cmd = "java -jar gamut.jar -g " + gt.name;
 	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
+  cmd += " >check.out 2>&1";
+
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
-
-	std::cout << "Return:" << result << std::endl;
-	r = false;
-	uint t_sleep = 1;
-	while(!r) {
-		r = process_Mgr.file_exist(filename);
-		if(!r) {
-			std::cout << "file:" << filename << " - " << r << std::endl;
-		  std::this_thread::sleep_for (std::chrono::seconds(t_sleep));
-		}
-	}
-
+  return process_Mgr.generation_check();
 }
-void Process_Mgr::generateGame(string fname, int actions, int players)
+
+bool Process_Mgr::generateGame(string fname, int actions, int players)
 {
   // self test of available type of games
   selfTest();
@@ -106,18 +81,7 @@ void Process_Mgr::generateGame(string fname, int actions, int players)
 	cmd += output_flag + " -output GambitOutput";
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
-
-	std::cout << "Return:" << result << std::endl;
-	r = false;
-	uint t_sleep = 1;
-	while(!r) {
-		r = process_Mgr.file_exist(filename);
-		if(!r) {
-			std::cout << "file:" << filename << " - " << r << std::endl;
-		  std::this_thread::sleep_for (std::chrono::seconds(t_sleep));
-		}
-	}
-
+  return process_Mgr.generation_check();
 }
 
 std::string Process_Mgr::cmd_exec(std::string cmd) {
@@ -138,6 +102,20 @@ std::string Process_Mgr::cmd_exec(std::string cmd) {
 inline bool Process_Mgr::file_exist(const std::string& name) {
 	struct stat buffer;   
 	return (stat (name.c_str(), &buffer) == 0); 
+}
+
+inline bool Process_Mgr::generation_check(){
+  // game generation check (Note: since Gamut only printed single line if it successfully generates)
+  if(!process_Mgr.file_exist("check.out"))
+    LOG(ERROR) << "check.out doesn't exist!";
+	string result = process_Mgr.cmd_exec("wc -l < check.out");
+  if(stoi(result) == 1){
+    LOG(INFO) << "Game generation succeeded";
+    return true;
+  }else{
+    LOG(ERROR) << "Game ganeration failed!";
+    return false;
+  }
 }
 
 void Process_Mgr::selfTest(){

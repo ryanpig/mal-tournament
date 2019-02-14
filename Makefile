@@ -32,11 +32,11 @@ endif
 
 # BOOST program_options library 
 ifeq ($(UNAME_VAL),Darwin)
-	BOOST_ROOT = /usr/local/Cellar/boost/1.67.0_1
+	BOOST_ROOT = /usr/local/opt/boost
 	BOOST_CXXFLAGS := -I${BOOST_ROOT}/include
 	BOOST_LDFLAGS := -L${BOOST_ROOT}/lib -lboost_program_options
 else ifeq ($(UNAME_VAL),Linux)
-	BOOST_ROOT = ~/miscellaneous/boost_1_69_0/
+	BOOST_ROOT = $(shell ls -d ~/miscellaneous/boost_* | tail -1)
 	BOOST_CXXFLAGS := -I${BOOST_ROOT}/boost
 	BOOST_LDFLAGS := -L${BOOST_ROOT}/stage/lib -lboost_program_options
 endif
@@ -58,8 +58,10 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
 # Collect sources
+SRC_DIR_TEST = tests
 CXX_SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
-CXX_SOURCES_TEST := $(wildcard tests/*.cpp) 
+CXX_SOURCES_TEST := $(wildcard $(SRC_DIR_TEST)/*.cpp) 
+# CXX_SOURCES_TEST := $(wildcard tests/*.cpp) 
 
 # Compute necessary compilation artifacts
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJDIR)/%.o,$(CXX_SOURCES))

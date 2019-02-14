@@ -4,11 +4,11 @@
 #include <math.h>
 #include <algorithm>
 #include "math_utility.h"
-#include "common.h"
 #include "random_user.h"
 #include <chrono>
 #include "gamut_parser.h"
 #include <memory>
+#include "easylogging++.h"
 
 using namespace std;
 

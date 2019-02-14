@@ -13,7 +13,6 @@ int main(int argc, char** argv)
 	// logging library configuration
 	logging_configuration();
 	LOG(INFO) << "Logging start!";
-	LOG(ERROR) << "Error Print Test!";
 
 	// configuration variables
 	int set_rounds = NUM_OF_ROUNDS; 
@@ -104,18 +103,22 @@ int main(int argc, char** argv)
 	LOG(INFO) << "---Generate a game from Gamut ---" << endl;
 	std::string fname = "RandNew1";
 	// process_Mgr.generateGame(fname, set_actions, set_players); // action size, players
-	// process_Mgr.generateGame(fname, {"RandomGame", 2, 3, true, true}); // action size, players
-  GameType a{"Bertrand Oligopoly", 3, 3, true, true};
-	process_Mgr.generateGame(fname, a);
+  // process_Mgr.generateGame(fname, {"RandomGame", 2, 3, true, true}); // action size, players
+  // GameType a{"Bertrand Oligopoly", 3, 3, true, true};
+  GameType a{"RandomGame", set_actions, set_players, true, true};
+	if(!process_Mgr.generateGame(fname, a)){
+    LOG(ERROR) << "game genearation failed";
+    return -1;
+  }
+  
 	GameParser gp;
 	if(!gp.parser(fname + ".game")){
-		cout << "parsing failed" << endl;
+		LOG(ERROR) << "parsing failed" << endl;
 		return -1;
 	}
 	cout << endl;
 
 	// start a game
-	// char a{0};
 	int iterations{1};
 	// allow to iterate player to use the single strategy to eliminate the bias
 	if(set_permute) iterations = set_players; 
@@ -170,10 +173,13 @@ bool GameGenerator::run_tournament(int total_rounds)
 		{
 			LOG(INFO) << "Game(i,j):" << i << ", " << j;
 			// generate a new game
-			process_Mgr.generateGame(fname, set_actions, set_players); // action size, players
+			if(!process_Mgr.generateGame(fname, set_actions, set_players)){
+        LOG(ERROR) << "game generation failed";
+        return -1;
+      }
 			GameParser gp;
 			if(!gp.parser(fname + ".game")){
-				cout << "parsing failed" << endl;
+				LOG(ERROR) << "parsing failed";
 				return -1;
 			}
 			// swap players
