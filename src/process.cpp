@@ -7,7 +7,7 @@ using namespace std;
 
 bool Process_Mgr::generateGame(string fname, GameType &gt)
 {
-  listParamInfo();
+  // listParamInfo();
   cout << "generating games...." << endl;
   int final_actions = gt.actions;
   int final_players = gt.players;
@@ -119,6 +119,8 @@ inline bool Process_Mgr::generation_check(){
     return true;
   }else{
     LOG(ERROR) << "Game ganeration failed!";
+    string cmd = "cat check.out >> error_report.txt";
+    string res = process_Mgr.cmd_exec(cmd);
     return false;
   }
 }

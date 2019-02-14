@@ -88,6 +88,8 @@ clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(OBJTEST)
 	rm -f *.o
+	rm -f error_report.txt
+	rm -f paramInfo.txt
 
 # Build Gtest library 
 GTEST_DIR = gtest
