@@ -12,8 +12,6 @@ void GameTypeMgr::initAvailableGames()
   {
     vec_gamelist.push_back(line);
   }
-  // for(auto e : vec_gamelist)
-  //   cout << e << endl;
 }
 
 void GameTypeMgr::selftest() 

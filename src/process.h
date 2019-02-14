@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include "gametype.h"
 #include "easylogging++.h"
+#include <fstream>
 
 #pragma once
 
@@ -16,8 +17,9 @@ static class Process_Mgr{
 		bool file_exist(const std::string& name); 
     bool generation_check();
 		bool generateGame(std::string fname, int actions, int players);
-    bool generateGame(string fname, GameType &gt);
+    bool generateGame(string fname, GameType &gt); // main
     void selfTest();
+    void listParamInfo() const;
 }process_Mgr;
 
 

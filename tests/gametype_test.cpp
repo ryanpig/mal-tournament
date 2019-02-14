@@ -42,19 +42,23 @@ class generategame: public ::testing::Test
     std::unique_ptr<GameTypeMgr> gtm;
 };
 
-
-
-TEST_F(generategame, Random) {
-	// ASSERT_TRUE(generateTest());
+TEST_F(generategame, listparaminfo){
+  Process_Mgr p;
+  p.listParamInfo();
 }
+
+
+// TEST_F(generategame, Random) {
+//   ASSERT_TRUE(generateTest());
+// }
 
 TEST_F(generategame, anygame) {
   
   Process_Mgr p;
   // retrieve all game names from the list. 
-  for(auto s : gtm->getGameLists()){
-    GameType a{s, 2, 2, true, true};
-    cout << s << endl;
+  for(auto a : gtm->getCollection()){
+    // GameType a{s, 2, 2, true, true};
+    cout << "testing..." << a.name << endl;
     EXPECT_TRUE(p.generateGame("unittest", a));
   }
 }

@@ -7,6 +7,7 @@ using namespace std;
 
 bool Process_Mgr::generateGame(string fname, GameType &gt)
 {
+  listParamInfo();
   cout << "generating games...." << endl;
   int final_actions = gt.actions;
   int final_players = gt.players;
@@ -27,18 +28,21 @@ bool Process_Mgr::generateGame(string fname, GameType &gt)
     return false;
   }
   // set final values
-  if(!found.allow_more_actions)
+  string game_flag;
+	// action flag
+  if(found.allow_more_actions){
     final_actions = found.actions;
-  if(!found.allow_more_players)
+    game_flag = " -actions " + std::to_string(final_actions);
+  }
+	// player flag
+  if(found.allow_more_players){
     final_players = found.players;
+    game_flag += " -players " + std::to_string(final_players);
+  }
   
 	string filename = fname;
 	filename += ".game";
   string output_flag = " -f " + filename; 
-	// action flag
-	string game_flag = " -actions " + std::to_string(final_actions);
-	// player flag
-	game_flag += " -players " + std::to_string(final_players);
 	
 	// clean up 
 	bool r = process_Mgr.file_exist(filename);
@@ -126,3 +130,15 @@ void Process_Mgr::selfTest(){
     cout << e.name << endl;
 }
 
+
+void Process_Mgr::listParamInfo() const{
+  auto gtm = make_unique<GameTypeMgr>();
+  for(const auto gt : gtm->getCollection()){
+    ofstream f;
+    f.open("paramInfo.txt", std::ofstream::app);
+    f << "----------" << gt.name << "--------" << endl;
+    f.close();
+    string cmd2 = "java -jar gamut.jar -helpgame " + gt.name + " |tee -a paramInfo.txt";
+    string res2 = process_Mgr.cmd_exec(cmd2);
+  }
+}
