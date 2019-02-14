@@ -3,6 +3,7 @@
 #include "game.h"
 #include "common.h"
 #include "sqlite.h"
+#include "gametype.h"
 
 class GameGenerator
 {

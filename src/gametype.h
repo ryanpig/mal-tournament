@@ -1,8 +1,10 @@
 #include <memory>
 #include <vector>
+#include <fstream>
+#include <iostream>
 
-using namespace std;
 #pragma once
+using namespace std;
 // GameType
 struct GameType
 {
@@ -15,11 +17,13 @@ struct GameType
 };
 
 using gameTypeVector = vector<GameType>;
+// find exact parameter Info of specific game, "java -jar gamut.jar -helpgame RandomGame"
 static const gameTypeVector vec_gametypes{
   {"Bertrand Oligopoly", 0, 0, true, true}, 
   {"Bidirectional LEG", 0, 0, true, true},
   {"Chicken", 2, 2, false, false},
-  {"Collaboration Game", 0, 2, true, false}
+  {"Collaboration Game", 0, 2, true, false}, 
+  {"RandomGame", 2, 2, true, true}
 };
 // use singleton pattern
 class GameTypeMgr
@@ -29,6 +33,7 @@ class GameTypeMgr
     // for singleton
     struct _constructor_tag{ explicit _constructor_tag(){;}};
     // Define all types of game including user-defined types
+    vector<string> vec_gamelist;
 
   public:
     static unique_ptr<GameTypeMgr> & getInstance()
@@ -37,10 +42,13 @@ class GameTypeMgr
         return m_instance;
     }
     // It only allows getInstance() to call constructor since it can access internal private member _constructor_tag
-    GameTypeMgr(_constructor_tag){}
+    GameTypeMgr(_constructor_tag){initAvailableGames();}
     ~GameTypeMgr(){}
-    const gameTypeVector& getCollection(){return vec_gametypes;}
+    const gameTypeVector& getCollection() const {return vec_gametypes;}
+    const vector<string> & getGameLists() const {return vec_gamelist;}
 
+    void initAvailableGames() ;
+    void selftest();
 };
 
 

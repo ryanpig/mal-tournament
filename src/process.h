@@ -14,6 +14,7 @@ static class Process_Mgr{
 		std::string cmd_exec(std::string cmd); 
 		bool file_exist(const std::string& name); 
 		void generateGame(std::string fname, int actions, int players);
+    void generateGame(string fname, GameType &gt);
     void selfTest();
 }process_Mgr;
 

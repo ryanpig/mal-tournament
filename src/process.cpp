@@ -4,6 +4,7 @@
 #include <chrono>
 #include <thread>
 
+
 using namespace std;
 /* for test */
 // int main()
@@ -11,10 +12,79 @@ using namespace std;
 //   process_Mgr.generateGame("Rand2", 3, 4);
 // }
 
+void Process_Mgr::generateGame(string fname, GameType &gt)
+{
+  cout << "received" << endl;
+  int final_actions = gt.actions;
+  int final_players = gt.players;
+
+  // find the GameType by its name
+  auto gtm = std::move(GameTypeMgr::getInstance());
+  const auto& findtype = [&](const GameType &g){
+  for(const auto &e : gtm->getCollection()){
+    if(e.name == g.name)
+       return e;
+  }
+  cout << "Not found" << endl;
+  };
+  const GameType found = findtype(gt);
+  // set final values
+  if(!found.allow_more_actions)
+    final_actions = found.actions;
+  if(!found.allow_more_players)
+    final_players = found.players;
+  
+  // testing
+  string cmd_getParamInfo;
+  string name;
+  // gtm.initAvailableGames();
+  for(auto s : gtm->getGameLists())
+  {
+    cmd_getParamInfo = "java -jar gamut.jar -helpgame " + s;
+    cout << cmd_getParamInfo << endl;
+	  string result = process_Mgr.cmd_exec(cmd_getParamInfo);
+    cout << result << endl;
+  }
+
+  //
+	string filename = fname;
+	filename += ".game";
+  string output_flag = " -f " + filename; 
+	// action flag
+	string game_flag = " -actions " + std::to_string(final_actions);
+	// string game_flag = " -actions 2 3 5 4" ;
+	// player flag
+	game_flag += " -players " + std::to_string(final_players);
+	
+	// clean up 
+	bool r = process_Mgr.file_exist(filename);
+	if(r)
+		string res = process_Mgr.cmd_exec("rm " + filename);
+	// command w/ a file flag
+	// string cmd = "java -jar gamut.jar -g RandomGame -actions 3 -players 2 -output GambitOutput -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
+	string cmd = "java -jar gamut.jar -g " + gt.name;
+	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
+	cmd += output_flag + " -output GambitOutput";
+	// execute command 
+	std::string result = process_Mgr.cmd_exec(cmd);
+
+	std::cout << "Return:" << result << std::endl;
+	r = false;
+	uint t_sleep = 1;
+	while(!r) {
+		r = process_Mgr.file_exist(filename);
+		if(!r) {
+			std::cout << "file:" << filename << " - " << r << std::endl;
+		  std::this_thread::sleep_for (std::chrono::seconds(t_sleep));
+		}
+	}
+
+}
 void Process_Mgr::generateGame(string fname, int actions, int players)
 {
   // self test of available type of games
   selfTest();
+
 	// filename flag
 	string filename = fname;
 	filename += ".game";

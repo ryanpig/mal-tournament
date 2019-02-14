@@ -103,7 +103,10 @@ int main(int argc, char** argv)
 	// generate a new game from Gamut
 	LOG(INFO) << "---Generate a game from Gamut ---" << endl;
 	std::string fname = "RandNew1";
-	process_Mgr.generateGame(fname, set_actions, set_players); // action size, players
+	// process_Mgr.generateGame(fname, set_actions, set_players); // action size, players
+	// process_Mgr.generateGame(fname, {"RandomGame", 2, 3, true, true}); // action size, players
+  GameType a{"Bertrand Oligopoly", 3, 3, true, true};
+	process_Mgr.generateGame(fname, a);
 	GameParser gp;
 	if(!gp.parser(fname + ".game")){
 		cout << "parsing failed" << endl;
