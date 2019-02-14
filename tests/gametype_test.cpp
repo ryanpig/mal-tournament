@@ -31,17 +31,31 @@ bool generateTest()
   return true;
 }
 
-TEST(GenerateGames, Random) {
-	ASSERT_TRUE(generateTest());
+class generategame: public ::testing::Test
+{
+    void SetUp() override 
+    {
+      gtm = std::move(GameTypeMgr::getInstance());
+    }
+    void TearDown() override{;}
+  public:
+    std::unique_ptr<GameTypeMgr> gtm;
+};
+
+
+
+TEST_F(generategame, Random) {
+	// ASSERT_TRUE(generateTest());
 }
 
-TEST(GenerateGames, anygame) {
+TEST_F(generategame, anygame) {
   
-  auto gtm = std::move(GameTypeMgr::getInstance());
   Process_Mgr p;
+  gtm = std::move(GameTypeMgr::getInstance());
   // retrieve all game names from the list. 
   for(auto s : gtm->getGameLists()){
     GameType a{s, 2, 2, true, true};
+    cout << s << endl;
     EXPECT_TRUE(p.generateGame("unittest", a));
   }
 }
