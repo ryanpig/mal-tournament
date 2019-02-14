@@ -35,6 +35,17 @@ TEST(GenerateGames, Random) {
 	ASSERT_TRUE(generateTest());
 }
 
+TEST(GenerateGames, anygame) {
+  
+  auto gtm = std::move(GameTypeMgr::getInstance());
+  Process_Mgr p;
+  // retrieve all game names from the list. 
+  for(auto s : gtm->getGameLists()){
+    GameType a{s, 2, 2, true, true};
+    EXPECT_TRUE(p.generateGame("unittest", a));
+  }
+}
+
 
 int main(int argc, char **argv){
 	testing::InitGoogleTest(&argc, argv);

@@ -3,6 +3,7 @@
 #include <numeric>
 #include "process.h"
 #include <cassert>
+#include "easylogging++.h"
 
 #pragma once
 using namespace std;

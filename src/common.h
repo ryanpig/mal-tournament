@@ -1,6 +1,6 @@
 #include "easylogging++.h"
 
-// INITIALIZE_EASYLOGGINGPP
+#define UNUSED(x) (void)(x)
 #pragma once
 
 static void logging_configuration()

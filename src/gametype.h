@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include "easylogging++.h"
 
 #pragma once
 using namespace std;
