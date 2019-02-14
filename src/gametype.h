@@ -31,19 +31,11 @@ class GameTypeMgr
 {
 
   private:
-    // for singleton
-    struct _constructor_tag{ explicit _constructor_tag(){;}};
     // Define all types of game including user-defined types
     vector<string> vec_gamelist;
 
   public:
-    static unique_ptr<GameTypeMgr> & getInstance()
-    {
-        static unique_ptr<GameTypeMgr> m_instance = make_unique<GameTypeMgr>(_constructor_tag());
-        return m_instance;
-    }
-    // It only allows getInstance() to call constructor since it can access internal private member _constructor_tag
-    GameTypeMgr(_constructor_tag){initAvailableGames();}
+    GameTypeMgr(){initAvailableGames();}
     ~GameTypeMgr(){}
     const gameTypeVector& getCollection() const {return vec_gametypes;}
     const vector<string> & getGameLists() const {return vec_gamelist;}

@@ -12,7 +12,7 @@ bool Process_Mgr::generateGame(string fname, GameType &gt)
   int final_players = gt.players;
 
   // find the GameType by its name
-  auto gtm = std::move(GameTypeMgr::getInstance());
+  unique_ptr<GameTypeMgr> gtm = make_unique<GameTypeMgr>();
   const auto& findtype = [&](const GameType &g){
     for(const auto &e : gtm->getCollection()){
       if(e.name == g.name)
@@ -120,7 +120,7 @@ inline bool Process_Mgr::generation_check(){
 }
 
 void Process_Mgr::selfTest(){
-  auto gtm = std::move(GameTypeMgr::getInstance());
+  auto gtm = make_unique<GameTypeMgr>();
   cout << "available type of games" << endl;
   for(auto &e : gtm->getCollection())
     cout << e.name << endl;

@@ -35,7 +35,7 @@ class generategame: public ::testing::Test
 {
     void SetUp() override 
     {
-      gtm = std::move(GameTypeMgr::getInstance());
+      gtm = make_unique<GameTypeMgr>(); 
     }
     void TearDown() override{;}
   public:
@@ -51,7 +51,6 @@ TEST_F(generategame, Random) {
 TEST_F(generategame, anygame) {
   
   Process_Mgr p;
-  gtm = std::move(GameTypeMgr::getInstance());
   // retrieve all game names from the list. 
   for(auto s : gtm->getGameLists()){
     GameType a{s, 2, 2, true, true};

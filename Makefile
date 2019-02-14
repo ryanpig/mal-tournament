@@ -36,7 +36,8 @@ ifeq ($(UNAME_VAL),Darwin)
 	BOOST_CXXFLAGS := -I${BOOST_ROOT}/include
 	BOOST_LDFLAGS := -L${BOOST_ROOT}/lib -lboost_program_options
 else ifeq ($(UNAME_VAL),Linux)
-	BOOST_ROOT = $(shell ls -d ~/miscellaneous/boost_* | tail -1)
+	# BOOST_ROOT = $(shell ls -d ~/miscellaneous/boost_* | tail -1)
+	BOOST_ROOT = ~/miscellaneous/boost_1_69_0
 	BOOST_CXXFLAGS := -I${BOOST_ROOT}/boost
 	BOOST_LDFLAGS := -L${BOOST_ROOT}/stage/lib -lboost_program_options
 endif
