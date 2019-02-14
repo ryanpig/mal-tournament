@@ -79,6 +79,7 @@ bool Process_Mgr::generateGame(string fname, int actions, int players)
 	string cmd = "java -jar gamut.jar -g RandomGame";
 	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
+  cmd += " >check.out 2>&1";
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
   return process_Mgr.generation_check();
