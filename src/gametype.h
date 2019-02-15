@@ -127,6 +127,52 @@ class GameTypeMgr
 
     void initAvailableGames() ;
     void selftest();
+    // helper function
+    void listAllGames() const {
+      cout << endl;
+      vector<const GameType*> tt,ft,tf,ff;
+      // sorting
+      for(const auto &g : vec_gametypes)
+      {
+        if(g.allow_more_players && g.allow_more_actions)
+          tt.push_back(&g);
+        else if(!g.allow_more_players && g.allow_more_actions)
+          ft.push_back(&g);
+        else if(g.allow_more_players && !g.allow_more_actions)
+          tf.push_back(&g);
+        else
+          ff.push_back(&g);
+      }
+      // cout << "All available game types:" << endl;
+      cout << "Extentable players && extentable actions:" << endl;
+      for(auto p : tt) cout << p->name << ", ";
+      cout << endl << endl;
+      cout << "Extentable actions:" << endl;
+      for(auto p : ft) cout << p->name << ", ";
+      cout << endl << endl;
+      cout << "Extentable players:" << endl;
+      for(auto p : tf) cout << p->name << ", ";
+      cout << endl << endl;
+      cout << "No parameter needed:" << endl;
+      for(auto p : ff) cout << p->name << ", ";
+      cout << endl;
+
+      // for(const auto &g : vec_gametypes)
+      //   cout << g.name << ", ";
+      // cout << endl;
+      cout << "Total " << vec_gametypes.size() <<  " types" << endl;
+      
+    }
+
+    bool typeCheck(string input_str)
+    {
+      for(const auto &g : vec_gametypes)
+      {
+        if(g.name == input_str)
+          return true;
+      }
+      return false;
+    }
 };
 
 

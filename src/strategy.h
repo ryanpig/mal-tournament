@@ -294,7 +294,13 @@ static class Strategy_Mgr
 				return "Out of range of StrategyType";
 		}
 
-		void listAllStrategies() const {for(size_t i = 0; i < vec_strategy_type.size(); i++) cout << vec_strategy_type[i] << " = " << i << " ; ";}
+		void listAllStrategies() const {
+      cout << "All available strategies: " << endl;
+      for(size_t i = 0; i < vec_strategy_type.size(); i++)
+        cout << vec_strategy_type[i] << " = " << i << " ; ";
+      cout << endl;
+    }
+
 		const vector<string>& getTypeVector() const {return vec_strategy_type;}
 
 		template<typename T>

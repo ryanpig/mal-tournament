@@ -31,12 +31,10 @@ bool Process_Mgr::generateGame(string fname, GameType &gt)
   string game_flag;
 	// action flag
   if(found.allow_more_actions){
-    final_actions = found.actions;
     game_flag = " -actions " + std::to_string(final_actions);
   }
 	// player flag
   if(found.allow_more_players){
-    final_players = found.players;
     game_flag += " -players " + std::to_string(final_players);
   }
   

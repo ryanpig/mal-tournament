@@ -32,12 +32,12 @@ inline void get_average_vector(vector<float> &in1, vector<int> &in2, vector<floa
 inline int argmax_pick(Info &inf)
 {
 	// action w/ maximum reward
-	float max{0.0f};
+	// float max{0.0f};
 	int max_reward_action{0};
 	vector<float> vec_avg(inf.m_action_size, 0.0f);
 	get_average_vector(inf.m_acc_payoffs_by_action, inf.m_counts_by_action, vec_avg);
 	auto it  = max_element(vec_avg.begin(), vec_avg.end());
-	max = *it;
+	// max = *it;
 	max_reward_action = it - vec_avg.begin();
 	return max_reward_action;
 }

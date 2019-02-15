@@ -18,7 +18,7 @@ void Player::print_action_statistic() const
 		float count = m_info.m_counts_by_action[i];
 		float avg{0.0}; 
 		if(count == 0){
-			LOG(DEBUG) << "Action counts of " << i << " is 0 " << endl;
+			// LOG(DEBUG) << "Action counts of " << i << " is 0 " << endl;
 		}else{
 			avg = acc / count;
 		}
