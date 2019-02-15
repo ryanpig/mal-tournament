@@ -8,6 +8,6 @@
 class GameGenerator
 {
 	public:
-		bool run_tournament(int total_rounds);
+		bool run_tournament(int total_rounds, GameType& gt);
     bool run_all_games(int total_rounds);
 };

@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	("permute,y", po::value<bool>()->required(), "run permutation of payoffs.")
 	("strategy,s", po::value<int>()->required(), "set main strategy for comparison, e.g. 0:random, 1:UCB1, 2:EXP3")
 	("opp_strategy,e", po::value<int>()->required(), "set opponent strategy for comparison, in 2 player game")
-	("tournament,o", po::value<bool>()->required(), "run tournament.")
+	("tournament,o", po::value<bool>()->required(), "run tournament w/ single game in all algorithm pairs.")
 	("tournament_all_games,q", po::value<bool>()->required(), "run tournament w/ all games.")
 	;
 	variables_map vm;
@@ -116,7 +116,8 @@ int main(int argc, char** argv)
 	if(set_tournament){
     LOG(INFO) << "---Tournament Mode w/ all algorithm pairs--- ";
 		GameGenerator gg;
-		if(!gg.run_tournament(set_rounds))
+    GameType gt{set_gametype, set_players, set_actions, true, true};
+		if(!gg.run_tournament(set_rounds, gt))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -177,7 +178,7 @@ int main(int argc, char** argv)
 }
 
 
-bool GameGenerator::run_tournament(int total_iterations)
+bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 {
 	// access fo available strategies
 	// generate all combinations (e.g Random v.s. Random, Random v.s. UCB1, Random v.s. EXP3 etc)
@@ -185,7 +186,8 @@ bool GameGenerator::run_tournament(int total_iterations)
 	// play in the same instance w/ player permutation 
 	//
 	// configuration of each game
-	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
+	int set_actions = gt.actions, set_players = gt.players, set_rounds{total_iterations};
+  string set_gametype = gt.name;
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
 	size_t total_stratagies = 10; 
@@ -197,7 +199,7 @@ bool GameGenerator::run_tournament(int total_iterations)
 	Strategy_Mgr *str_mgr = &strategy_Mgr;
 	vector<Record> vec_records;
 	// db_mgr->selfTest();
-	// db_mgr->createTable();
+  db_mgr->createTable();
 	db_mgr->deleteTable();
   int total_instatnces{0};
 
@@ -207,7 +209,8 @@ bool GameGenerator::run_tournament(int total_iterations)
 		{
 			LOG(INFO) << "Game(i,j):" << i << ", " << j;
 			// generate a new game
-			if(!process_Mgr.generateGame(fname, set_actions, set_players)){
+			// if(!process_Mgr.generateGame(fname, set_actions, set_players)){
+			if(!process_Mgr.generateGame(fname, gt)){
         LOG(ERROR) << "game generation failed";
         return -1;
       }
@@ -227,6 +230,7 @@ bool GameGenerator::run_tournament(int total_iterations)
 				testgame.run();
 				vector<float> tmp = testgame.getFinalResult();
 				Record r{
+          set_gametype, 
           permuteid, set_actions, set_players, set_rounds, 
           str_mgr->getname(s_type), tmp[0],
           str_mgr->getname(opp_type), tmp[1]
@@ -252,7 +256,7 @@ bool GameGenerator::run_all_games(int total_iterations)
 	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	size_t total_stratagies = 2; 
+	size_t total_stratagies = 10; 
 	std::string fname = "AllGamesTournament";
 	vector<float> result;
 	// initializae the database connection
@@ -297,6 +301,7 @@ bool GameGenerator::run_all_games(int total_iterations)
           // result
           vector<float> tmp = testgame.getFinalResult();
           Record r{
+            gt.name,
             permuteid, set_actions, set_players, set_rounds, 
             str_mgr->getname(s_type), tmp[0],
             str_mgr->getname(opp_type), tmp[1]

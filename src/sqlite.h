@@ -11,19 +11,20 @@ static const string Qu = "'";
 struct Record
 {
 	public:
-		Record(int round, int actions, int players, int steps,  string type_p0 ,float payoff_p0, string type_p1, float payoff_p1) :
-			round(round), actions(actions), players(players), steps(steps), type_p0(type_p0), payoff_p0(payoff_p0), type_p1(type_p1), payoff_p1(payoff_p1)
+		Record(string gametype, int round, int actions, int players, int steps,  string type_p0 ,float payoff_p0, string type_p1, float payoff_p1) :
+			gametype(gametype), round(round), actions(actions), players(players), steps(steps), type_p0(type_p0), payoff_p0(payoff_p0), type_p1(type_p1), payoff_p1(payoff_p1)
 			{}
 		string makeSQLString() const
 		{
 			string sql{};
 			sql += "VALUES (";
-			sql += to_string(round) + "," + to_string(actions) + "," + to_string(players) + "," + to_string(steps) + ","
+			sql += quote(gametype) + "," + to_string(round) + "," + to_string(actions) + "," + to_string(players) + "," + to_string(steps) + ","
 				+ quote(type_p0) + "," + to_string(payoff_p0) + "," + quote(type_p1) + "," + to_string(payoff_p1);
 			sql += ");";
 			return sql;
 		}	
 	private:
+    string gametype;
 		int round, actions, players, steps;
 		string type_p0;
 		float payoff_p0;
