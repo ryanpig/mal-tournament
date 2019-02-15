@@ -20,9 +20,11 @@ tmp2 <- DF[even_index, ]
 avg_DF <- (tmp1[, "payoff_p0"] + tmp2[, "payoff_p1"]) / 2
 new_DF <- tmp1[, c("type_p0", "type_p1")]
 final <- cbind(new_DF,avg_DF)
+
+png("boxplot.png", 640,480)
 boxplot(avg_DF ~ type_p0, data=final, las=2)
 
-
+png("beanplot.png", 640, 480)
 ##bean plot
 library("ggplot2")
 ggplot(final, aes(x=type_p0, y=avg_DF))+geom_boxplot()+geom_violin(fill='lightblue', alpha=0.5)+geom_jitter(position = position_jitter(width = .1))
@@ -33,4 +35,4 @@ favstats(avg_DF ~ type_p0,data=final)
 
 ## finish 
 dbDisconnect(con)
-
+dev.off()

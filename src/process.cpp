@@ -45,7 +45,7 @@ bool Process_Mgr::generateGame(string fname, GameType &gt)
 	// clean up 
 	bool r = process_Mgr.file_exist(filename);
 	if(r)
-		string res = process_Mgr.cmd_exec("rm " + filename);
+		string res = process_Mgr.cmd_exec("rm -f " + filename);
 	// flag setting
 	string cmd = "java -jar gamut.jar -g " + gt.name;
 	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
