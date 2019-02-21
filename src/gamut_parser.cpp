@@ -105,10 +105,10 @@ bool GameParser::parser(string filename)
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
 	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) {
 		m_index_max = multi(m_act_dim);
-		LOG(INFO) << "Parsing succeeded!";
+		// LOG(INFO) << "Parsing succeeded!";
     return true;
 	}else{
-		LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size();
+		// LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size();
     return false;
 	}
 }

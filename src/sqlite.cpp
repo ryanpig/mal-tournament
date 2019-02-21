@@ -34,6 +34,14 @@ void SQLMgr::createTable()
 	sqlExeution(sql);
 }
 
+void SQLMgr::insertRecord(Record &r)
+{
+	string header = "INSERT INTO " + m_table + " (gametype, round, actions, players, steps, type_p0, payoff_p0, type_p1, payoff_p1) ";
+	string sql{};
+  sql += header + r.makeSQLString(); 
+	sqlExeution(sql);
+}
+
 void SQLMgr::insertRecords(vector<Record> &vec)
 {
 	string header = "INSERT INTO " + m_table + " (gametype, round, actions, players, steps, type_p0, payoff_p0, type_p1, payoff_p1) ";

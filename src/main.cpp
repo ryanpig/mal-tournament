@@ -7,7 +7,7 @@
 using namespace boost::program_options;
 
 INITIALIZE_EASYLOGGINGPP
-bool doTask(const GameType gametype, int set_players, int set_actions, int set_rounds, int iterations, int i, int j);
+// bool doTask(const GameType gametype, int set_players, int set_actions, int set_rounds, int iterations, int i, int j);
 
 int main(int argc, char** argv)
 {
@@ -333,11 +333,11 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
 	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	int total_stratagies = 2; 
+	int total_stratagies = 10; 
 	// initializae the database connection
-  auto db_mgr = std::move(SQLMgr::getInstance(SQLITE_DB_PATH, "TESTTABLE"));
-	db_mgr->createTable();
-	db_mgr->deleteTable();
+  SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
+  db_mgr.createTable();
+  db_mgr.deleteTable();
   // retrieve all available games
   auto gt_mgr = make_unique<GameTypeMgr>();
   int total_instatnces{0};
@@ -356,69 +356,71 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
         // threadpool.push_back(thread(doTask, gt, set_players,set_actions, set_rounds, iterations, i, j));
         Task task{gt, set_players, set_actions, set_rounds, iterations, i, j};
         tmgr.addTask(task);
-        total_instatnces++; 
+        total_instatnces += 2; 
       }
 		}
 	}
+
   
   // start the job server
   LOG(INFO) << "start job server...";
+  LOG(INFO) << "total tasks:" << tmgr.totalTasks();
   tmgr.startJobServer();
   LOG(INFO) << "finish all jobs ...";
 
 	// Insert to database
-	// db_mgr->insertRecords(vec_records);
-	db_mgr->insertRecords(tmgr.getResult());
-	db_mgr->queryAll();
+  db_mgr.queryAll();
   LOG(INFO) << "Total play " << total_instatnces << " instances in the tournamenet";
+
+  // tmgr.destroyThreads();
 
 
 	return true;
 }
 
 
-bool doTask(const GameType gt, int set_players, int set_actions, int set_rounds, int iterations, int i, int j)
-{
-  string tmp = to_string(std::rand());
-	std::string fname = "AllGamesTournament_" + tmp;
+// bool doTask(const GameType gt, int set_players, int set_actions, int set_rounds, int iterations, int i, int j)
+// {
+//   string tmp = to_string(std::rand());
+//   std::string fname = "AllGamesTournament_" + tmp;
 
-  // generate game
-  if(!process_Mgr.generateGame(fname, gt)){
-    LOG(ERROR) << "game generation failed";
-    return false;
-  }
+//   // generate game
+//   if(!process_Mgr.generateGame(fname, gt)){
+//     LOG(ERROR) << "game generation failed";
+//     return false;
+//   }
 
-  // parse matrix
-  GameParser gp;
-  if(!gp.parser(fname + ".game")){
-    LOG(ERROR) << "parsing failed";
-    return false;
-  }
+//   // parse matrix
+//   GameParser gp;
+//   if(!gp.parser(fname + ".game")){
+//     LOG(ERROR) << "parsing failed";
+//     return false;
+//   }
   
-  // play games w/ swapped players
-  vector<float> sum_vec(set_players, 0.0);
-  for(int permuteid = 0; permuteid < iterations; permuteid++)
-  {
-    StrategyType s_type  = static_cast<StrategyType>(i); 
-    StrategyType opp_type  = static_cast<StrategyType>(j); 
+//   // play games w/ swapped players
+//   vector<float> sum_vec(set_players, 0.0);
+//   for(int permuteid = 0; permuteid < iterations; permuteid++)
+//   {
+//     StrategyType s_type  = static_cast<StrategyType>(i); 
+//     StrategyType opp_type  = static_cast<StrategyType>(j); 
 
-    Game testgame(permuteid, set_rounds, set_players, 0, 0, gp, permuteid, false, s_type, opp_type);
-    testgame.run();
-    // result
-    vector<float> tmp = testgame.getFinalResult();
+//     Game testgame(permuteid, set_rounds, set_players, 0, 0, gp, permuteid, false, s_type, opp_type);
+//     testgame.run();
+//     // result
+//     vector<float> tmp = testgame.getFinalResult();
     
-    Record r{
-      gt.name,
-      permuteid, set_actions, set_players, set_rounds, 
-      strategy_Mgr.getname(s_type), tmp[0],
-      strategy_Mgr.getname(opp_type), tmp[1]
-    };
-    // key section, write to shared resource
-    unique_lock<mutex> lck_vec_records(mtx_vec_records);
-    {
-      vec_records.push_back(r);
-    }
-    lck_vec_records.unlock();
-  }
-  return true;
-}
+//     Record r{
+//       gt.name,
+//       permuteid, set_actions, set_players, set_rounds, 
+//       strategy_Mgr.getname(s_type), tmp[0],
+//       strategy_Mgr.getname(opp_type), tmp[1]
+//     };
+//     // key section, write to shared resource
+//     unique_lock<mutex> lck_vec_records(mtx_vec_records);
+//     {
+//       vec_records.push_back(r);
+//     }
+//     lck_vec_records.unlock();
+//   }
+//   return true;
+// }

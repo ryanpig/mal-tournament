@@ -25,7 +25,7 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
   const GameType found = findtype(gt);
   if(found.name == "empty")
   {
-    LOG(ERROR) << "can't find " << gt.name << " from the available game list";
+    // LOG(ERROR) << "can't find " << gt.name << " from the available game list";
     return false;
   }
   // set final values
@@ -48,14 +48,16 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
 	if(r)
 		string res = process_Mgr.cmd_exec("rm -f " + filename);
 	// flag setting
+  string checkname = "check" + to_string(rand() % 500000) + ".out";
 	string cmd = "java -jar gamut.jar -g " + gt.name;
 	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
-  cmd += " >check.out 2>&1";
+  // cmd += " >check.out 2>&1";
+  cmd += " >" + checkname + " 2>&1";
 
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
-  r = process_Mgr.generation_check();
+  r = process_Mgr.generation_check(checkname);
 
   return r;
 }
@@ -85,9 +87,10 @@ bool Process_Mgr::generateGame(string fname, int actions, int players)
 	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
   cmd += " >check.out 2>&1";
+  // cmd += " >" + checkname + " 2>&1";
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
-  return process_Mgr.generation_check();
+  return process_Mgr.generation_check("check.out");
 }
 
 std::string Process_Mgr::cmd_exec(std::string cmd) {
@@ -110,17 +113,20 @@ inline bool Process_Mgr::file_exist(const std::string& name) {
 	return (stat (name.c_str(), &buffer) == 0); 
 }
 
-inline bool Process_Mgr::generation_check(){
+inline bool Process_Mgr::generation_check(string filename){
   // game generation check (Note: since Gamut only printed single line if it successfully generates)
-  if(!process_Mgr.file_exist("check.out"))
-    LOG(ERROR) << "check.out doesn't exist!";
-	string result = process_Mgr.cmd_exec("wc -l < check.out");
+  if(!process_Mgr.file_exist(filename)){
+    // LOG(ERROR) << "check.out doesn't exist!";
+    cerr << "check.out doesn't exist!";
+    return false;
+  }
+	string result = process_Mgr.cmd_exec("wc -l < "+ filename);
   if(stoi(result) == 1){
-    LOG(INFO) << "Game generation succeeded";
+    // LOG(INFO) << "Game generation succeeded";
     return true;
   }else{
-    LOG(ERROR) << "Game ganeration failed!";
-    string cmd = "cat check.out >> error_report.txt";
+    // LOG(ERROR) << "Game ganeration failed!";
+    string cmd = "cat " + filename + " >> error_report.txt";
     string res = process_Mgr.cmd_exec(cmd);
     return false;
   }

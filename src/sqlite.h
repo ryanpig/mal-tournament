@@ -35,13 +35,19 @@ struct Record
 
 class SQLMgr
 {
-	struct _constructor_tag{ explicit _constructor_tag(){}};
+  struct _constructor_tag{ explicit _constructor_tag(){}};
 	public:
-		static unique_ptr<SQLMgr>& getInstance(string dbname, string current_table)
+    static unique_ptr<SQLMgr>& getInstance(string dbname, string current_table)
+    {
+      static unique_ptr<SQLMgr> m_instance = make_unique<SQLMgr>(dbname, _constructor_tag());
+      m_instance->setTable(current_table);
+      return m_instance;
+    }
+    
+		SQLMgr(string dbname, string current_table) : db(nullptr)
 		{
-			static unique_ptr<SQLMgr> m_instance = make_unique<SQLMgr>(dbname, _constructor_tag());
-			m_instance->setTable(current_table);
-			return m_instance;
+      setTable(current_table);
+		 	connectToDB(dbname);
 		}
 					
 		void connectToDB(string dbname);
@@ -49,15 +55,16 @@ class SQLMgr
 
 		void createTable();
 		void insertRecords(vector<Record> &vec);
+    void insertRecord(Record &r);
 		void queryAll();
 		void deleteTable();
 		void selfTest();
 		// hidde constructor for singleton design pattern 
 		// BUT, make_unique needs public constructor so we use the private "struct tag" to make workarounds
-		SQLMgr(string dbname, _constructor_tag) : db(nullptr)
-		{
-		 	connectToDB(dbname);
-		}
+    SQLMgr(string dbname, _constructor_tag) : db(nullptr)
+    {
+       connectToDB(dbname);
+    }
 
 		~SQLMgr()
 		{

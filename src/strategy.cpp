@@ -10,7 +10,8 @@ inline int choose_by_probability(vector<float> &probs, RNG &rng)
 			return i;
 	}
 
-	LOG(ERROR) << "wrong operation of choose_by_probability:" <<  endl;
+	// LOG(ERROR) << "wrong operation of choose_by_probability:" <<  endl;
+	cerr << "wrong operation of choose_by_probability:" <<  endl;
 	strategy_Mgr.printVec(probs);
 	return 0;
 }
@@ -155,7 +156,8 @@ void Strategy_EXP3::prob_distr_calc()
   for(size_t i = 0; i < weights.size(); i++){
 		probs[i] = a * weights[i] + b;
 		if(probs[i] < 0.0f || probs[i] > 1.0f)
-			LOG(ERROR) << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
+			// LOG(ERROR) << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
+			cerr << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
 	}
 }
 

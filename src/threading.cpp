@@ -9,8 +9,10 @@ void ThreadMgr::addTask(Task &t)
 void ThreadMgr::createThreads()
 {
   const int available_cores = thread::hardware_concurrency();
-  for(int i = 0; i < available_cores; i++)
+  for(int i = 0; i < available_cores; i++){
     m_threadpool.push_back(thread(&ThreadMgr::checkTask, this, i));
+    m_worker_flags.push_back(false);
+  }
   LOG(INFO) << "create " << available_cores << " worker thread!";
 }
 
@@ -20,8 +22,6 @@ void ThreadMgr::startJobServer()
   thread t_monitor(&ThreadMgr::monitorThread, this);
   while(!checkStatus())
     this_thread::sleep_for(chrono::milliseconds(500));
-  destroyThreads();
-  t_monitor.join();
 }
 
 void ThreadMgr::monitorThread()
@@ -30,14 +30,22 @@ void ThreadMgr::monitorThread()
   while(!flag_finish_all_job)
   {
     unique_lock<mutex> lck(m_mtx_deque);
+    LOG(INFO) << "Total available tasks:" << m_deque.size();
     if(!m_deque.empty()){
-      LOG(INFO) << "Total available tasks:" << m_deque.size();
-      cv.notify_all();
-      this_thread::sleep_for(chrono::milliseconds(100));
+      // cv.notify_all();
+      lck.unlock();
+      this_thread::sleep_for(chrono::milliseconds(1000));
     }
     else
     {
-      flag_finish_all_job = true;
+      for(bool a : m_worker_flags)
+        cout << a << ",";
+      cout << endl;
+
+      if(all_of(m_worker_flags.begin(), m_worker_flags.end(), [](bool b){return b;}))
+      {
+        flag_finish_all_job = true;
+      }
     }
   }
 }
@@ -52,31 +60,47 @@ bool ThreadMgr::checkStatus()
 /* consumer side */
 void ThreadMgr::checkTask(int id)
 {
-  while(true)
+  // LOG(INFO) << "Let's start to work, id " << id;
+  bool enable = true;
+  while(enable)
   {
     unique_lock<mutex> lck(m_mtx_deque);
-    if(!m_deque.empty()){
-      LOG(INFO) << "start to work, id:" << id;
-      Task t = m_deque.back();
-      doTask(t);
-      m_deque.pop_back();
-      cout << "I am worker " << id << ", and finish one task!" << endl;
-      lck.unlock();
+    while(m_deque.empty()){
+      setFlag(id);
+      enable = false;
       cv.wait(lck);
     }
+    
+    Task t = m_deque.back();
+    m_deque.pop_back();
+    lck.unlock();
+    bool r = doTask(t);
   }
+  cout << "finished";
+}
+
+void ThreadMgr::setFlag(int id)
+{
+  unique_lock<mutex> lck(m_mtx_flags);
+  m_worker_flags[id] = true; 
 }
 
 void ThreadMgr::saveToRecords(Record &record)
 {
   unique_lock<mutex> lck(m_mtx_record);
-    vec_records.push_back(record);
+  SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
+  db_mgr.insertRecord(record);
+    // vec_records.push_back(record);
 }
 
 void ThreadMgr::destroyThreads()
 {
+  int count{0};
   for(auto &t : m_threadpool)
+  {
     t.join();
+    cout << count++ << endl; 
+  }
 }
 
 bool ThreadMgr::doTask(Task& t)
@@ -93,14 +117,14 @@ bool ThreadMgr::doTask(Task& t)
 
   // generate game
   if(!process_Mgr.generateGame(fname, t.gt)){
-    LOG(ERROR) << "game generation failed";
+    // LOG(ERROR) << "game generation failed";
     return false;
   }
 
   // parse matrix
   GameParser gp;
   if(!gp.parser(fname + ".game")){
-    LOG(ERROR) << "parsing failed";
+    // LOG(ERROR) << "parsing failed";
     return false;
   }
   
@@ -122,14 +146,8 @@ bool ThreadMgr::doTask(Task& t)
       strategy_Mgr.getname(s_type), tmp[0],
       strategy_Mgr.getname(opp_type), tmp[1]
     };
-
+    
     saveToRecords(r);
-    // key section, write to shared resource
-    // unique_lock<mutex> lck_vec_records(m_mtx_record);
-    // {
-    //   vec_records.push_back(r);
-    // }
-    // lck_vec_records.unlock();
   }
   return true;
 }
