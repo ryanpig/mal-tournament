@@ -4,8 +4,6 @@
 #include "common.h"
 #include "sqlite.h"
 #include "gametype.h"
-#include <mutex>
-#include <thread>
 #include "threading.h"
 
 void cleanTempFiles();

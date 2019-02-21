@@ -46,14 +46,6 @@ inline void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd, float 
 	//find maximum and minimum value
   const auto max{*max_element(beg, end)};
   const auto min{*min_element(beg, end)};
-  
-  //max, min check
-  if(max == min){
-    int index_max = max_element(beg, end) - beg;
-    int index_min = min_element(beg, end) - beg;
-    LOG(ERROR) << "same max/min input vector to softmax function:" << max << ", "<< index_max << ", "<< index_min;
-    LOG(ERROR) << "elements:" << *beg << "," << *(beg++); 
-  }
 
 	// normalization
 	if(normalizd)
@@ -68,19 +60,8 @@ inline void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd, float 
 	transform(beg, end, dest, [&](VType val){
 		auto ex = exp((val - max_normalized) / temperature);
 		exptot += ex; // sum of exp(value) -> Done inside of function
-    if(ex == 0){
-      LOG(ERROR) << "ex = 0" ;
-      LOG(ERROR) << "val:" << val << ", " << max_normalized;
-    }
 		return ex;
 	});
-
-  if(exptot == 0.0){
-    LOG(ERROR) << "exeptot = 0 !" ;
-    LOG(ERROR) << "temperature" << (float)(temperature);
-    for(auto it = beg; it != end;it++)
-      LOG(ERROR) << *it;
-  }
 	
 	// division
 	transform(beg, end, dest, [&](VType val){

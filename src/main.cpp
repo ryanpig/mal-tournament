@@ -8,7 +8,6 @@
 using namespace boost::program_options;
 
 INITIALIZE_EASYLOGGINGPP
-// bool doTask(const GameType gametype, int set_players, int set_actions, int set_rounds, int iterations, int i, int j);
 
 int main(int argc, char** argv)
 {
@@ -333,9 +332,6 @@ bool GameGenerator::run_all_games(int total_iterations)
 	return true;
 }
 
-vector<Record> vec_records;
-mutex mtx_vec_records;
-
 bool GameGenerator::run_all_games_mt(int total_iterations)
 {
 
@@ -382,3 +378,4 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
 	return true;
 }
 
+// vim: set sw=4 ts=4 noet:
