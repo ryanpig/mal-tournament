@@ -8,6 +8,8 @@
 #include <thread>
 #include "threading.h"
 
+void cleanTempFiles();
+
 class GameGenerator
 {
 	public:

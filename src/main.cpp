@@ -123,6 +123,7 @@ int main(int argc, char** argv)
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
+    cleanTempFiles();
 		return -1;
 	}
   // --------------- Tournament All Game Mode w/ all game types--------------
@@ -134,6 +135,7 @@ int main(int argc, char** argv)
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
+    cleanTempFiles();
 		return -1;
 	}
  
@@ -176,8 +178,15 @@ int main(int argc, char** argv)
       testgame.dataToFile();
     }
     LOG(INFO) << "single Game finished";
+    cleanTempFiles();
     return -1;
   }
+}
+
+void cleanTempFiles()
+{
+  string cmd = "rm *.out && rm *.game";
+  string res = process_Mgr.cmd_exec(cmd);
 }
 
 
@@ -334,7 +343,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
 	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	int total_stratagies = 10; 
+	int total_stratagies = 2; 
 	// initializae the database connection
   SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
   // clean data
