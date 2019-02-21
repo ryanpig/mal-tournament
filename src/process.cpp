@@ -62,36 +62,6 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
   return r;
 }
 
-bool Process_Mgr::generateGame(string fname, int actions, int players)
-{
-  // self test of available type of games
-  selfTest();
-
-	// filename flag
-	string filename = fname;
-	filename += ".game";
-  string output_flag = " -f " + filename; 
-	// action flag
-	string game_flag = " -actions " + std::to_string(actions);
-	// string game_flag = " -actions 2 3 5 4" ;
-	// player flag
-	game_flag += " -players " + std::to_string(players);
-	
-	// clean up 
-	bool r = process_Mgr.file_exist(filename);
-	if(r)
-		string res = process_Mgr.cmd_exec("rm " + filename);
-	// command w/ a file flag
-	// string cmd = "java -jar gamut.jar -g RandomGame -actions 3 -players 2 -output GambitOutput -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
-	string cmd = "java -jar gamut.jar -g RandomGame";
-	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
-	cmd += output_flag + " -output GambitOutput";
-  cmd += " >check.out 2>&1";
-  // cmd += " >" + checkname + " 2>&1";
-	// execute command 
-	std::string result = process_Mgr.cmd_exec(cmd);
-  return process_Mgr.generation_check("check.out");
-}
 
 std::string Process_Mgr::cmd_exec(std::string cmd) {
 	std::cout << cmd << std::endl;
