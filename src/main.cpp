@@ -336,6 +336,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
 	int total_stratagies = 10; 
 	// initializae the database connection
   SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
+  // clean data
   db_mgr.createTable();
   db_mgr.deleteTable();
   // retrieve all available games
@@ -352,75 +353,22 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
       // loop games
       for(const auto gt : gt_mgr->getCollection())
       {
-        // doTask(gt, set_players,set_actions, set_rounds, iterations, i, j);
-        // threadpool.push_back(thread(doTask, gt, set_players,set_actions, set_rounds, iterations, i, j));
         Task task{gt, set_players, set_actions, set_rounds, iterations, i, j};
         tmgr.addTask(task);
         total_instatnces += 2; 
       }
 		}
 	}
-
   
   // start the job server
   LOG(INFO) << "start job server...";
   LOG(INFO) << "total tasks:" << tmgr.totalTasks();
   tmgr.startJobServer();
-  LOG(INFO) << "finish all jobs ...";
 
 	// Insert to database
   db_mgr.queryAll();
   LOG(INFO) << "Total play " << total_instatnces << " instances in the tournamenet";
 
-  // tmgr.destroyThreads();
-
-
 	return true;
 }
 
-
-// bool doTask(const GameType gt, int set_players, int set_actions, int set_rounds, int iterations, int i, int j)
-// {
-//   string tmp = to_string(std::rand());
-//   std::string fname = "AllGamesTournament_" + tmp;
-
-//   // generate game
-//   if(!process_Mgr.generateGame(fname, gt)){
-//     LOG(ERROR) << "game generation failed";
-//     return false;
-//   }
-
-//   // parse matrix
-//   GameParser gp;
-//   if(!gp.parser(fname + ".game")){
-//     LOG(ERROR) << "parsing failed";
-//     return false;
-//   }
-  
-//   // play games w/ swapped players
-//   vector<float> sum_vec(set_players, 0.0);
-//   for(int permuteid = 0; permuteid < iterations; permuteid++)
-//   {
-//     StrategyType s_type  = static_cast<StrategyType>(i); 
-//     StrategyType opp_type  = static_cast<StrategyType>(j); 
-
-//     Game testgame(permuteid, set_rounds, set_players, 0, 0, gp, permuteid, false, s_type, opp_type);
-//     testgame.run();
-//     // result
-//     vector<float> tmp = testgame.getFinalResult();
-    
-//     Record r{
-//       gt.name,
-//       permuteid, set_actions, set_players, set_rounds, 
-//       strategy_Mgr.getname(s_type), tmp[0],
-//       strategy_Mgr.getname(opp_type), tmp[1]
-//     };
-//     // key section, write to shared resource
-//     unique_lock<mutex> lck_vec_records(mtx_vec_records);
-//     {
-//       vec_records.push_back(r);
-//     }
-//     lck_vec_records.unlock();
-//   }
-//   return true;
-// }

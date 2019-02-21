@@ -28,32 +28,20 @@ class ThreadMgr
   private:
     vector<thread> m_threadpool;
     deque<Task> m_deque;
-    mutex m_mtx_deque, m_mtx_record, m_mtx_flags;
-    condition_variable cv, cv_monitor;
-    vector<Record> vec_records;
-    bool flag_finish_all_job; 
-    vector<bool> m_worker_flags;
-
+    mutex m_mtx_deque, m_mtx_record;
+    condition_variable cv;
     
   public:
-    ThreadMgr() : flag_finish_all_job(false){;}
+    ThreadMgr(){;}
     // client function
     void addTask(Task &t);
     int totalTasks(){return m_deque.size();}
-    vector<Record>& getResult(){return vec_records;}
+
     void startJobServer();
-
     void createThreads();
-    void destroyThreads();
-
-    // monitor thread
-    void monitorThread();
-    bool checkStatus();
 
     // worker thread
-    void checkTask(int id);
+    void checkTask();
     bool doTask(Task& t);
     void saveToRecords(Record &record);
-    void setFlag(int id);
-
 };
