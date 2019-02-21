@@ -2,6 +2,7 @@
 #include <chrono>
 #include "main.h"
 #include "common.h"
+#define ELPP_THREAD_SAFE 1
 
 
 using namespace boost::program_options;
@@ -121,16 +122,19 @@ int main(int argc, char** argv)
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
+    cleanTempFiles();
 		return -1;
 	}
   // --------------- Tournament All Game Mode w/ all game types--------------
 	if(set_tournament_all_games){
     LOG(INFO) << "---Tournament All Game Mode w/ all game types---";
 		GameGenerator gg;
-		if(!gg.run_all_games(set_rounds))
+		// if(!gg.run_all_games(set_rounds))
+		if(!gg.run_all_games_mt(set_rounds))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
+    cleanTempFiles();
 		return -1;
 	}
  
@@ -173,8 +177,15 @@ int main(int argc, char** argv)
       testgame.dataToFile();
     }
     LOG(INFO) << "single Game finished";
+    cleanTempFiles();
     return -1;
   }
+}
+
+void cleanTempFiles()
+{
+  string cmd = "rm *.out && rm *.game";
+  string res = process_Mgr.cmd_exec(cmd);
 }
 
 
@@ -258,7 +269,6 @@ bool GameGenerator::run_all_games(int total_iterations)
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
 	size_t total_stratagies = 10; 
 	std::string fname = "AllGamesTournament";
-	vector<float> result;
 	// initializae the database connection
   auto db_mgr = std::move(SQLMgr::getInstance(SQLITE_DB_PATH, "TESTTABLE"));
 	db_mgr->createTable();
@@ -321,3 +331,51 @@ bool GameGenerator::run_all_games(int total_iterations)
 
 	return true;
 }
+
+bool GameGenerator::run_all_games_mt(int total_iterations)
+{
+
+	// configuration of each game
+	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
+	int iterations{set_players};
+	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
+	int total_stratagies = 2; 
+	// initializae the database connection
+  SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
+  // clean data
+  db_mgr.createTable();
+  db_mgr.deleteTable();
+  // retrieve all available games
+  auto gt_mgr = make_unique<GameTypeMgr>();
+  int total_instatnces{0};
+
+  ThreadMgr tmgr;
+
+  for(int i = 0; i < total_stratagies; i++)
+	{
+		for(int j = 0; j < total_stratagies; j++)
+		{
+			LOG(INFO) << "Game(i,j):" << i << ", " << j;
+      // loop games
+      for(const auto gt : gt_mgr->getCollection())
+      {
+        Task task{gt, set_players, set_actions, set_rounds, iterations, i, j};
+        tmgr.addTask(task);
+        total_instatnces += 2; 
+      }
+		}
+	}
+  
+  // start the job server
+  LOG(INFO) << "start job server...";
+  LOG(INFO) << "total tasks:" << tmgr.totalTasks();
+  tmgr.startJobServer();
+
+	// Insert to database
+  db_mgr.queryAll();
+  LOG(INFO) << "Total play " << total_instatnces << " instances in the tournamenet";
+
+	return true;
+}
+
+// vim: set sw=4 ts=4 noet:

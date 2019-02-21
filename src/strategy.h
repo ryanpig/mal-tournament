@@ -9,6 +9,7 @@
 #include "gamut_parser.h"
 #include <memory>
 #include "easylogging++.h"
+#include <mutex>
 
 using namespace std;
 
@@ -266,6 +267,9 @@ class Strategy_Markov: public Strategy
 // Compostion: all common apis can be put here rather than in pure Strategy class
 static class Strategy_Mgr
 {
+  private:
+    mutex m_mtx;
+
 	public:
 		const vector<string> vec_strategy_type{"Random" , "UCB1" , "EXP3", "Satisficing", "EGreedy", "NGreedy", "Softmax", "NoRegret", "FP", "QL", "BrFP", "Markov"}; 
 		unique_ptr<Strategy> createNewStrategy(StrategyType type, int action_size) {
@@ -287,6 +291,7 @@ static class Strategy_Mgr
 		}
 
 		string getname(StrategyType type) const {
+      unique_lock<mutex> m_mtx;
 			int index = static_cast<int>(type);
 			if(index < (int)vec_strategy_type.size())
 				return vec_strategy_type[index];
@@ -305,5 +310,6 @@ static class Strategy_Mgr
 
 		template<typename T>
 		void printVec(vector<T> &v) const {for(auto e : v) cout<<e<<" ,"; cout << endl;};
+
 
 } strategy_Mgr;

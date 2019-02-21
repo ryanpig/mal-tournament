@@ -4,6 +4,7 @@
 #include <numeric> //accumulate
 #include <math.h> // exp
 #include <functional>
+#include "easylogging++.h"
 
 using namespace std;
 
@@ -43,8 +44,8 @@ inline void softmax(IterIn beg, IterIn end, IterOut dest, bool normalizd, float 
 	VType temperature = static_cast<VType>(temp);
 
 	//find maximum and minimum value
-	const auto max{*max_element(beg, end)};
-	const auto min{*min_element(beg, end)};
+  const auto max{*max_element(beg, end)};
+  const auto min{*min_element(beg, end)};
 
 	// normalization
 	if(normalizd)

@@ -5,8 +5,9 @@
 
 using namespace std;
 
-bool Process_Mgr::generateGame(string fname, GameType &gt)
+bool Process_Mgr::generateGame(string fname, const GameType gt)
 {
+  unique_lock<mutex> lck(m_mtx);
   // listParamInfo();
   cout << "generating games...." << endl;
   int final_actions = gt.actions;
@@ -47,45 +48,20 @@ bool Process_Mgr::generateGame(string fname, GameType &gt)
 	if(r)
 		string res = process_Mgr.cmd_exec("rm -f " + filename);
 	// flag setting
+  string checkname = "check" + to_string(rand() % 500000) + ".out";
 	string cmd = "java -jar gamut.jar -g " + gt.name;
 	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
-  cmd += " >check.out 2>&1";
+  // cmd += " >check.out 2>&1";
+  cmd += " >" + checkname + " 2>&1";
 
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
-  return process_Mgr.generation_check();
+  r = process_Mgr.generation_check(checkname);
+
+  return r;
 }
 
-bool Process_Mgr::generateGame(string fname, int actions, int players)
-{
-  // self test of available type of games
-  selfTest();
-
-	// filename flag
-	string filename = fname;
-	filename += ".game";
-  string output_flag = " -f " + filename; 
-	// action flag
-	string game_flag = " -actions " + std::to_string(actions);
-	// string game_flag = " -actions 2 3 5 4" ;
-	// player flag
-	game_flag += " -players " + std::to_string(players);
-	
-	// clean up 
-	bool r = process_Mgr.file_exist(filename);
-	if(r)
-		string res = process_Mgr.cmd_exec("rm " + filename);
-	// command w/ a file flag
-	// string cmd = "java -jar gamut.jar -g RandomGame -actions 3 -players 2 -output GambitOutput -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
-	string cmd = "java -jar gamut.jar -g RandomGame";
-	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
-	cmd += output_flag + " -output GambitOutput";
-  cmd += " >check.out 2>&1";
-	// execute command 
-	std::string result = process_Mgr.cmd_exec(cmd);
-  return process_Mgr.generation_check();
-}
 
 std::string Process_Mgr::cmd_exec(std::string cmd) {
 	std::cout << cmd << std::endl;
@@ -107,17 +83,19 @@ inline bool Process_Mgr::file_exist(const std::string& name) {
 	return (stat (name.c_str(), &buffer) == 0); 
 }
 
-inline bool Process_Mgr::generation_check(){
+inline bool Process_Mgr::generation_check(string filename){
   // game generation check (Note: since Gamut only printed single line if it successfully generates)
-  if(!process_Mgr.file_exist("check.out"))
+  if(!process_Mgr.file_exist(filename)){
     LOG(ERROR) << "check.out doesn't exist!";
-	string result = process_Mgr.cmd_exec("wc -l < check.out");
+    return false;
+  }
+	string result = process_Mgr.cmd_exec("wc -l < "+ filename);
   if(stoi(result) == 1){
     LOG(INFO) << "Game generation succeeded";
     return true;
   }else{
     LOG(ERROR) << "Game ganeration failed!";
-    string cmd = "cat check.out >> error_report.txt";
+    string cmd = "cat " + filename + " >> error_report.txt";
     string res = process_Mgr.cmd_exec(cmd);
     return false;
   }
