@@ -378,4 +378,4 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
 	return true;
 }
 
-// vim: set sw=4 ts=4 noet:
+// vim: set sw=2 ts=2 noet:

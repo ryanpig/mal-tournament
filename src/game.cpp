@@ -194,6 +194,8 @@ void Game::print_final_result()
 	string padding  = "         ";
 	string padding1 = "Avg. Pay."; 
 	string padding2 = "Avg. Reg."; 
+  float maxPay = m_game_parser->max_reward;
+  float minPay = m_game_parser->min_reward;
 	cout << "---FINAL---" << endl;
 	cout << padding;
 	for(auto &p : m_players)
@@ -204,8 +206,11 @@ void Game::print_final_result()
 	for(auto &p : m_players)
 	{
 		float avg_payoff = (float)(p->m_acc_payoffs) / m_cur_round;
-		cout << avg_payoff << " ,";
-		m_avg_result.push_back(avg_payoff);
+    float avg_payoff_normalized = (avg_payoff - minPay) / (maxPay - minPay);
+    if(avg_payoff_normalized > 1.0)
+      m_game_parser->traverseMat();
+		cout << avg_payoff << "(" << avg_payoff_normalized << ")" << " ,";
+		m_avg_result.push_back(avg_payoff_normalized);
 	}
 	cout << endl;
 	cout << padding2;

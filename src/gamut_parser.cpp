@@ -85,6 +85,8 @@ bool GameParser::parser(string filename)
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
 	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) {
 		m_index_max = multi(m_act_dim);
+    // set max min reward;
+    getMaxMinReward();
     LOG(INFO) << "Parsing succeeded!";
     return true;
 	}else{
@@ -266,6 +268,70 @@ void GameParser::traverseMat() const
 	cout << "Total items:" << count << endl;
 }
 
+void GameParser::getMaxMinReward(){
+	// set element that postion is smaller than pos to zero
+	auto resetZero = [](vector<int> &v, int pos){
+		for(int p = 0; p < pos; p++){
+			v[p] = 0;
+		}
+	};
+	// input
+	vector<int> cur(m_act_dim.size(), 0);
+	vector<int> max = m_act_dim;
+	for_each(max.begin(), max.end(), [](int &e){e--;});
+	int epos = 0;	
+	int count = 1;
+	bool flag_plus{false};
+	bool overflow{false};
+  // initialize
+  max_reward = 0;
+  min_reward = 99999999;
+	vector<float> ini = queryByVec(cur);
+  float max_ini = *max_element(ini.begin(), ini.end());
+  float min_ini = *min_element(ini.begin(), ini.end());
+  if(max_ini > max_reward)
+    max_reward = max_ini;
+  if(min_ini < min_reward)
+    min_reward = min_ini;
+	// start
+	while(cur != max)
+	{
+		flag_plus = false;
+		epos = 0;
+		while(!flag_plus){
+			if((cur[epos] + 1) <= max[epos])
+			{
+				if(!overflow){
+					cur[epos]++;
+					flag_plus = true;
+				}else{
+					cur[epos]++;
+					resetZero(cur,epos);
+					overflow = false;
+					flag_plus = true;
+				}
+			}else{
+				overflow = true;
+				epos++; 
+			}
+		}
+		vector<float> res = queryByVec(cur);
+    float max_res = *max_element(res.begin(), res.end());
+    float min_res = *min_element(res.begin(), res.end());
+    if(max_res > max_reward)
+      max_reward = max_res;
+    if(min_res < min_reward)
+      min_reward = min_res;
+		count++;
+	}
 
+	LOG(INFO) << "Total items:" << count;
+  LOG(INFO) << "Maximum reward:" << max_reward << ", Minimum reward:" << min_reward;
+}
 
+void GameParser::normalize_reward(vector<float> &avg_payoff)
+{
+  for(size_t i = 0; i < avg_payoff.size(); i++)
+    avg_payoff[i] = (avg_payoff[i] - min_reward) / (max_reward - min_reward); 
+}
 

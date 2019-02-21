@@ -22,6 +22,10 @@ class GameParser
 		bool indexCheck(int &ind) const{return (ind < m_index_max);};
 		template<typename T>
 		void printVec(vector<T> &v) const{for(auto &e : v) cout << e << " ,"; cout<<endl;};
+    void normalize_reward(vector<float> &avg_payoff);
+    void getMaxMinReward();
+    float max_reward;
+    float min_reward;
 
 	private:
 		vector<vector<float>> m_matrix;

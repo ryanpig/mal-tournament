@@ -88,6 +88,9 @@ class Game
 		void print_final_result() ; // save final result in m_avg_result
 		void dataToFile() const;
 		int getGameID() const {return m_gameid;};
-		const vector<float>& getFinalResult() const {return m_avg_result;};
+		vector<float>& getFinalResult() {
+      return m_avg_result;
+    };
+
 };
 
