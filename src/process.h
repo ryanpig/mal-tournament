@@ -8,6 +8,7 @@
 #include "gametype.h"
 #include "easylogging++.h"
 #include <fstream>
+#include <mutex>
 
 #pragma once
 
@@ -17,9 +18,11 @@ static class Process_Mgr{
 		bool file_exist(const std::string& name); 
     bool generation_check();
 		bool generateGame(std::string fname, int actions, int players);
-    bool generateGame(string fname, GameType &gt); // main
+    bool generateGame(string fname, const GameType gt); // main
     void selfTest();
     void listParamInfo() const;
+  private:
+    std::mutex m_mtx;
 }process_Mgr;
 
 

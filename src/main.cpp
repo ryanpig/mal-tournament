@@ -7,6 +7,7 @@
 using namespace boost::program_options;
 
 INITIALIZE_EASYLOGGINGPP
+bool doTask(const GameType gametype, int set_players, int set_actions, int set_rounds, int iterations, int i, int j);
 
 int main(int argc, char** argv)
 {
@@ -127,7 +128,8 @@ int main(int argc, char** argv)
 	if(set_tournament_all_games){
     LOG(INFO) << "---Tournament All Game Mode w/ all game types---";
 		GameGenerator gg;
-		if(!gg.run_all_games(set_rounds))
+		// if(!gg.run_all_games(set_rounds))
+		if(!gg.run_all_games_mt(set_rounds))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -258,7 +260,6 @@ bool GameGenerator::run_all_games(int total_iterations)
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
 	size_t total_stratagies = 10; 
 	std::string fname = "AllGamesTournament";
-	vector<float> result;
 	// initializae the database connection
   auto db_mgr = std::move(SQLMgr::getInstance(SQLITE_DB_PATH, "TESTTABLE"));
 	db_mgr->createTable();
@@ -320,4 +321,104 @@ bool GameGenerator::run_all_games(int total_iterations)
   LOG(INFO) << "Total play " << total_instatnces << " instances in the tournamenet";
 
 	return true;
+}
+
+vector<Record> vec_records;
+mutex mtx_vec_records;
+
+bool GameGenerator::run_all_games_mt(int total_iterations)
+{
+
+	// configuration of each game
+	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
+	int iterations{set_players};
+	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
+	int total_stratagies = 2; 
+	// initializae the database connection
+  auto db_mgr = std::move(SQLMgr::getInstance(SQLITE_DB_PATH, "TESTTABLE"));
+	db_mgr->createTable();
+	db_mgr->deleteTable();
+  // retrieve all available games
+  auto gt_mgr = make_unique<GameTypeMgr>();
+  int total_instatnces{0};
+
+  ThreadMgr tmgr;
+
+	for(int i = 0; i < total_stratagies; i++)
+	{
+		for(int j = 0; j < total_stratagies; j++)
+		{
+			LOG(INFO) << "Game(i,j):" << i << ", " << j;
+      // loop games
+      for(const auto gt : gt_mgr->getCollection())
+      {
+        // doTask(gt, set_players,set_actions, set_rounds, iterations, i, j);
+        // threadpool.push_back(thread(doTask, gt, set_players,set_actions, set_rounds, iterations, i, j));
+        Task task{gt, set_players, set_actions, set_rounds, iterations, i, j};
+        tmgr.addTask(task);
+        total_instatnces++; 
+      }
+		}
+	}
+  
+  // start the job server
+  LOG(INFO) << "start job server...";
+  tmgr.startJobServer();
+  LOG(INFO) << "finish all jobs ...";
+
+	// Insert to database
+	// db_mgr->insertRecords(vec_records);
+	db_mgr->insertRecords(tmgr.getResult());
+	db_mgr->queryAll();
+  LOG(INFO) << "Total play " << total_instatnces << " instances in the tournamenet";
+
+
+	return true;
+}
+
+
+bool doTask(const GameType gt, int set_players, int set_actions, int set_rounds, int iterations, int i, int j)
+{
+  string tmp = to_string(std::rand());
+	std::string fname = "AllGamesTournament_" + tmp;
+
+  // generate game
+  if(!process_Mgr.generateGame(fname, gt)){
+    LOG(ERROR) << "game generation failed";
+    return false;
+  }
+
+  // parse matrix
+  GameParser gp;
+  if(!gp.parser(fname + ".game")){
+    LOG(ERROR) << "parsing failed";
+    return false;
+  }
+  
+  // play games w/ swapped players
+  vector<float> sum_vec(set_players, 0.0);
+  for(int permuteid = 0; permuteid < iterations; permuteid++)
+  {
+    StrategyType s_type  = static_cast<StrategyType>(i); 
+    StrategyType opp_type  = static_cast<StrategyType>(j); 
+
+    Game testgame(permuteid, set_rounds, set_players, 0, 0, gp, permuteid, false, s_type, opp_type);
+    testgame.run();
+    // result
+    vector<float> tmp = testgame.getFinalResult();
+    
+    Record r{
+      gt.name,
+      permuteid, set_actions, set_players, set_rounds, 
+      strategy_Mgr.getname(s_type), tmp[0],
+      strategy_Mgr.getname(opp_type), tmp[1]
+    };
+    // key section, write to shared resource
+    unique_lock<mutex> lck_vec_records(mtx_vec_records);
+    {
+      vec_records.push_back(r);
+    }
+    lck_vec_records.unlock();
+  }
+  return true;
 }

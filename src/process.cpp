@@ -5,8 +5,9 @@
 
 using namespace std;
 
-bool Process_Mgr::generateGame(string fname, GameType &gt)
+bool Process_Mgr::generateGame(string fname, const GameType gt)
 {
+  unique_lock<mutex> lck(m_mtx);
   // listParamInfo();
   cout << "generating games...." << endl;
   int final_actions = gt.actions;
@@ -54,7 +55,9 @@ bool Process_Mgr::generateGame(string fname, GameType &gt)
 
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
-  return process_Mgr.generation_check();
+  r = process_Mgr.generation_check();
+
+  return r;
 }
 
 bool Process_Mgr::generateGame(string fname, int actions, int players)
