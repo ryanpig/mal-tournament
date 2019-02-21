@@ -25,7 +25,7 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
   const GameType found = findtype(gt);
   if(found.name == "empty")
   {
-    // LOG(ERROR) << "can't find " << gt.name << " from the available game list";
+    LOG(ERROR) << "can't find " << gt.name << " from the available game list";
     return false;
   }
   // set final values
@@ -116,16 +116,15 @@ inline bool Process_Mgr::file_exist(const std::string& name) {
 inline bool Process_Mgr::generation_check(string filename){
   // game generation check (Note: since Gamut only printed single line if it successfully generates)
   if(!process_Mgr.file_exist(filename)){
-    // LOG(ERROR) << "check.out doesn't exist!";
-    cerr << "check.out doesn't exist!";
+    LOG(ERROR) << "check.out doesn't exist!";
     return false;
   }
 	string result = process_Mgr.cmd_exec("wc -l < "+ filename);
   if(stoi(result) == 1){
-    // LOG(INFO) << "Game generation succeeded";
+    LOG(INFO) << "Game generation succeeded";
     return true;
   }else{
-    // LOG(ERROR) << "Game ganeration failed!";
+    LOG(ERROR) << "Game ganeration failed!";
     string cmd = "cat " + filename + " >> error_report.txt";
     string res = process_Mgr.cmd_exec(cmd);
     return false;

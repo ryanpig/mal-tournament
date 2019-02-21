@@ -10,23 +10,30 @@ inline int choose_by_probability(vector<float> &probs, RNG &rng)
 			return i;
 	}
 
-	// LOG(ERROR) << "wrong operation of choose_by_probability:" <<  endl;
-	cerr << "wrong operation of choose_by_probability:" <<  endl;
+  LOG(ERROR) << "wrong operation of choose_by_probability:" <<  endl;
 	strategy_Mgr.printVec(probs);
 	return 0;
 }
 
 // generate average rewards by giving accumulated payfoss and counts by each action
+// in1:acc payoff, in2:acc counts, out:prob
 inline void get_average_vector(vector<float> &in1, vector<int> &in2, vector<float> &out)
 {
+  assert(in1.size() == in2.size());
+  assert(in2.size() == out.size());
+
 	for(size_t i = 0; i < in1.size(); i++){
-		float acc = in1[i];
-		int count = in2[i];
-		if(count == 0)
+		if(in2[i] == 0)
 			out[i] = 0.0f;
 		else
-			out[i] = acc / count; 
+			out[i] = in1[i] / in2[i]; 
 	}
+
+  for(auto v : out){
+    if(isnan(v))
+      LOG(ERROR) << "nan!! here";
+  }
+    
 }	
 
 // return action w/ maximum average reward
@@ -156,8 +163,7 @@ void Strategy_EXP3::prob_distr_calc()
   for(size_t i = 0; i < weights.size(); i++){
 		probs[i] = a * weights[i] + b;
 		if(probs[i] < 0.0f || probs[i] > 1.0f)
-			// LOG(ERROR) << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
-			cerr << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
+      LOG(ERROR) << "ERROR: probs[i]:" << probs[i] << ", a:" << a << ",b:" << b << endl;
 	}
 }
 
@@ -246,6 +252,7 @@ int Strategy_NGreedy::exec(Info &inf)
 
 int Strategy_Softmax::exec(Info &inf)
 {
+
 	// using initialization
 	if(inf.m_cur_round <= inf.m_action_size )
 		return inf.m_cur_round - 1;
@@ -253,8 +260,28 @@ int Strategy_Softmax::exec(Info &inf)
 		int select_action{0};
 		vector<float> vec_avg(inf.m_action_size, 0.0f);
 		get_average_vector(inf.m_acc_payoffs_by_action, inf.m_counts_by_action, vec_avg);
-		softmax(vec_avg.begin(), vec_avg.end(), vec_avg.begin(), true, 1.0f); // temperature = 1.0f;
-		select_action = choose_by_probability(vec_avg, m_rng);
+
+    // do the maximux check 
+    auto find_maxQ = [](vector<float> &v){ return max_element(v.begin(), v.end());};
+    auto count_maxQ = [](vector<float> &v, float max_value){ return std::count(v.begin(), v.end(), max_value);};
+    auto iter_maxQ = find_maxQ(vec_avg);
+    auto beg = vec_avg.begin();
+    auto end = vec_avg.end();
+    float maxQ = *iter_maxQ;
+    int counts_of_max = count_maxQ(vec_avg, maxQ);
+
+    // branch if there are more than 1 maximum values 
+    if(counts_of_max == 1){
+      softmax(vec_avg.begin(), vec_avg.end(), vec_avg.begin(), true, 1.0f); // temperature = 1.0f;
+      select_action = choose_by_probability(vec_avg, m_rng);
+    }else{
+			vector<int> matches;			
+			for(auto it = beg; it != end; it++)
+				if(*it == maxQ) 
+					matches.push_back(it - beg);
+			select_action = matches[m_rng.getInt(0, matches.size() - 1)];
+    }
+
 		return select_action;
 	}
 }
@@ -337,7 +364,7 @@ int Strategy_QL::exec(Info &inf)
 	if(m_rng.getReal() < epsilon)
 	{
 		best_action = m_rng.getInt(0, action_size - 1);
-		// LOG(DEBUG) << "random action:" << best_action ;
+    // LOG(DEBUG) << "random action:" << best_action ;
 	}
 	else
 	{

@@ -2,6 +2,7 @@
 #include <chrono>
 #include "main.h"
 #include "common.h"
+#define ELPP_THREAD_SAFE 1
 
 
 using namespace boost::program_options;
@@ -345,7 +346,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
 
   ThreadMgr tmgr;
 
-	for(int i = 0; i < total_stratagies; i++)
+  for(int i = 0; i < total_stratagies; i++)
 	{
 		for(int j = 0; j < total_stratagies; j++)
 		{

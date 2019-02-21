@@ -5,26 +5,6 @@
 #include <iostream>
 #include <set>
 #include <algorithm>
-// #include "process.h"
-
-// For test
-// int main()
-// {
-//   // Existing games for testing 
-//   // std::string fname = "RandTest333"; // Players:3 , actions:{3,3,3}
-//   // std::string fname = "RandTest2354"; // players:4 , actions: {2,3,5,4}
-	
-//   // Generate a new game
-//   std::string fname = "RandNew1";
-//   process_Mgr.generateGame(fname, 5, 2); // action size, players
-//   GameParser g;
-//   if(!g.parser(fname + ".game"))
-//     cout << "parser failed" << endl;
-//   else
-//     g.traverseMat();
-//   //   g.selftest();
-// }
-
 
 bool GameParser::parser(string filename)
 {
@@ -105,10 +85,10 @@ bool GameParser::parser(string filename)
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
 	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) {
 		m_index_max = multi(m_act_dim);
-		// LOG(INFO) << "Parsing succeeded!";
+    LOG(INFO) << "Parsing succeeded!";
     return true;
 	}else{
-		// LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size();
+    LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size();
     return false;
 	}
 }

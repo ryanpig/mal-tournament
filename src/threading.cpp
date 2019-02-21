@@ -37,7 +37,8 @@ void ThreadMgr::checkTask()
       Task t = m_deque.back();
       m_deque.pop_back();
       lck.unlock();
-      bool r = doTask(t);
+      if(!doTask(t))
+        LOG(ERROR) << "Do task failed";
     }
   }
 }
