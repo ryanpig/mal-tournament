@@ -86,6 +86,7 @@ Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies,
 - Google test [github](https://github.com/google/googletest) <a name="googletest"></a>
 - UCB1 algorithm implementation written in Python. [github](https://github.com/j2kun/ucb1) 
 - EXP3 algorithm implementation written in Python. [github](https://github.com/j2kun/exp3)
+- Q-Learning written in Matlab [link](https://www.mathworks.com/matlabcentral/fileexchange/67989-q-learning-example)
 - GAMUT, the suite of game generators [website](http://gamut.stanford.edu/)
 - Multi-agent learning course in Utrecht university. [course website](http://www.cs.uu.nl/docs/vakken/maa/current/index.html)
 
