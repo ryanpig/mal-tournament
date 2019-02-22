@@ -94,9 +94,10 @@ Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies,
 <p>
 Algorithm v.s. Algorithm in a single game type
 <img src="img/heatmap_algorithms_algorithms.png" width=800>
-
+</p>
+<p>
 Algirhtm v.s. Algorithm in all game types
-<img src="img/heatmap_game_algorithms.png" height=400>
+<img src="img/heatmap_game_algorithms.png" height=600>
 <img src="img/boxplot.png" width=800>
 <img src="img/beanplot.png" width=800>
 </p>
