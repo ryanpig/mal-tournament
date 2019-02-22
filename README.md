@@ -13,13 +13,13 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 	- Accumulated Regrets
 
 ## Features
-- A test framework to evaluate relation among algorithms, games, and metrics.
-- Cover popular MAL & Bandit algorithms as many as possible
+- A complete test framework to evaluate correlation among algorithms, games, and metrics.
+- Cover popular MAL & Bandit algorithms as many as possible.
 - Provide various game types from either scientific interested games or customized games.
-- Multi-threading default enabled to improve experiment running time
-- Single sqlite3 database file to store all experiment result
-- Global wide logging function support.
-- Integrated GoogleTest for unit test. 
+- Multi-threading default enabled to improve experiment running time.
+- Single sqlite3 database file to store all experiment result.
+- system wide logging function.
+- Integrated GoogleTest for unit tests. 
 - Statistical analysis by visualization, such as heatmap, and boxchart.
 
 
@@ -28,6 +28,10 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 - sqlite3 
 
 Note: Tweak library pahts in Markfile after installation of libraries. 
+
+### Simple build and test
+- `make -j8 && ./mal`
+- `make test -j8 && ./unittest` 
 
 ## Test OS
 - Ubuntu 16.04 LTS
@@ -66,6 +70,7 @@ Random = 0 ; UCB1 = 1 ; EXP3 = 2 ; Satisficing = 3 ; EGreedy = 4 ; NGreedy = 5 ;
 
 - Note: BrFP & Markov are not available now
 
+<a name="gametypes"></a> 
 ### Available game types 
 1. Extentable players && extentable actions:
 RandomGame, MajorityVoting, DispersionGame, GuessTwoThirdsAve, CovariantGame, 
@@ -85,8 +90,13 @@ Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies,
 - Multi-agent learning course in Utrecht university. [course website](http://www.cs.uu.nl/docs/vakken/maa/current/index.html)
 
 
-## Screen shot
-<p><img src="Result/10000rounds_10strs.png" width=200>
-<img src="Result/100000rounds_10.png" width=200></p>
-bean/box plot by R (left:10000 iterations , right:100000 iterations)
+## Screenshots
+<p>
+Algorithm v.s. Algorithm.
+<img src="img/heatmap_algorithms_algorithms.png" width=800>
+Algirhtm v.s. Algorithm in all game types
+<img src="img/heatmap_game_algorithms.png" height=400>
+<img src="img/boxplot.png" width=800>
+<img src="img/beanplot.png" width=800>
+</p>
 
