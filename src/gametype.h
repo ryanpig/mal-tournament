@@ -130,6 +130,7 @@ class GameTypeMgr
     // helper function
     void listAllGames() const {
       cout << endl;
+      cout << "Available game types:" << endl;
       vector<const GameType*> tt,ft,tf,ff;
       // sorting
       for(const auto &g : vec_gametypes)
@@ -144,16 +145,16 @@ class GameTypeMgr
           ff.push_back(&g);
       }
       // cout << "All available game types:" << endl;
-      cout << "Extentable players && extentable actions:" << endl;
+      cout << "1. Extentable players && extentable actions:" << endl;
       for(auto p : tt) cout << p->name << ", ";
       cout << endl << endl;
-      cout << "Extentable actions:" << endl;
+      cout << "2. Extentable actions:" << endl;
       for(auto p : ft) cout << p->name << ", ";
       cout << endl << endl;
-      cout << "Extentable players:" << endl;
+      cout << "3. Extentable players:" << endl;
       for(auto p : tf) cout << p->name << ", ";
       cout << endl << endl;
-      cout << "No parameter needed:" << endl;
+      cout << "4. No parameter needed:" << endl;
       for(auto p : ff) cout << p->name << ", ";
       cout << endl;
 
