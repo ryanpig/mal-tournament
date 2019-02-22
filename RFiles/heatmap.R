@@ -1,6 +1,6 @@
 library("RSQLite")
 # connect to the sqlite file
-con <- dbConnect(drv=RSQLite::SQLite(), dbname="~/CppProj/thesis_proj/Result/result_iter_10000.db")
+con <- dbConnect(drv=RSQLite::SQLite(), dbname="~/CppProj/mal-tournament/Result/result2.db")
 tables <- dbListTables(con)
 
 ## exclude sqlite_sequence (contains table information)
@@ -13,13 +13,20 @@ for (i in seq(along=tables)) {
   DF <- dbGetQuery(conn=con, statement=paste("SELECT * FROM '", tables[[i]], "'", sep=""))
 }
 
-odd_index = seq(1, nrow(DF), 2)
-even_index = seq(2, nrow(DF), 2)
-tmp1 <- DF[odd_index, ]
-tmp2 <- DF[even_index, ]
-avg_DF <- (tmp1[, "payoff_p0"] + tmp2[, "payoff_p1"]) / 2
-new_DF <- tmp1[, c("gametype", "type_p0", "type_p1")]
+## Average different round payoffs
+total_iteration <- length(unique(DF$round))
+## create 0 value data
+total <- subset(DF, DF$round == 0)[, "payoff_p0"]
+total[] = 0
+## get average of payoffs
+for(i in seq(total_iteration)){
+  tmp <- subset(DF, DF$round == i - 1)
+  total <- total + tmp[, paste("payoff_p", i-1,sep="")]
+}
+avg_DF <- total[] / total_iteration * 100
+new_DF <- tmp[, c("gametype", "type_p0", "type_p1")]
 final <- cbind(new_DF,avg_DF)
+
 
 # games v.s. algorithms
 gametypes <- unique(final$gametype)
@@ -51,9 +58,9 @@ plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
 
 
 # with normalization (right) (apply(,2,): by columns
-png("heatmap_normal_games.png", 640,640)
-data=apply(data, 2, function(x){x/mean(x)})
-plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
+#png("heatmap_normal_games.png", 640,640)
+#data=apply(data, 2, function(x){x/mean(x)})
+#plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
 
 
 
