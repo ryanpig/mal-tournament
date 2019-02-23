@@ -1,13 +1,7 @@
-#/bin/sh
-cmd="Rscript statistical_analysis.R"
-if [ -f boxplot.png ]; then
-  echo "plot file boxplot.png exist!"
-  read -p "Do you wish to run this program?" yn
-
-  case $yn in
-  [Yy]* ) echo ${cmd} | bash; break;;
-  [Nn]* ) echo "exit"; break;;
-  esac
-else
- echo ${cmd} | bash 
-fi
+#!/bin/sh
+cmd1="Rscript statistical_analysis.R"
+cmd2="Rscript heatmap.R"
+cmd3="Rscript heatmap_algorithms.R"
+echo ${cmd1} | bash
+echo ${cmd2} | bash
+echo ${cmd3} | bash

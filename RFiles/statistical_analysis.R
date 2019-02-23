@@ -1,6 +1,8 @@
 library("RSQLite")
+sysPath = "~/CppProj/mal-tournament/"
+
 # connect to the sqlite file
-con <- dbConnect(drv=RSQLite::SQLite(), dbname="~/CppProj/mal-tournament/Result/result2.db")
+con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste(sysPath, "Result/result2.db", sep=""))
 tables <- dbListTables(con)
 
 ## exclude sqlite_sequence (contains table information)
@@ -27,17 +29,19 @@ for (i in seq(along=tables)) {
   final <- cbind(new_DF,avg_DF)
 
 ## Drawing
-  #png("boxplot.png", 640,480)
+  png(paste(sysPath,"img/boxplot.png", sep=""), 640,480)
   boxplot(avg_DF ~ type_p0, data=final, las=2)
+  dev.off()
   
-  #png("beanplot.png", 640, 480)
+  png(paste(sysPath,"img/beanplot.png", sep=""), 640,480)
   library("ggplot2")
   ggplot(final, aes(x=type_p0, y=avg_DF))+geom_boxplot()+geom_violin(fill='lightblue', alpha=0.5)+geom_jitter(position = position_jitter(width = .1))
-
+  dev.off()
+  
 ## descriptive statistics
   library("mosaic")#favstats
   favstats(avg_DF ~ type_p0,data=final)
 
 ## finish 
   dbDisconnect(con)
-  #dev.off()
+  
