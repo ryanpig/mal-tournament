@@ -21,7 +21,8 @@ bool generateTest()
 	// generate a new game from Gamut
 	std::string fname = "RandTest";
   Process_Mgr p;
-	p.generateGame(fname, 2, 2); // action size, players
+  GameType gt{"RandomGame", 2, 2, true, true};
+	p.generateGame(fname, gt); // action size, players
 	GameParser gp;
 	if(!gp.parser(fname + ".game")){
 		cout << "parsing failed" << endl;

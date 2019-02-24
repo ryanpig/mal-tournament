@@ -39,6 +39,9 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
     game_flag += " -players " + std::to_string(final_players);
   }
   
+  // add random_params
+  game_flag += " -random_params";
+
 	string filename = fname;
 	filename += ".game";
   string output_flag = " -f " + filename; 
