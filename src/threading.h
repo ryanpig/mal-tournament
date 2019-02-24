@@ -30,9 +30,10 @@ class ThreadMgr
     deque<Task> m_deque;
     mutex m_mtx_deque, m_mtx_record;
     condition_variable cv;
+    bool enable_multithreading;
     
   public:
-    ThreadMgr(){;}
+    ThreadMgr(bool set_mt) : enable_multithreading(set_mt){;}
     // client function
     void addTask(Task &t);
     int totalTasks(){return m_deque.size();}

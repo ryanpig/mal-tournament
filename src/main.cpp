@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 	int set_opp_strategy = 1;
 	bool set_tournament = false;
 	bool set_tournament_all_games = false;
+	bool set_mt = true;
 
 	// command line parser
 	namespace po = boost::program_options;
@@ -46,6 +47,7 @@ int main(int argc, char** argv)
 	("permute,y", po::value<bool>()->required(), "run permutation of payoffs. (Default:false)")
 	("tournament,o", po::value<bool>()->required(), "run tournament w/ single game in all algorithm pairs. (Default:false)")
 	("tournament_all_games,q", po::value<bool>()->required(), "run tournament w/ all game types and all algorithms. (Default:false)")
+	("enable_multithreading,m", po::value<bool>()->required(), "enable enable_multithreading. (Default:true)")
 	;
 	variables_map vm;
 
@@ -130,7 +132,7 @@ int main(int argc, char** argv)
     LOG(INFO) << "---Tournament All Game Mode w/ all game types---";
 		GameGenerator gg;
 		// if(!gg.run_all_games(set_rounds))
-		if(!gg.run_all_games_mt(set_rounds))
+		if(!gg.run_all_games_mt(set_rounds, set_mt))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -332,14 +334,14 @@ bool GameGenerator::run_all_games(int total_iterations)
 	return true;
 }
 
-bool GameGenerator::run_all_games_mt(int total_iterations)
+bool GameGenerator::run_all_games_mt(int total_iterations, bool set_mt)
 {
 
 	// configuration of each game
 	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	int total_stratagies = 2; 
+	int total_stratagies = 10; 
 	// initializae the database connection
   SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
   // clean data
@@ -349,7 +351,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations)
   auto gt_mgr = make_unique<GameTypeMgr>();
   int total_instatnces{0};
 
-  ThreadMgr tmgr;
+  ThreadMgr tmgr(set_mt);
 
   for(int i = 0; i < total_stratagies; i++)
 	{

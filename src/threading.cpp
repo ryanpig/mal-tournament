@@ -15,7 +15,7 @@ void ThreadMgr::startJobServer()
 
 void ThreadMgr::createThreads()
 {
-  const int available_cores = thread::hardware_concurrency();
+  const int available_cores = enable_multithreading ? thread::hardware_concurrency() : 1;
   for(int i = 0; i < available_cores; i++){
     m_threadpool.push_back(thread(&ThreadMgr::checkTask, this));
   }

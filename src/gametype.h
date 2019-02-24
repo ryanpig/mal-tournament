@@ -44,7 +44,7 @@ static const gameTypeVector vec_gametypes{
   {"BertrandOligopoly", 2, 2, true, true}, //cost_func
   {"BidirectionalLEG", 2, 2, true, true}, //graph class
   {"TravelersDilemma", 2, 2, true, true}, // need -reward
-  {"SimpleInspectionGame", 0, 0, false, false}, 
+  // {"SimpleInspectionGame", 0, 0, false, false}, 
 // -set_size:    number of elements in set S from which the players choose 
 // elements.  Must be > 0 but <= 8 in order o keep the number of actions 
   {"LocationGame", 0, 2, false, true},
@@ -83,7 +83,7 @@ static const gameTypeVector vec_gametypes{
 // -function_Z:    Z in payoff functions (see description).  Must be set 
 // such that 0 < Z - Y < X and all parameters must be less than 100,000.
 
-  {"CongestionGame", 2, 0, true, false},
+  // {"CongestionGame", 2, 0, true, false},
 // -facilities:    number of facilities in set.  Since each player chooses a 
 // subset of the facilities, the number of actions available to each 
 // player is 2 to the number of facilities.  A maximum of five facilities is 
