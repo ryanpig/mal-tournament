@@ -52,6 +52,12 @@ library(plotly)
 head(combined_final)
 data=as.matrix(combined_final)
 
+# Grouping
+mal <- c("FP", "NoRegret")
+bandit <- c("QL", "Softmax", "NGreedy", "EGreedy", "Satisficing", "UCB1", "EXP3")
+mal_sum <- rowSums(data[, mal]) / length(mal)
+bandit_sum <- rowSums(data[, bandit]) / length(bandit)
+data = cbind(mal_sum, bandit_sum)
 #basic heatmap
 ## Drawing
 png(paste(sysPath,"img/heatmap_game_algorithms.png", sep=""), 640,640)
