@@ -54,17 +54,17 @@ bool GameParser::parser(string filename)
 	}
 
 	// parsing result
-	cout << "Parsed action size:";
+  string concatenateStr;
 	for(auto &e : m_act_dim)
-		cout << e << ",";
-	cout << endl;
+		concatenateStr += to_string(e) + ",";
+	LOG(INFO) << "Parsed action size:" << concatenateStr;
 
 	// convert vector to matrix by traversing all rows of each player (size_reward: the size of elements that each player has)
 	auto vecToMatrix = [](vector<float> &vec, vector<int> &act_dim){
 		vector<vector<float>> mat;
 		int size_rewards = multi(act_dim); 
 		int cur{0};
-		std::cout << "Total size:" << vec.size() << ", Plyaers:" << act_dim.size() << ", Each player:" << size_rewards << std::endl;
+		LOG(INFO) << "Total size:" << vec.size() << ", Plyaers:" << act_dim.size() << ", Each player:" << size_rewards;
 		for(int i = 0; i < size_rewards ; i++)
 		{
 			// std::cout << "row number:" << i << "-- ";
@@ -83,7 +83,9 @@ bool GameParser::parser(string filename)
 	};
 
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
-	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size()) {
+  // 1. check cell number , 2. check each cell has the number of player 3. check cell number is not too much huge
+  size_t threshold_action_size = 20;
+	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size() && m_matrix.size() <= threshold_action_size) {
 		m_index_max = multi(m_act_dim);
     // set max min reward;
     getMaxMinReward();
@@ -327,6 +329,8 @@ void GameParser::getMaxMinReward(){
 
 	LOG(INFO) << "Total items:" << count;
   LOG(INFO) << "Maximum reward:" << max_reward << ", Minimum reward:" << min_reward;
+  if(count >= 20)
+    LOG(ERROR) << "Total action action size is too huge!" << count;
 }
 
 void GameParser::normalize_reward(vector<float> &avg_payoff)

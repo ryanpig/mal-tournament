@@ -136,7 +136,7 @@ int main(int argc, char** argv)
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
-    cleanTempFiles();
+    // cleanTempFiles();
 		return -1;
 	}
  

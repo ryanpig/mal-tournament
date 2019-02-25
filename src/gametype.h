@@ -37,7 +37,6 @@ static const gameTypeVector vec_gametypes{
   {"CovariantGame", 2, 2, true, true},
   {"GrabTheDollar", 0, 2, false, true},
   {"CoordinationGame", 2, 0, true, false}, 
-  {"CoordinationGame", 2, 0, true, false}, 
   {"ShapleysGame", 0, 0, false, false},
 
   // Need to use random values for unset parameters
@@ -53,15 +52,12 @@ static const gameTypeVector vec_gametypes{
 //   {"PolymatrixGame", 2, 2, true, true}
 // -graph:    the name of the graph structure class to use
 
-  {"BertrandOligopoly", 2, 2, true, true},
-// -cost_func:    the name of the function class to use for the cost 
-// function.
   
   {"ArmsRace", 0, 2, false, true},
 // -c_func:    the name of the function class to use for the cost function 
 // C.  The function supplied should be SMOOTH in order to stick to the 
 // strict definition of an Arms Race.
-  {"GreedyGame", 0, 0, false, false}, 
+  // {"GreedyGame", 0, 0, false, false}, 
 // -set_size:    number of elements in set S from which the players choose 
 // elements.  Must be > 0 and <= 8 for the sake of keeping the number of 
 // actions reasonable.

@@ -48,11 +48,6 @@ TEST_F(generategame, listparaminfo){
   p.listParamInfo();
 }
 
-
-// TEST_F(generategame, Random) {
-//   ASSERT_TRUE(generateTest());
-// }
-
 TEST_F(generategame, anygame) {
   
   Process_Mgr p;
@@ -64,7 +59,27 @@ TEST_F(generategame, anygame) {
   }
 }
 
+// repeat tet the same game type
+TEST_F(generategame, bogame) {
+  GameType a{"BertrandOligopoly", 2, 2, true, true};
+  Process_Mgr p;
+  for(int i; i < 20; i++)
+  {
+    cout << "Single game test:" << a.name << endl;
+    EXPECT_TRUE(p.generateGame("unittest", a));
+  }
+}
 
+// Need to specify more parameters to limit the game size, and make it normalizable
+// TEST_F(generategame, greedygame) {
+//   GameType a{"GreedyGame", 0, 0, false, false};
+//   Process_Mgr p;
+//   for(int i; i < 20; i++)
+//   {
+//     cout << "Single game test:" << a.name << endl;
+//     EXPECT_TRUE(p.generateGame("unittest", a));
+//   }
+// }
 int main(int argc, char **argv){
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();

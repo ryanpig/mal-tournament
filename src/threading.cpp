@@ -57,14 +57,14 @@ bool ThreadMgr::doTask(Task& t)
 
   // generate game
   if(!process_Mgr.generateGame(fname, t.gt)){
-    // LOG(ERROR) << "game generation failed";
+    LOG(ERROR) << t.gt.name << " generation failed";
     return false;
   }
 
   // parse matrix
   GameParser gp;
   if(!gp.parser(fname + ".game")){
-    // LOG(ERROR) << "parsing failed";
+    LOG(ERROR) << "parsing failed";
     return false;
   }
   

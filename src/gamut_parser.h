@@ -24,8 +24,11 @@ class GameParser
 		void printVec(vector<T> &v) const{for(auto &e : v) cout << e << " ,"; cout<<endl;};
     void normalize_reward(vector<float> &avg_payoff);
     void getMaxMinReward();
+    void pringActionSize(){string total; for(auto e : m_act_dim) total += to_string(e) + ","; LOG(ERROR) << total;}
+
     float max_reward;
     float min_reward;
+
 
 	private:
 		vector<vector<float>> m_matrix;

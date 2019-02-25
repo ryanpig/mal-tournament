@@ -53,7 +53,7 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
 	// flag setting
   string checkname = "check" + to_string(rand() % 500000) + ".out";
 	string cmd = "java -jar gamut.jar -g " + gt.name;
-	cmd += game_flag + " -normalize -min_payoff 1 -max_payoff 100 -int_payoffs -int_mult 1";
+	cmd += game_flag + " -normalize -min_payoff -100 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
   // cmd += " >check.out 2>&1";
   cmd += " >" + checkname + " 2>&1";
@@ -61,6 +61,8 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
 	// execute command 
 	std::string result = process_Mgr.cmd_exec(cmd);
   r = process_Mgr.generation_check(checkname);
+  if(!r) 
+    LOG(ERROR) << cmd;
 
   return r;
 }
