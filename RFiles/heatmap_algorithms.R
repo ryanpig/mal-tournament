@@ -53,15 +53,8 @@ head(combined_final)
 data=as.matrix(combined_final)
 
 # Basic heatmap
-p <-plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
+plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
 
-
-if (!require("processx")) install.packages("processx")
-
-# with normalization (right) (apply(,2,): by columns
-#png("heatmap_normal_algorithms.png", 640,640)
-#data=apply(data, 2, function(x){x/mean(x)})
-#plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
 
 ## 
 library("mosaic")#favstats
