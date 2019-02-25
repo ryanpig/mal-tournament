@@ -81,6 +81,7 @@ RandomZeroSum, GrabTheDollar, LocationGame, ArmsRace, CournotDuopoly, WarOfAttri
 CollaborationGame, RandomCompoundGame, CoordinationGame, 
 4. No parameter needed:
 Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies, HawkAndDove, ShapleysGame, TwoByTwoGame, 
+
 Total 29 types
 
 ## Reference
