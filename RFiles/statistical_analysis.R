@@ -24,23 +24,24 @@ for (i in seq(along=tables)) {
     tmp <- subset(DF, DF$round == i - 1)
     total <- total + tmp[, paste("payoff_p", i-1,sep="")]
   }
-  avg_DF <- total[] / total_iteration
+  Average_Payoff <- total[] / total_iteration
   new_DF <- tmp[, c("gametype", "type_p0", "type_p1")]
-  final <- cbind(new_DF,avg_DF)
+  final <- cbind(new_DF,Average_Payoff)
+  colnames(final)[2] <- "Main_Algorithms"
 
 ## Drawing
   png(paste(sysPath,"img/boxplot.png", sep=""), 640,480)
-  boxplot(avg_DF ~ type_p0, data=final, las=2)
+  boxplot(Average_Payoff ~ Main_Algorithms, data=final, las=2,  xlab="Main Algorithms", ylab="Average Payoffs")
   dev.off()
   
   png(paste(sysPath,"img/beanplot.png", sep=""), 640,480)
   library("ggplot2")
-  ggplot(final, aes(x=type_p0, y=avg_DF))+geom_boxplot()+geom_violin(fill='lightblue', alpha=0.5)+geom_jitter(position = position_jitter(width = .1))
+  ggplot(final, aes(x=Main_Algorithms, y=Average_Payoff))+geom_boxplot()+geom_violin(fill='lightblue', alpha=0.5)+geom_jitter(position = position_jitter(width = .1))
   dev.off()
   
 ## descriptive statistics
   library("mosaic")#favstats
-  favstats(avg_DF ~ type_p0,data=final)
+  favstats(Average_Payoff ~ Main_Algorithms,data=final)
 
 ## finish 
   dbDisconnect(con)
