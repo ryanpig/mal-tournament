@@ -63,6 +63,7 @@ Note: Tweak library pahts in Markfile after installation of libraries.
 | -y [ --permute ] arg              | run permutation of payoffs. | (Default:false)
 | -o [ --tournament ] arg           | run tournament w/ single game in all  algorithm pairs.| (Default:false)
 | -q [ --tournament_all_games ] arg | run tournament w/ all game types and all algorithms. | (Default:false)
+| -m [ --enable_multithreading ] arg | enable multithreading. | (Default:true)
 
 <a name="algorithms"></a> 
 ### Available strategies 
@@ -73,13 +74,15 @@ Random = 0 ; UCB1 = 1 ; EXP3 = 2 ; Satisficing = 3 ; EGreedy = 4 ; NGreedy = 5 ;
 <a name="gametypes"></a> 
 ### Available game types 
 1. Extentable players && extentable actions:
-RandomGame, MajorityVoting, DispersionGame, GuessTwoThirdsAve, CovariantGame, 
+RandomGame, MajorityVoting, DispersionGame, GuessTwoThirdsAve, CovariantGame, BertrandOligopoly, BidirectionalLEG, TravelersDilemma, RandomGraphicalGame, RandomLEG, UniformLEG, MinimumEffortGame, 
 2. Extentable actions:
-RandomZeroSum, GrabTheDollar, 
+RandomZeroSum, GrabTheDollar, LocationGame, ArmsRace, CournotDuopoly, WarOfAttrition, 
 3. Extentable players:
 CollaborationGame, RandomCompoundGame, CoordinationGame, 
 4. No parameter needed:
-Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies, HawkAndDove, ShapleysGame, 
+Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies, HawkAndDove, ShapleysGame, TwoByTwoGame, 
+
+Total 29 types
 
 ## Reference
 - Easy Logging library [github](https://github.com/zuhd-org/easyloggingpp)
@@ -94,11 +97,16 @@ Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies,
 ## Screenshots
 <p>
 Algorithm v.s. Algorithm in a single game type
-<img src="img/heatmap_algorithms_algorithms.png" width=800>
+<img src="img/heatmap_algorithms_algorithms_29.png" width=800>
 </p>
 <p>
-Algirhtm v.s. Algorithm in all game types
-<img src="img/heatmap_game_algorithms.png" height=600>
+Games v.s. Algorithm in all game types
+<img src="img/heatmap_game_algorithms_29.png" height=500>
+</p>
+<p>
+Games v.s. Algorithm in all game types by MAL and Bandit
+<img src="img/heatmap_game_algorithms_by_groups_29.png" height=500>
+</p>
 <img src="img/boxplot.png" width=800>
 <img src="img/beanplot.png" width=800>
 </p>
