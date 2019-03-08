@@ -26,10 +26,21 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 ## Build Dependencies 
 - Boost (program_options)
 - sqlite3 
+- gtest (already included in the repo.)
 
-Note: Tweak library pahts in Markfile after installation of libraries. 
+### Build dependencies by make only
+1. Install Boost and sqlite3 
+2. Modify coresponding library and header file paths in Makefile
+3. `make`
 
-### Simple build and test
+### Build dependencies by Conan
+1. `pip conan` (if not installed in your system)
+2. `vim ~/.conan/profiles/default` (compiler.libcxx=libstdc++11) (if gcc version > 5.1)
+3. `conan install .` (install all dep. and generate .mak)
+4. `cp Makefiles/MakefileForConan .` (use Conan version Makefile)
+5. `make` 
+
+### build and test
 - `make -j8 && ./mal`
 - `make test -j8 && ./unittest` 
 

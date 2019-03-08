@@ -1,0 +1,12 @@
+tags
+.objs
+mal
+unittest
+*.log
+log_file
+*.json
+edu/
+*.svg
+log_ubuntu.md
+conaninfo.txt
+

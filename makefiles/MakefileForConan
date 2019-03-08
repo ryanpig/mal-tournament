@@ -1,0 +1,116 @@
+include conanbuildinfo.mak
+# The name of the final executable
+TARGET := mal 
+# The directory in which to put compilation artifacts
+OBJDIR := .objs
+OBJTEST := .objstest
+SRC_DIR = src
+
+# Compiler choice and base flags
+CXX := g++ -fdiagnostics-color=always
+CXXFLAGS := -Wall -Wextra -std=c++14 -g -ffast-math -march=native -mtune=native -pthread
+LDFLAGS :=
+
+#----------------------------------------
+#     Prepare flags from variables
+#      #----------------------------------------
+
+CFLAGS          += $(CONAN_CFLAGS)
+CXXFLAGS        += $(CONAN_CXXFLAGS)
+CPPFLAGS        += $(addprefix -I, $(CONAN_INCLUDE_DIRS))
+CPPFLAGS        += $(addprefix -D, $(CONAN_DEFINES))
+LDFLAGS         += $(addprefix -L, $(CONAN_LIB_DIRS))
+LDLIBS          += $(addprefix -l, $(CONAN_LIBS))
+
+LDFLAGS         += $(LDLIBS)
+# Setting for UnitTest
+#
+TARGET_TEST := unittest 
+
+# Disable optimisation in debug mode.
+# To enable debug mode, pass e.g. DEBUG=1 as an extra argument to 'make'.
+ifeq ($(DEBUG),)
+	CXXFLAGS += -O3 
+	CXXFLAGS += -fsanitize=address 
+endif
+
+# Detect platform and enable specific features.
+UNAME_VAL := $(shell uname)
+ifeq ($(UNAME_VAL),Darwin)
+	CXXFLAGS += -DHAVE_SIGACTION -flto
+else ifeq ($(UNAME_VAL),Linux)
+	CXXFLAGS += -DHAVE_SIGACTION
+endif
+
+
+# Flags for testing
+CXXFLAGS_TEST := $(CXXFLAGS)
+LDFLAGS_TEST  := $(LDFLAGS)
+
+# Collect sources
+SRC_DIR_TEST = tests
+CXX_SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
+CXX_SOURCES_TEST := $(wildcard $(SRC_DIR_TEST)/*.cpp) 
+# CXX_SOURCES_TEST := $(wildcard tests/*.cpp) 
+
+# Compute necessary compilation artifacts
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJDIR)/%.o,$(CXX_SOURCES))
+DEP_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJDIR)/%.d,$(CXX_SOURCES))
+
+# OBJ_FILES_TEST := $(patsubst $(SRC_DIR_TEST)/%.cpp,$(OBJTEST)/%.o,$(CXX_SOURCES_TEST))
+OBJ_FILES_TEST := $(patsubst tests/%.cpp,$(OBJTEST)/%.o,$(CXX_SOURCES_TEST))
+
+
+# Generic targets
+.PHONY: all clean
+
+all: $(TARGET)
+
+# testing target
+.PHONY: test
+test: $(TARGET_TEST) 
+
+# cleaning after building
+clean:
+	rm -f $(TARGET)
+	rm -f $(TARGET_TEST)
+	rm -rf $(OBJDIR)
+	rm -rf $(OBJTEST)
+	rm -f *.o
+	rm -f error_report.txt
+	rm -f paramInfo.txt
+
+
+# Compilation rules
+$(TARGET): $(OBJ_FILES)
+	@echo LD $@
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(OBJDIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	@echo CXX $<
+	@$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJDIR)/%.d: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	@echo DEP $<
+	@$(CXX) -MT $(OBJDIR)/$*.o -MM $(CXXFLAGS) $< >$@
+
+# Compilation rules for UnitTest 
+BASIC_HEADER = $(SRC_DIR)/*.h
+SRC_TEST = tests
+OBJ_FILTER := $(filter-out $(OBJDIR)/main.o, $(OBJ_FILES)) 
+
+$(TARGET_TEST): $(OBJ_FILES_TEST) $(OBJ_FILTER)  
+	@echo link objects: $^
+	@echo LD $@
+	@$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST)  -o $@ $^ $(LDFLAGS_TEST)
+	
+$(OBJTEST)/%.o : $(SRC_TEST)/%.cpp 
+	@mkdir -p $(dir $@)
+	@echo CXX $<
+	@echo compiled *.cpp to *.o : $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -I$(SRC_DIR) -c -o $@ $< 
+
+# Make sure the dependency relations get read by 'make'
+-include $(DEP_FILES)
