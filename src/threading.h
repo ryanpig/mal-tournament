@@ -32,6 +32,7 @@ class ThreadMgr
     deque<Task> m_deque_for_creation;
     mutex m_mtx_deque, m_mtx_record;
     mutex m_mtx_deque_for_creation;
+    mutex m_mtx_processMgr;
     condition_variable cv;
     bool enable_multithreading;
     

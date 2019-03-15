@@ -51,7 +51,8 @@ void ThreadMgr::checkTask_gamecreation()
     if(m_deque_for_creation.empty()){
       // finish the thread
       enable = false;
-      this_thread::sleep_for(chrono::seconds(1));
+      lck.unlock();
+      this_thread::sleep_for(chrono::milliseconds(300));
     }else{
       Task t = m_deque_for_creation.back();
       m_deque_for_creation.pop_back();
@@ -86,9 +87,10 @@ void ThreadMgr::checkTask()
     if(m_deque.empty()){
       // finish the thread
       enable = false;
+      lck.unlock();
     }else{
-      Task t = m_deque.back();
-      m_deque.pop_back();
+      Task t = m_deque.front();
+      m_deque.pop_front();
       lck.unlock();
       if(!doTask(t))
         LOG(ERROR) << "Do task failed";
@@ -109,12 +111,15 @@ bool ThreadMgr::doTask(Task& t)
 	std::string fname = "AllGamesTournament_" + to_string(taskid);
 
   //game generation check 
+  unique_lock<mutex> lck(m_mtx_processMgr);
   string checkname = "check" + to_string(taskid) + ".out";
   if(!process_Mgr.generation_check(checkname)){
     LOG(ERROR) << t.gt.name << " generation failed";
+    lck.unlock();
     return false;
   }
-  
+  lck.unlock(); 
+
   //parse game
   GameParser gp;
   if(!gp.parser(fname + ".game")){
