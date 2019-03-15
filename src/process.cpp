@@ -5,7 +5,7 @@
 
 using namespace std;
 
-bool Process_Mgr::generateGame(string fname, const GameType gt)
+bool Process_Mgr::generateGame(string fname, const GameType gt, int taskid)
 {
   unique_lock<mutex> lck(m_mtx);
   // listParamInfo();
@@ -50,19 +50,19 @@ bool Process_Mgr::generateGame(string fname, const GameType gt)
 	bool r = process_Mgr.file_exist(filename);
 	if(r)
 		string res = process_Mgr.cmd_exec("rm -f " + filename);
+ 
 	// flag setting
-  string checkname = "check" + to_string(rand() % 500000) + ".out";
+  string checkname = "check" + to_string(taskid) + ".out";
 	string cmd = "java -jar gamut.jar -g " + gt.name;
 	cmd += game_flag + " -normalize -min_payoff -100 -max_payoff 100 -int_payoffs -int_mult 1";
 	cmd += output_flag + " -output GambitOutput";
   // cmd += " >check.out 2>&1";
-  cmd += " >" + checkname + " 2>&1";
+  cmd += " >" + checkname + " 2>&1 &";
 
 	// execute command 
-	std::string result = process_Mgr.cmd_exec(cmd);
-  r = process_Mgr.generation_check(checkname);
-  if(!r) 
-    LOG(ERROR) << cmd;
+  std::string result = process_Mgr.cmd_exec(cmd);
+  // the genearation check has moved to ThreadMgr::doTask()
+  r = true;
 
   return r;
 }
@@ -88,10 +88,10 @@ inline bool Process_Mgr::file_exist(const std::string& name) {
 	return (stat (name.c_str(), &buffer) == 0); 
 }
 
-inline bool Process_Mgr::generation_check(string filename){
+bool Process_Mgr::generation_check(string filename){
   // game generation check (Note: since Gamut only printed single line if it successfully generates)
   if(!process_Mgr.file_exist(filename)){
-    LOG(ERROR) << "check.out doesn't exist!";
+    LOG(ERROR) << filename << " doesn't exist! generation_check failed!";
     return false;
   }
 	string result = process_Mgr.cmd_exec("wc -l < "+ filename);

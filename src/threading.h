@@ -21,6 +21,7 @@ struct Task
   int iterations;
   int i;
   int j;
+  int taskid;
 };
 
 class ThreadMgr 
@@ -28,7 +29,9 @@ class ThreadMgr
   private:
     vector<thread> m_threadpool;
     deque<Task> m_deque;
+    deque<Task> m_deque_for_creation;
     mutex m_mtx_deque, m_mtx_record;
+    mutex m_mtx_deque_for_creation;
     condition_variable cv;
     bool enable_multithreading;
     
@@ -41,8 +44,14 @@ class ThreadMgr
     void startJobServer();
     void createThreads();
 
-    // worker thread
+    // worker for game creation 
+    void copyDeque();
+    void checkTask_gamecreation();
+    bool doGameCreationTask(Task& t);
+
+    // worker for game running
     void checkTask();
     bool doTask(Task& t);
     void saveToRecords(Record &record);
+
 };

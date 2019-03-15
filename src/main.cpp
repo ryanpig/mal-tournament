@@ -150,7 +150,7 @@ int main(int argc, char** argv)
     // generate a new game from Gamut
     GameType a{set_gametype, set_players, set_actions, true, true};
 
-    if(!process_Mgr.generateGame(fname, a)){
+    if(!process_Mgr.generateGame(fname, a, 99999)){
       LOG(ERROR) << "game genearation failed";
       return -1;
     }
@@ -216,6 +216,7 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 	db_mgr->deleteTable();
   int total_instatnces{0};
 
+	int taskid{0};
 	for(size_t i = 0; i < total_stratagies; i++)
 	{
 		for(size_t j = 0; j < total_stratagies; j++)
@@ -223,10 +224,11 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 			LOG(INFO) << "Game(i,j):" << i << ", " << j;
 			// generate a new game
 			// if(!process_Mgr.generateGame(fname, set_actions, set_players)){
-			if(!process_Mgr.generateGame(fname, gt)){
+			if(!process_Mgr.generateGame(fname, gt, taskid)){
         LOG(ERROR) << "game generation failed";
         return -1;
       }
+			taskid++;
 			GameParser gp;
 			if(!gp.parser(fname + ".game")){
 				LOG(ERROR) << "parsing failed";
@@ -281,6 +283,7 @@ bool GameGenerator::run_all_games(int total_iterations)
   // retrieve all available games
   auto gt_mgr = make_unique<GameTypeMgr>();
   int total_instatnces{0};
+	int taskid{0};
 
 	for(size_t i = 0; i < total_stratagies; i++)
 	{
@@ -291,10 +294,11 @@ bool GameGenerator::run_all_games(int total_iterations)
       for(auto gt : gt_mgr->getCollection())
       {
         // generate game
-        if(!process_Mgr.generateGame(fname, gt)){
+        if(!process_Mgr.generateGame(fname, gt, taskid)){
           LOG(ERROR) << "game generation failed";
           return false;
         }
+				taskid++;
         // parse matrix
         GameParser gp;
         if(!gp.parser(fname + ".game")){
@@ -352,7 +356,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, bool set_mt)
   int total_instatnces{0};
 
   ThreadMgr tmgr(set_mt);
-
+	int taskid = 0;
   for(int i = 0; i < total_stratagies; i++)
 	{
 		for(int j = 0; j < total_stratagies; j++)
@@ -361,9 +365,10 @@ bool GameGenerator::run_all_games_mt(int total_iterations, bool set_mt)
       // loop games
       for(const auto gt : gt_mgr->getCollection())
       {
-        Task task{gt, set_players, set_actions, set_rounds, iterations, i, j};
+        Task task{gt, set_players, set_actions, set_rounds, iterations, i, j, taskid};
         tmgr.addTask(task);
         total_instatnces += 2; 
+				taskid++;
       }
 		}
 	}
@@ -371,6 +376,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, bool set_mt)
   // start the job server
   LOG(INFO) << "start job server...";
   LOG(INFO) << "total tasks:" << tmgr.totalTasks();
+	tmgr.copyDeque();
   tmgr.startJobServer();
 
 	// Insert to database

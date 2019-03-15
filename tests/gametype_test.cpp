@@ -22,7 +22,7 @@ bool generateTest()
 	std::string fname = "RandTest";
   Process_Mgr p;
   GameType gt{"RandomGame", 2, 2, true, true};
-	p.generateGame(fname, gt); // action size, players
+	p.generateGame(fname, gt, 999991); // action size, players
 	GameParser gp;
 	if(!gp.parser(fname + ".game")){
 		cout << "parsing failed" << endl;
@@ -55,7 +55,7 @@ TEST_F(generategame, anygame) {
   for(auto a : gtm->getCollection()){
     // GameType a{s, 2, 2, true, true};
     cout << "testing..." << a.name << endl;
-    EXPECT_TRUE(p.generateGame("unittest", a));
+    EXPECT_TRUE(p.generateGame("unittest", a, 999992));
   }
 }
 
@@ -66,7 +66,7 @@ TEST_F(generategame, bogame) {
   for(int i; i < 20; i++)
   {
     cout << "Single game test:" << a.name << endl;
-    EXPECT_TRUE(p.generateGame("unittest", a));
+    EXPECT_TRUE(p.generateGame("unittest", a, 999993));
   }
 }
 
