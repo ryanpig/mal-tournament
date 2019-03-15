@@ -103,9 +103,12 @@ Total 29 types
 	- 16m19s (debug mode, single thread)
 	- 9m3s (debug mode, multi-thread)
 	- **5m18s** (release mode, multi-thread)
+	- **(New)3m13s** (release mode, multi-thread, change the working flow to two stage operation) (Refer to the *pull-request game-create-run-separation*)
 - Possible improvement:
-	- using asynchronous threads for database I/O and game file creation to achieve non-blocking executions. 
+	- using asynchronous threads for database I/O and game file creation to achieve non-blocking executions.  (Done)
 	- using pre-generated game files. 
+	- algorithm execution in each step
+	- others
 
 ## Reference
 - Easy Logging library [github](https://github.com/zuhd-org/easyloggingpp)
