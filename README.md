@@ -30,7 +30,7 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 
 ### Build dependencies by make only
 1. Install Boost and sqlite3 
-2. Modify coresponding library and header file paths in Makefile
+2. Modify corresponding library and header file paths in Makefile
 3. `make`
 
 ### Build dependencies by Conan
@@ -53,7 +53,7 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 1. RandomGame w/ 2 players 2 actions in Softmax v.s. FictitiousPlay algorithm: `./mal -g RandomGame -a 2 -p 2 -s 6 -e 8`
 2. Run the tournament w/ all algorithms in a 2-player game w/ 3000 iterations
 `./mal -o true -r 3000`
-3. Run the tournament w/ all algorithm paris in all game types
+3. Run the tournament w/ all algorithm pairs in all game types
 `./mal -q true`
 
 ## Command line flags 
