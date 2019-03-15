@@ -95,6 +95,18 @@ Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies,
 
 Total 29 types
 
+## Running time performance
+- Testing condition
+	- Hardware:  (Intel(R) Xeon(R) CPU E3-1231 v3 @3.4GHz , 8 cores
+	- Total Game Instances: 5800 2-player 2 actions game instances w/  10000 steps
+- Result:
+	- 16m19s (debug mode, single thread)
+	- 9m3s (debug mode, multi-thread)
+	- **5m18s** (release mode, multi-thread)
+- Possible improvement:
+	- using asynchronous threads for database I/O and game file creation to achieve non-blocking executions. 
+	- using pre-generated game files. 
+
 ## Reference
 - Easy Logging library [github](https://github.com/zuhd-org/easyloggingpp)
 - Google test [github](https://github.com/google/googletest) <a name="googletest"></a>
