@@ -117,10 +117,14 @@ int Strategy_UCB1::exec(Info &inf)
  *  */
 
 // TODO: think how to pass reward to calculation (e.g. update weights by previous reward?)
-static const float rewardMax = 100.0f;
-static const float rewardMin = 0.0f;
 int Strategy_EXP3::exec(Info &inf)
 {
+  // initialization 
+  if(inf.m_cur_round == 1)
+  {
+    rewardMax = inf.gp->getMaxReward();
+    rewardMin = inf.gp->getMinReward();
+  }
 	// retrive info from previous action/reward
 	float reward = inf.last_reward; 	
 	int last_action = inf.last_action;
@@ -131,8 +135,8 @@ int Strategy_EXP3::exec(Info &inf)
 	float estimated_reward = scaledReward / probs[last_action]; 
 	weights[last_action] *= exp(gamma * estimated_reward / weights.size());
 	// for output
-	weights_history.push_back(weights);
-	probs_history.push_back(probs);
+	// weights_history.push_back(weights);
+	// probs_history.push_back(probs);
 	// TODO: check this compared to normalization
   // check if any weight is too large to be out of range
 	checkMaxRange(weights, 0.5, 1000000000.0f);

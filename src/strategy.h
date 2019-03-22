@@ -103,8 +103,9 @@ class Strategy_EXP3: public Strategy
 		vector<vector<float>> weights_history, probs_history;
 		float gamma; 
 		default_random_engine random_eng;
+    float rewardMax, rewardMin;
 		// Constructor
-		Strategy_EXP3(int act) : Strategy(act, StrategyType::EXP3), gamma(0.07)
+		Strategy_EXP3(int act) : Strategy(act, StrategyType::EXP3), gamma(0.07) 
 		{
 			weights.resize(action_size, 1.0f);
 			probs.resize(action_size, 0.0f);
