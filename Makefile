@@ -7,17 +7,18 @@ SRC_DIR = src
 
 # Compiler choice and base flags
 CXX := g++ -fdiagnostics-color=always
-CXXFLAGS := -Wall -Wextra -std=c++14 -g -ffast-math -march=native -mtune=native -pthread
+CXXFLAGS := -Wall -Wextra -std=c++14 -ffast-math -march=native -mtune=native -pthread
 LDFLAGS :=
 
 # Setting for UnitTest
 TARGET_TEST := unittest 
 
-# Disable optimisation in debug mode.
-# To enable debug mode, pass e.g. DEBUG=1 as an extra argument to 'make'.
-ifeq ($(DEBUG),)
-	CXXFLAGS += -O3 
-	CXXFLAGS += -fsanitize=address 
+# Disable optimisation in debug mode. 
+# To enable debug mode, pass DEBUG=1 as an extra argument to 'make'.
+ifeq ($(DEBUG), 1)
+	CXXFLAGS += -g -fsanitize=address 
+else 
+  CXXFLAGS += -O3
 endif
 
 # Detect platform and enable specific features.

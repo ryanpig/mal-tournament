@@ -25,20 +25,26 @@ void ThreadMgr::startJobServer()
 void ThreadMgr::createThreads()
 {
   const int available_cores = enable_multithreading ? thread::hardware_concurrency() : 1;
+  bool run_game_creation{true}; // TODO: add it as a command-line flag
+  bool run_game_running{true};
 
   // game creation 
-  vector<thread> threadpool_gamecreation;
-  for(int i = 0; i < available_cores; i++){
-    threadpool_gamecreation.push_back(thread(&ThreadMgr::checkTask_gamecreation, this));
+  if(run_game_creation) {
+    vector<thread> threadpool_gamecreation;
+    for(int i = 0; i < available_cores; i++){
+      threadpool_gamecreation.push_back(thread(&ThreadMgr::checkTask_gamecreation, this));
+    }
+    for(auto &t : threadpool_gamecreation)
+      t.join();
   }
-  for(auto &t : threadpool_gamecreation)
-    t.join();
 
   // game running
-  for(int i = 0; i < available_cores; i++){
-    m_threadpool.push_back(thread(&ThreadMgr::checkTask, this));
+  if(run_game_running) {
+    for(int i = 0; i < available_cores; i++){
+      m_threadpool.push_back(thread(&ThreadMgr::checkTask, this));
+    }
+    LOG(INFO) << "create " << available_cores << " worker thread!";
   }
-  LOG(INFO) << "create " << available_cores << " worker thread!";
 }
 
 // worker thread of game creation

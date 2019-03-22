@@ -25,16 +25,15 @@ class GameParser
     void normalize_reward(vector<float> &avg_payoff);
     void getMaxMinReward();
     void pringActionSize(){string total; for(auto e : m_act_dim) total += to_string(e) + ","; LOG(ERROR) << total;}
-
-    float max_reward;
-    float min_reward;
-
+    float getMaxReward() const noexcept {return max_reward;} 
+    float getMinReward() const noexcept {return min_reward;} 
 
 	private:
 		vector<vector<float>> m_matrix;
 		vector<int> m_act_dim;
 		int m_index_max;
-
+    float max_reward;
+    float min_reward;
 };
 
 inline int multi(const vector<int> &v)

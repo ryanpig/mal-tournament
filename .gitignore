@@ -9,4 +9,6 @@ edu/
 *.svg
 log_ubuntu.md
 conaninfo.txt
+*.out
+*.game
 

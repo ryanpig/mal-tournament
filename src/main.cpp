@@ -145,15 +145,29 @@ int main(int argc, char** argv)
   {
     LOG(INFO) << "---Normal single game mode w/ single algorithm pair---";
     LOG(INFO) << "---Generate a game from Gamut ---" << endl;
-    std::string fname = "RandNew1";
+    std::string fname_root = "RandSingleGame";
+		int taskid{99999};
+    std::string fname = fname_root + to_string(taskid);
 
     // generate a new game from Gamut
-    GameType a{set_gametype, set_players, set_actions, true, true};
+    GameType gt{set_gametype, set_players, set_actions, true, true};
 
-    if(!process_Mgr.generateGame(fname, a, 99999)){
+    if(!process_Mgr.generateGame(fname, gt, taskid)){
       LOG(ERROR) << "game genearation failed";
       return -1;
     }
+
+		// game generation check
+		string checkname = "check" + to_string(taskid) + ".out";
+		int timeout{0};
+		while(!process_Mgr.generation_check(checkname)){
+			if(timeout >=1000){
+				LOG(ERROR) << gt.name << " generation failed";
+				return -1;
+			}
+			timeout += 100;
+			this_thread::sleep_for(chrono::milliseconds(100));
+		}
 
     // parse the game 
     GameParser gp;
@@ -204,7 +218,7 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
 	size_t total_stratagies = 10; 
-	std::string fname = "RandTournament";
+	std::string fname_root = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
   auto db_mgr = std::move(SQLMgr::getInstance(SQLITE_DB_PATH, "TESTTABLE"));
@@ -223,12 +237,23 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 		{
 			LOG(INFO) << "Game(i,j):" << i << ", " << j;
 			// generate a new game
-			// if(!process_Mgr.generateGame(fname, set_actions, set_players)){
+			string fname = fname_root + to_string(taskid);		
 			if(!process_Mgr.generateGame(fname, gt, taskid)){
         LOG(ERROR) << "game generation failed";
         return -1;
       }
-			taskid++;
+			// game generation check
+			string checkname = "check" + to_string(taskid) + ".out";
+			int timeout{0};
+			while(!process_Mgr.generation_check(checkname)){
+				if(timeout >=1000){
+					LOG(ERROR) << gt.name << " generation failed";
+					return -1;
+				}
+				timeout += 100;
+				this_thread::sleep_for(chrono::milliseconds(100));
+			}
+			// parsing
 			GameParser gp;
 			if(!gp.parser(fname + ".game")){
 				LOG(ERROR) << "parsing failed";
@@ -254,6 +279,7 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 					
         total_instatnces++; 
 			}
+			taskid++;
 		}
 	}
 

@@ -59,11 +59,11 @@ TEST_F(generategame, anygame) {
   }
 }
 
-// repeat tet the same game type
+// repeat test the same game type
 TEST_F(generategame, bogame) {
   GameType a{"BertrandOligopoly", 2, 2, true, true};
   Process_Mgr p;
-  for(int i; i < 20; i++)
+  for(int i = 0; i < 20; i++)
   {
     cout << "Single game test:" << a.name << endl;
     EXPECT_TRUE(p.generateGame("unittest", a, 999993));

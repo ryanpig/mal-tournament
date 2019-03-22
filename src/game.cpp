@@ -194,8 +194,8 @@ void Game::print_final_result()
 	string padding  = "         ";
 	string padding1 = "Avg. Pay."; 
 	string padding2 = "Avg. Reg."; 
-  float maxPay = m_game_parser->max_reward;
-  float minPay = m_game_parser->min_reward;
+  float maxPay = m_game_parser->getMaxReward();
+  float minPay = m_game_parser->getMinReward();
 	cout << "---FINAL---" << endl;
 	cout << padding;
 	for(auto &p : m_players)
