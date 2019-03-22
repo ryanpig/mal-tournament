@@ -159,6 +159,130 @@ TEST_F(multiplayer, allalgorithm2p) {
   EXPECT_TRUE(global_count == iterations * total_stratagies);
 }
 
+TEST_F(multiplayer, allalgorithm3p) {
+  // configuration
+  const int taskid{999995}; 
+  const int set_players{3};
+  const int set_actions{2};
+  const int set_steps{200};
+  const bool set_permute{true}; 
+  const string set_gametype{"RandomGame"};
+	const bool set_print_flag{false};
+  const int set_print_top{0};
+  const int set_print_last{0};
+	const int set_opp_strategy = 0;
+	const int total_stratagies = 10; // strategy_Mgr.getTypeVector().size();
+  const string fname_root{"unittest"};
+  const string fname{fname_root + to_string(taskid)};
+  int global_count{0};
+  // game generation
+  Process_Mgr p;
+  GameType a{set_gametype, set_players, set_actions, true, true};
+  EXPECT_TRUE(p.generateGame(fname, a, taskid));
+  // game generation check
+  string checkname = "check" + to_string(taskid) + ".out";
+  int timeout{0};
+  while(!process_Mgr.generation_check(checkname)){
+    EXPECT_TRUE(timeout <=1000);
+    timeout += 100;
+    this_thread::sleep_for(chrono::milliseconds(100));
+  }
+  // game parsing
+	GameParser gp;
+	EXPECT_TRUE(gp.parser(fname + ".game"));
+  // play game for each algorithm
+  
+  // start a game
+  int iterations{1};
+  // allow to iterate player to use the single strategy to eliminate the bias
+  if(set_permute) iterations = set_players; 
+    
+  // run all algorithms v.s. random in a single game 
+  for(int set_main_strategy = 0; set_main_strategy < total_stratagies; ++set_main_strategy)
+  {
+    StrategyType s_type  = static_cast<StrategyType>(set_main_strategy); 
+    StrategyType opp_type  = static_cast<StrategyType>(set_opp_strategy);
+    for(int permuteid = 0; permuteid < iterations; permuteid++)
+    {
+      Game testgame(permuteid, set_steps, set_players, set_print_top, set_print_last, gp, permuteid, set_print_flag, s_type, opp_type);
+      testgame.run();
+      vector<float> results = testgame.getFinalResult();
+      for(auto& r : results)
+      {
+        EXPECT_TRUE(r > 0.0 && r <= 1.0);
+      }
+      global_count++;
+    }
+  }
+
+  LOG(INFO) << "Toatl instances" << global_count << "Total strategies:" << total_stratagies;
+  EXPECT_TRUE(global_count == iterations * total_stratagies);
+}
+
+TEST_F(multiplayer, allalgorithmnp) {
+  // configuration
+  const int taskid{999996}; 
+  // const int set_players{4}; // the number of players until n
+  const int set_actions{2};
+  const int set_steps{200};
+  const bool set_permute{true}; 
+  const string set_gametype{"RandomGame"};
+	const bool set_print_flag{false};
+  const int set_print_top{0};
+  const int set_print_last{0};
+	const int set_opp_strategy = 0;
+	const int total_stratagies = 10; // strategy_Mgr.getTypeVector().size();
+  const string fname_root{"unittest"};
+  const string fname{fname_root + to_string(taskid)};
+  const vector<int> playerSet{4, 5, 6, 7, 8, 9, 10, 11}; // TODO:failed in 12 with the game generation failure. 1. remove normalization?
+  for(auto set_players : playerSet)
+  {
+    int global_count{0};
+    // game generation
+    Process_Mgr p;
+    GameType a{set_gametype, set_players, set_actions, true, true};
+    EXPECT_TRUE(p.generateGame(fname, a, taskid));
+    // game generation check
+    string checkname = "check" + to_string(taskid) + ".out";
+    int timeout{0};
+    while(!process_Mgr.generation_check(checkname)){
+      EXPECT_TRUE(timeout <=1000);
+      timeout += 100;
+      this_thread::sleep_for(chrono::milliseconds(100));
+    }
+    // game parsing
+    GameParser gp;
+    EXPECT_TRUE(gp.parser(fname + ".game"));
+    // play game for each algorithm
+    
+    // start a game
+    int iterations{1};
+    // allow to iterate player to use the single strategy to eliminate the bias
+    if(set_permute) iterations = set_players; 
+      
+    // run all algorithms v.s. random in a single game 
+    for(int set_main_strategy = 0; set_main_strategy < total_stratagies; ++set_main_strategy)
+    {
+      StrategyType s_type  = static_cast<StrategyType>(set_main_strategy); 
+      StrategyType opp_type  = static_cast<StrategyType>(set_opp_strategy);
+      for(int permuteid = 0; permuteid < iterations; permuteid++)
+      {
+        Game testgame(permuteid, set_steps, set_players, set_print_top, set_print_last, gp, permuteid, set_print_flag, s_type, opp_type);
+        testgame.run();
+        vector<float> results = testgame.getFinalResult();
+        for(auto& r : results)
+        {
+          EXPECT_TRUE(r > 0.0 && r <= 1.0);
+        }
+        global_count++;
+      }
+    }
+
+    LOG(INFO) << "Toatl instances" << global_count << "Total strategies:" << total_stratagies;
+    EXPECT_TRUE(global_count == iterations * total_stratagies );
+  }
+
+}
 int main(int argc, char **argv){
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();

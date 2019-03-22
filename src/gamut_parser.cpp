@@ -84,7 +84,7 @@ bool GameParser::parser(string filename)
 
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
   // 1. check cell number , 2. check each cell has the number of player 3. check cell number is not too much huge
-  size_t threshold_action_size = 20;
+  size_t threshold_action_size = 2 << 20 ; // limit the number of player <= 20 in a 2 action game
 	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size() && m_matrix.size() <= threshold_action_size) {
 		m_index_max = multi(m_act_dim);
     // set max min reward;
@@ -92,7 +92,7 @@ bool GameParser::parser(string filename)
     LOG(INFO) << "Parsing succeeded!";
     return true;
 	}else{
-    LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size();
+    LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << " or " <<  m_matrix.size() << " >= " << threshold_action_size;
     return false;
 	}
 }
