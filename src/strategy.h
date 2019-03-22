@@ -11,6 +11,7 @@
 #include "easylogging++.h"
 #include <mutex>
 
+#pragma once
 using namespace std;
 
 enum StrategyType {Random , UCB1 , EXP3, Satisficing, EGreedy, NGreedy, Softmax, NoRegret, FP, QL, BrFP, Markov}; 
