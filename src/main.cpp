@@ -247,8 +247,8 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 			int timeout{0};
 			while(!process_Mgr.generation_check(checkname)){
 				if(timeout >=1000){
-					LOG(ERROR) << gt.name << " generation failed";
-					return -1;
+					LOG(ERROR) << gt.name << " generation failed:" << checkname;
+					continue;
 				}
 				timeout += 100;
 				this_thread::sleep_for(chrono::milliseconds(100));
@@ -256,8 +256,8 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 			// parsing
 			GameParser gp;
 			if(!gp.parser(fname + ".game")){
-				LOG(ERROR) << "parsing failed";
-				return -1;
+				LOG(ERROR) << "parsing failed:" << fname << ".game";
+				continue;
 			}
 			// swap players
 			vector<float> sum_vec(set_players, 0.0);
@@ -272,8 +272,8 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 				Record r{
           set_gametype, 
           permuteid, set_actions, set_players, set_rounds, 
-          str_mgr->getname(s_type), tmp[0],
-          str_mgr->getname(opp_type), tmp[1]
+          str_mgr->getname(s_type), tmp[permuteid], // only record the avg. of main algorithm 
+          str_mgr->getname(opp_type), 0.0f 
         };
 				vec_records.push_back(r);
 					
@@ -345,8 +345,8 @@ bool GameGenerator::run_all_games(int total_iterations)
           Record r{
             gt.name,
             permuteid, set_actions, set_players, set_rounds, 
-            str_mgr->getname(s_type), tmp[0],
-            str_mgr->getname(opp_type), tmp[1]
+            str_mgr->getname(s_type), tmp[permuteid],
+            str_mgr->getname(opp_type), 0.0f 
           };
           vec_records.push_back(r);
           

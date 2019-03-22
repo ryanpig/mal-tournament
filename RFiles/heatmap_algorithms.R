@@ -22,7 +22,7 @@ total[] = 0
 ## get average of payoffs
 for(i in seq(total_iteration)){
   tmp <- subset(DF, DF$round == i - 1)
-  total <- total + tmp[, paste("payoff_p", i-1,sep="")]
+  total <- total + tmp[, paste("payoff_p", 0,sep="")]
 }
 avg_DF <- total[] / total_iteration * 100
 new_DF <- tmp[, c("gametype", "type_p0", "type_p1")]

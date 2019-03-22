@@ -332,7 +332,7 @@ void GameParser::getMaxMinReward(){
   // checking
   if(max_reward == min_reward)
     LOG(ERROR) << "(Normalization check) " << "max_reward:" << max_reward << ", min_reward:" << min_reward;
-  if(count >= 20)
+  if(count >= (2<<20))
     LOG(ERROR) << "Total action action size is too huge!" << count;
 }
 
