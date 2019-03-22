@@ -100,10 +100,12 @@ Total 29 types
 	- Hardware:  (Intel(R) Xeon(R) CPU E3-1231 v3 @3.4GHz , 8 cores
 	- Total Game Instances: 5800 2-player 2 actions game instances w/  10000 steps
 - Result:
-	- 16m19s (debug mode, single thread)
-	- 9m3s (debug mode, multi-thread)
-	- **5m18s** (release mode, multi-thread)
-	- **(New)3m13s** (release mode, multi-thread, change the working flow to two stage operation) (Refer to the *pull-request game-create-run-separation*)
+	- **16m19s** (debug mode, single thread)
+	- **9m3s** (debug mode, multi-thread)
+	- **5m18s** (debug mode, multi-thread, turn off -f)
+	- **3m13s** (debug mode, multi-thread, change the working flow to two stage operation) (Refer to the *pull-request game-create-run-separation*)
+	- **1m51s** (release mode, use compiler flag -O3 only) 
+	- **1m06s** (use pre-generated games)
 - Possible improvement:
 	- using asynchronous threads for database I/O and game file creation to achieve non-blocking executions.  (Done)
 	- using pre-generated game files. 
@@ -137,3 +139,4 @@ Games v.s. Algorithm in all game types by MAL and Bandit
 <img src="img/beanplot.png" width=800>
 </p>
 
+j

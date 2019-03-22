@@ -88,7 +88,7 @@ bool GameParser::parser(string filename)
 	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size() && m_matrix.size() <= threshold_action_size) {
 		m_index_max = multi(m_act_dim);
     // set max min reward;
-    // getMaxMinReward();
+    getMaxMinReward();
     LOG(INFO) << "Parsing succeeded!";
     return true;
 	}else{
@@ -329,6 +329,9 @@ void GameParser::getMaxMinReward(){
 
 	LOG(INFO) << "Total items:" << count;
   LOG(INFO) << "Maximum reward:" << max_reward << ", Minimum reward:" << min_reward;
+  // checking
+  if(max_reward == min_reward)
+    LOG(ERROR) << "(Normalization check) " << "max_reward:" << max_reward << ", min_reward:" << min_reward;
   if(count >= 20)
     LOG(ERROR) << "Total action action size is too huge!" << count;
 }
