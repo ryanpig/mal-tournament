@@ -204,20 +204,19 @@ void cleanTempFiles()
   string res = process_Mgr.cmd_exec(cmd);
 }
 
-
+/* Run the tournament with all algorithm pairs in a single game type
+ * 1. access fo available strategies
+ * 2. generate all combinations (e.g Random v.s. Random, Random v.s. UCB1, Random v.s. EXP3 etc)
+ * 3. create a new game instance (including parsing)
+ * 4. play in the same instance w/ player permutation 
+ */
 bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
 {
-	// access fo available strategies
-	// generate all combinations (e.g Random v.s. Random, Random v.s. UCB1, Random v.s. EXP3 etc)
-	// create a new game instance (including parsing)
-	// play in the same instance w/ player permutation 
-	//
-	// configuration of each game
+	// configuration for each game
 	int set_actions = gt.actions, set_players = gt.players, set_rounds{total_iterations};
   string set_gametype = gt.name;
 	int iterations{set_players};
-	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	size_t total_stratagies = 10; 
+	size_t total_stratagies = 10; // = strategy_Mgr.getTypeVector().size();
 	std::string fname_root = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
@@ -229,6 +228,12 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
   db_mgr->createTable();
 	db_mgr->deleteTable();
   int total_instatnces{0};
+
+	// n-player ganme type check
+	if(set_players > 2){
+		auto nplayerCheck = [](GameType &gt){return gt.allow_more_players && gt.name != "CollaborationGame" && gt.name != "CoordinationGame";};
+		if(!nplayerCheck(gt)) LOG(ERROR) << "the gamtype doesn't support n-player(>2):" << gt.name;
+	}
 
 	int taskid{0};
 	for(size_t i = 0; i < total_stratagies; i++)
@@ -242,23 +247,35 @@ bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
         LOG(ERROR) << "game generation failed";
         return -1;
       }
-			// game generation check
+
+			// game generation check and parsing 
 			string checkname = "check" + to_string(taskid) + ".out";
-			int timeout{0};
-			while(!process_Mgr.generation_check(checkname)){
-				if(timeout >=1000){
-					LOG(ERROR) << gt.name << " generation failed:" << checkname;
-					continue;
-				}
-				timeout += 100;
-				this_thread::sleep_for(chrono::milliseconds(100));
-			}
-			// parsing
 			GameParser gp;
-			if(!gp.parser(fname + ".game")){
-				LOG(ERROR) << "parsing failed:" << fname << ".game";
+      int timecount{0};
+      bool r{false};
+
+      while((timecount++) <= 30){
+        LOG(INFO) << "trying:" << timecount;
+        if(process_Mgr.generation_check(checkname))
+        {
+          // game parsing
+          auto gp_tmp = make_unique<GameParser>(); 
+          if(gp_tmp->parser(fname + ".game"))
+          {
+            r = true;
+            gp = *(gp_tmp.release());
+            break;
+          }
+        }
+        this_thread::sleep_for(chrono::milliseconds(100));
+      }
+			
+			if(!r){
+				LOG(ERROR) << "parsing failed:" << fname << ".game" << ", gametype: " << gt.name <<  ", players: " <<  to_string(set_players);
+				taskid++;
 				continue;
 			}
+
 			// swap players
 			vector<float> sum_vec(set_players, 0.0);
 			for(int permuteid = 0; permuteid < iterations; permuteid++)

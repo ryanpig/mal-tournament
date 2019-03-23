@@ -296,48 +296,46 @@ TEST_F(multiplayer, generategame) {
   Process_Mgr p;
   int global_count{0};
   vector<string> error_summary;
+  auto nplayerCheck = [](GameType &gt){return gt.allow_more_players && gt.name != "CollaborationGame" && gt.name != "CoordinationGame";};
   // retrieve all game names from the list. 
   for(auto set_players : playerSet)
   {
     for(auto gt : gtm->getCollection())
     {
-      if(gt.allow_more_players)
-      {
-        if(gt.name == "CollaborationGame" || gt.name == "CoordinationGame") continue;
-        string fname{fname_root + to_string(++taskid)};
-        // game generation
-        Process_Mgr p;
-        GameType a = gt;
-        a.players = set_players;
-        a.actions = set_actions;
-        GameParser *gp{nullptr};
-        EXPECT_TRUE(p.generateGame(fname, a, taskid));
-        // game generation check
-        string checkname = "check" + to_string(taskid) + ".out";
-        int timecount{0};
-        bool r{false};
-        // combine generation check and parsing check, because generation check may pass but the game file is not ready for use. 
-        while((timecount++) <= 30){
-          LOG(INFO) << "trying:" << timecount;
-          if(process_Mgr.generation_check(checkname))
+      if(!nplayerCheck(gt)) continue;
+      string fname{fname_root + to_string(++taskid)};
+      // game generation
+      Process_Mgr p;
+      GameType a = gt;
+      a.players = set_players;
+      a.actions = set_actions;
+      GameParser *gp{nullptr};
+      EXPECT_TRUE(p.generateGame(fname, a, taskid));
+      // game generation check
+      string checkname = "check" + to_string(taskid) + ".out";
+      int timecount{0};
+      bool r{false};
+      // combine generation check and parsing check, because generation check may pass but the game file is not ready for use. 
+      while((timecount++) <= 30){
+        LOG(INFO) << "trying:" << timecount;
+        if(process_Mgr.generation_check(checkname))
+        {
+          // game parsing
+          auto gp_tmp = make_unique<GameParser>(); 
+          if(gp_tmp->parser(fname + ".game"))
           {
-            // game parsing
-            auto gp_tmp = make_unique<GameParser>(); 
-            if(gp_tmp->parser(fname + ".game"))
-            {
-              r = true;
-              gp = gp_tmp.release();
-              break;
-            }
+            r = true;
+            gp = gp_tmp.release();
+            break;
           }
-          if(timecount == 25)
-            error_summary.push_back(string(gt.name + "-" + to_string(set_players)));
-          this_thread::sleep_for(chrono::milliseconds(100));
         }
-        EXPECT_TRUE(r);
-        EXPECT_TRUE(gp != nullptr);
-        global_count++;
+        if(timecount == 25)
+          error_summary.push_back(string(gt.name + "-" + to_string(set_players)));
+        this_thread::sleep_for(chrono::milliseconds(100));
       }
+      EXPECT_TRUE(r);
+      EXPECT_TRUE(gp != nullptr);
+      global_count++;
     }
   }
   LOG(INFO) << "Toatl instances" << global_count; 
