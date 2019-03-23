@@ -418,10 +418,10 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
       {
 				// set to n player
 				gt.players = set_players;
-				if(set_players > 2){
+				if(set_players >= 2){
 					if(!nplayerCheck(gt))
 					{	
-						LOG(INFO) << "skip gametype doesn't support >2 player:" << gt.name;
+						// LOG(INFO) << "skip gametype doesn't support >2 player:" << gt.name;
 						continue;
 					}
 				}
