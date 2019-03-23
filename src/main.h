@@ -13,5 +13,5 @@ class GameGenerator
 	public:
 		bool run_tournament(int total_rounds, GameType& gt);
     bool run_all_games(int total_rounds);
-    bool run_all_games_mt(int total_rounds, bool set_mt);
+    bool run_all_games_mt(int total_rounds, int set_players, int set_actions, bool set_mt);
 };

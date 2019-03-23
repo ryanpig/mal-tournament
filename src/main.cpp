@@ -132,7 +132,7 @@ int main(int argc, char** argv)
     LOG(INFO) << "---Tournament All Game Mode w/ all game types---";
 		GameGenerator gg;
 		// if(!gg.run_all_games(set_rounds))
-		if(!gg.run_all_games_mt(set_rounds, set_mt))
+		if(!gg.run_all_games_mt(set_rounds, set_players, set_actions,  set_mt))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -364,11 +364,12 @@ bool GameGenerator::run_all_games(int total_iterations)
 	return true;
 }
 
-bool GameGenerator::run_all_games_mt(int total_iterations, bool set_mt)
+bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int set_actions, bool set_mt)
 {
 
 	// configuration of each game
-	int set_actions{2}, set_players{2}, set_rounds{total_iterations};
+	// int set_actions{2}, set_players{2}, set_rounds{total_iterations};
+	int set_rounds{total_iterations};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
 	int total_stratagies = 10; 

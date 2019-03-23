@@ -17,41 +17,59 @@ bool GameParser::parser(string filename)
 	}
 	
 	// parsing line by line, and save result to a vector
+  const int maxActionSize{4};
+  const int maxElementCount{65535}; // allows 12 players with 2 actions
 	std::string line;
 	bool start_flag = false;
 	std::vector<float> parsed_vec;
 	string find_action = "Actions:";
-
-	while(std::getline(infile, line))
-	{
-		// parsing action size
-		size_t pos = line.find(find_action);
-		if(pos != string::npos)
-		{
-			line.erase(pos, find_action.length()); 
-			std::istringstream iss1(line);
-			std::string token1;
-			while(std::getline(iss1, token1,' '))
-			{
-				m_act_dim.push_back(std::stoi(token1.c_str()));	
-			}
-		}
-		// parsing payoff data, save to a vector 
-		if(start_flag)
-		{
-			std::istringstream iss(line);
-			std::string token;
-			char delim = ' ';
-			while(std::getline(iss, token, delim))
-			{
-				parsed_vec.push_back(std::stof(token.c_str()));	
-			}
-			// std::cout << line << std::endl;
-		}
-		// if empty line, start to parse data
-		if(line.size() == 0)
-			start_flag = true;	
-	}
+  LOG(INFO) << "pasring start";
+  try
+  {
+    while(std::getline(infile, line))
+    {
+      // parsing action size
+      size_t pos = line.find(find_action);
+      if(pos != string::npos)
+      {
+        line.erase(pos, find_action.length()); 
+        std::istringstream iss1(line);
+        std::string token1;
+        while(std::getline(iss1, token1,' '))
+        {
+          m_act_dim.push_back(std::stoi(token1.c_str()));	
+          if(std::stoi(token1.c_str()) > maxActionSize){
+            LOG(ERROR) << "action size > " << maxActionSize << " : " << token1.c_str();
+            return false;
+          }
+        }
+      }
+      // parsing payoff data, save to a vector 
+      if(start_flag)
+      {
+        std::istringstream iss(line);
+        std::string token;
+        char delim = ' ';
+        int elementCount{0};
+        while(std::getline(iss, token, delim))
+        {
+          if(elementCount++ > maxElementCount){
+            LOG(ERROR) << "parsing elementCount " << elementCount << ">" << maxElementCount;
+            return false;
+          }
+          parsed_vec.push_back(std::stof(token.c_str()));	
+        }
+        // std::cout << line << std::endl;
+      }
+      // if empty line, start to parse data
+      if(line.size() == 0){
+        start_flag = true;	
+      }
+    }
+  } catch(exception &e) {
+    LOG(ERROR) << "exception: " << e.what();
+    return false;
+  }
 
 	// parsing result
   string concatenateStr;
@@ -81,18 +99,18 @@ bool GameParser::parser(string filename)
 			
 		return mat;
 	};
-
+  // empty check for parsed vector 
+  if(parsed_vec.size() == 0){LOG(ERROR) << "zero parsing size"; return false;}
 	m_matrix = vecToMatrix(parsed_vec, m_act_dim);
   // 1. check cell number , 2. check each cell has the number of player 3. check cell number is not too much huge
-  size_t threshold_action_size = 2 << 20 ; // limit the number of player <= 20 in a 2 action game
-	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size() && m_matrix.size() <= threshold_action_size) {
+	if((int)m_matrix.size() == multi(m_act_dim) && m_matrix[0].size() == m_act_dim.size() && m_matrix.size() <= maxElementCount) {
 		m_index_max = multi(m_act_dim);
     // set max min reward;
     getMaxMinReward();
     LOG(INFO) << "Parsing succeeded!";
     return true;
 	}else{
-    LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << " or " <<  m_matrix.size() << " >= " << threshold_action_size;
+    LOG(ERROR) << "Parsing failed: " << m_matrix.size() <<  " != " << multi(m_act_dim) << " or " << m_matrix[0].size() << " != " << m_act_dim.size() << " or " <<  m_matrix.size() << " >= " << maxElementCount;
     return false;
 	}
 }

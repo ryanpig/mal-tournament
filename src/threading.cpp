@@ -151,8 +151,8 @@ bool ThreadMgr::doTask(Task& t)
     Record r{
       t.gt.name,
       permuteid, set_actions, set_players, set_rounds, 
-      strategy_Mgr.getname(s_type), tmp[0],
-      strategy_Mgr.getname(opp_type), tmp[1]
+      strategy_Mgr.getname(s_type), tmp[permuteid],
+      strategy_Mgr.getname(opp_type), 0.0f 
     };
     saveToRecords(r);
   }

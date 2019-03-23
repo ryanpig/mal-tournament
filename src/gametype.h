@@ -22,7 +22,7 @@ using gameTypeVector = vector<GameType>;
 static const gameTypeVector vec_gametypes{
   // No need to use random values for unset parameters 
   {"Chicken", 0, 0, false, false},
-  {"CollaborationGame", 2, 0, true, false}, 
+  {"CollaborationGame", 2, 0, true, false},  // action size is player number
   {"RandomGame", 2, 2, true, true}, 
   {"MajorityVoting", 2, 2, true, true},
   {"RockPaperScissors", 2, 2, false, false}, 
@@ -36,7 +36,7 @@ static const gameTypeVector vec_gametypes{
   {"GuessTwoThirdsAve", 2, 2, true, true}, 
   {"CovariantGame", 2, 2, true, true},
   {"GrabTheDollar", 0, 2, false, true},
-  {"CoordinationGame", 2, 0, true, false}, 
+  {"CoordinationGame", 2, 0, true, false}, // action size is player number
   {"ShapleysGame", 0, 0, false, false},
 
   // Need to use random values for unset parameters
