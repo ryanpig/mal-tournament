@@ -398,6 +398,8 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
   // retrieve all available games
   auto gt_mgr = make_unique<GameTypeMgr>();
   int total_instatnces{0};
+	// n-player check
+	auto nplayerCheck = [](GameType &gt){return gt.allow_more_players && gt.name != "CollaborationGame" && gt.name != "CoordinationGame";};
 
   ThreadMgr tmgr(set_mt);
 	int taskid = 0;
@@ -407,11 +409,20 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 		{
 			LOG(INFO) << "Game(i,j):" << i << ", " << j;
       // loop games
-      for(const auto gt : gt_mgr->getCollection())
+      for(auto gt : gt_mgr->getCollection())
       {
+				// set to n player
+				gt.players = set_players;
+				if(set_players > 2){
+					if(!nplayerCheck(gt))
+					{	
+						LOG(INFO) << "skip gametype doesn't support >2 player:" << gt.name;
+						continue;
+					}
+				}
         Task task{gt, set_players, set_actions, set_rounds, iterations, i, j, taskid};
         tmgr.addTask(task);
-        total_instatnces += 2; 
+        total_instatnces += set_players; 
 				taskid++;
       }
 		}
