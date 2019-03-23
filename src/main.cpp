@@ -29,6 +29,7 @@ int main(int argc, char** argv)
 	bool set_tournament = false;
 	bool set_tournament_all_games = false;
 	bool set_mt = true;
+	int set_totalstrategies = 10;
 
 	// command line parser
 	namespace po = boost::program_options;
@@ -48,6 +49,7 @@ int main(int argc, char** argv)
 	("tournament,o", po::value<bool>()->required(), "run tournament w/ single game in all algorithm pairs. (Default:false)")
 	("tournament_all_games,q", po::value<bool>()->required(), "run tournament w/ all game types and all algorithms. (Default:false)")
 	("enable_multithreading,m", po::value<bool>()->required(), "enable enable_multithreading. (Default:true)")
+	("total_stratagies,v", po::value<int>()->required(), "total strategies for tournament mode. (Default:10)")
 	;
 	variables_map vm;
 
@@ -104,12 +106,15 @@ int main(int argc, char** argv)
 		  set_tournament_all_games = vm["tournament_all_games"].as<bool>();
       LOG(INFO) << " Set Tournament All Game Mode. (Run all available games)";
     }
+		if (vm.count("total_stratagies"))
+		  set_totalstrategies = vm["total_stratagies"].as<int>();
 
 		LOG(INFO) << "CMD, rounds:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players;
     LOG(INFO) << "Game type:" << set_gametype;
 		LOG(INFO) << "print flag:" << set_print_flag << ", permute flag:" << set_permute; 
 		LOG(INFO) << "main strategy:" <<  strategy_Mgr.getname(static_cast<StrategyType>(set_main_strategy));
 		LOG(INFO) << "opponent strategy:" << strategy_Mgr.getname(static_cast<StrategyType>(set_opp_strategy));
+		LOG(INFO) << "total running strategies (only in tournament mode):" << set_totalstrategies;
 	}
 	catch(exception& e) {
 		std::cerr << e.what() << "\n";
@@ -120,7 +125,7 @@ int main(int argc, char** argv)
     LOG(INFO) << "---Tournament Mode w/ all algorithm pairs--- ";
 		GameGenerator gg;
     GameType gt{set_gametype, set_players, set_actions, true, true};
-		if(!gg.run_tournament(set_rounds, gt))
+		if(!gg.run_tournament(set_rounds, gt, set_totalstrategies))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -132,7 +137,7 @@ int main(int argc, char** argv)
     LOG(INFO) << "---Tournament All Game Mode w/ all game types---";
 		GameGenerator gg;
 		// if(!gg.run_all_games(set_rounds))
-		if(!gg.run_all_games_mt(set_rounds, set_players, set_actions,  set_mt))
+		if(!gg.run_all_games_mt(set_rounds, set_players, set_actions,  set_mt, set_totalstrategies))
 			LOG(ERROR) << "tournament failed";
 		else
 			LOG(INFO) << "tournament finished";
@@ -210,13 +215,13 @@ void cleanTempFiles()
  * 3. create a new game instance (including parsing)
  * 4. play in the same instance w/ player permutation 
  */
-bool GameGenerator::run_tournament(int total_iterations, GameType &gt)
+bool GameGenerator::run_tournament(int total_iterations, GameType &gt, size_t total_stratagies)
 {
 	// configuration for each game
 	int set_actions = gt.actions, set_players = gt.players, set_rounds{total_iterations};
   string set_gametype = gt.name;
 	int iterations{set_players};
-	size_t total_stratagies = 10; // = strategy_Mgr.getTypeVector().size();
+	// size_t total_stratagies = 10; // = strategy_Mgr.getTypeVector().size();
 	std::string fname_root = "RandTournament";
 	vector<float> result;
 	// initializae the database connection
@@ -381,7 +386,7 @@ bool GameGenerator::run_all_games(int total_iterations)
 	return true;
 }
 
-bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int set_actions, bool set_mt)
+bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int set_actions, bool set_mt, size_t total_stratagies)
 {
 
 	// configuration of each game
@@ -389,7 +394,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 	int set_rounds{total_iterations};
 	int iterations{set_players};
 	// size_t total_stratagies = strategy_Mgr.getTypeVector().size();
-	int total_stratagies = 10; 
+	// int total_stratagies = 10; 
 	// initializae the database connection
   SQLMgr db_mgr(SQLITE_DB_PATH, "TESTTABLE");
   // clean data
@@ -403,9 +408,9 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 
   ThreadMgr tmgr(set_mt);
 	int taskid = 0;
-  for(int i = 0; i < total_stratagies; i++)
+  for(size_t i = 0; i < total_stratagies; i++)
 	{
-		for(int j = 0; j < total_stratagies; j++)
+		for(size_t j = 0; j < total_stratagies; j++)
 		{
 			LOG(INFO) << "Game(i,j):" << i << ", " << j;
       // loop games
@@ -420,7 +425,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 						continue;
 					}
 				}
-        Task task{gt, set_players, set_actions, set_rounds, iterations, i, j, taskid};
+        Task task{gt, set_players, set_actions, set_rounds, iterations, (int)i, (int)j, taskid};
         tmgr.addTask(task);
         total_instatnces += set_players; 
 				taskid++;
@@ -436,7 +441,8 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 
 	// Insert to database
   db_mgr.queryAll();
-  LOG(INFO) << "Total play " << total_instatnces << " instances in the tournamenet";
+  LOG(INFO) << "Expect instances (n-players):" << (set_players*13*total_stratagies*total_stratagies) << ", Total actually played " << total_instatnces << " instances in the tournamenet";
+
 
 	return true;
 }
