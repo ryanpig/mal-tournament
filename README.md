@@ -123,20 +123,45 @@ Total 29 types
 
 
 ## Screenshots
-<p>
+<p align="center">
 Algorithm v.s. Algorithm in a single game type
-<img src="img/heatmap_algorithms_algorithms_29.png" width=800>
-</p>
-<p>
-Games v.s. Algorithm in all game types
-<img src="img/heatmap_game_algorithms_29.png" height=500>
-</p>
-<p>
-Games v.s. Algorithm in all game types by MAL and Bandit
-<img src="img/heatmap_game_algorithms_by_groups_29.png" height=500>
-</p>
-<img src="img/boxplot.png" width=800>
-<img src="img/beanplot.png" width=800>
+<img src="img/heatmap_algorithms_algorithms_29.png" height=500>
 </p>
 
-j
+<p align="center">
+Games v.s. Algorithm in all game types
+<img src="img/heatmap_game_algorithms_29.png" height=500>
+
+</p>
+
+<p align="center">
+Games v.s. Algorithm in all game types by MAL and Bandit
+<img src="img/heatmap_game_algorithms_by_groups_29.png" height=500>
+
+</p>
+
+<p align="center">
+all algorithms in box plot.
+<img src="img/boxplot.png" width=800>
+
+</p>
+<p align="center">
+all algorithms in bean plot.
+<img src="img/beanplot.png" width=800>
+
+</p>
+
+<p align="center">
+The execution time for 2 players to 10 players for all algorithms in 13 games
+<img src="img/instance_time-0324.png" height=500>
+</p>
+
+<p align="center">
+all algorithm pairs by 2~10 players games
+<img src="img/nplayer-algo-0324.png" height=500>
+</p>
+
+<p align="center">
+grouping to MAL and Bandit by 2~20 players games. 
+<img src="img/nplayer-two-group-0324.png" height=500>
+</p>

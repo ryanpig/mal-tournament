@@ -276,7 +276,9 @@ int Strategy_Softmax::exec(Info &inf)
 
     // branch if there are more than 1 maximum values 
     if(counts_of_max == 1){
-      softmax(vec_avg.begin(), vec_avg.end(), vec_avg.begin(), true, 1.0f); // temperature = 1.0f;
+      softmax(vec_avg.begin(), vec_avg.end(), vec_avg.begin(), true, 0.3f); // temperature = 1.0f;
+      //DEBUG
+      // strategy_Mgr.printVec(vec_avg);
       select_action = choose_by_probability(vec_avg, m_rng);
     }else{
 			vector<int> matches;			

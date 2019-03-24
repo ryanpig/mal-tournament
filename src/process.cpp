@@ -96,10 +96,10 @@ bool Process_Mgr::generation_check(string filename){
   }
 	string result = process_Mgr.cmd_exec("wc -l < "+ filename);
   if(stoi(result) == 1){
-    LOG(INFO) << "Game generation check succeeded";
+    LOG(INFO) << "Game generation check succeeded:" << filename;
     return true;
   }else{
-    LOG(INFO) << "Game ganeration check failed!";
+    LOG(INFO) << "Game ganeration check failed! :" << filename;
     string cmd = "cat " + filename + " >> error_report.txt";
     string res = process_Mgr.cmd_exec(cmd);
     return false;

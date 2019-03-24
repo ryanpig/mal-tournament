@@ -6,7 +6,8 @@ combined_players <- matrix(0.0, nrow = length(players), ncol = length(algorithms
 rownames(combined_players) <- players
 instances <- matrix(0.0, nrow = length(players), ncol = 2)
 colnames(instances) <- c("instances", "executionTime")
-instances[,2] = c(63,77,95,118,154,201,259,331,416)
+# instances[,2] = c(63,77,95,118,154,201,259,331,416)
+instances[,2] = c(62,77,90,105,139, 197,253,323,405)
 
 # connect to the sqlite file
 for(n in players){
@@ -87,7 +88,7 @@ favstats(data$MAL_algorithms ~ MAL_algorithms,data=data[, "MAL_algorithms"])
 ##
 ins = instances[,1]      # the eruption durations 
 exe = instances[,2]         # the waiting interval 
-plot(ins, exe, xlab="Instances", ylab="Execution Time")
+plot(ins, exe, type="b", xlab="Instances", ylab="Execution Time")
 abline(lm(ins ~ exe)) 
 
 ## finish 

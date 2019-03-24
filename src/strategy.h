@@ -311,7 +311,12 @@ static class Strategy_Mgr
 		const vector<string>& getTypeVector() const {return vec_strategy_type;}
 
 		template<typename T>
-		void printVec(vector<T> &v) const {for(auto e : v) cout<<e<<" ,"; cout << endl;};
+		void printVec(vector<T> &v) const {
+      string print{};
+      for(auto e : v)
+        print += to_string(e) + ", ";
+      LOG(INFO) << print;
+    }
 
 
 } strategy_Mgr;
