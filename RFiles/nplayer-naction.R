@@ -131,11 +131,30 @@ library("mosaic")#favstats
 favstats(avg_DF ~ type_p0,data=final)
 favstats(data$MAL_algorithms ~ MAL_algorithms,data=data[, "MAL_algorithms"])
 
-##
-#ins = instances[,1]      # the eruption durations 
-#exe = instances[,2]         # the waiting interval 
-#plot(ins, exe, type="b", xlab="Instances", ylab="Execution Time")
-#abline(lm(ins ~ exe)) 
+## Running time v.s. instances
+library(plotly)
+ins = instances[,c(1:3)]      # the eruption durations 
+exe = instances[,c(4:6)]         # the waiting interval 
+# plot(ins, exe, type="p", xlab="Instances", ylab="Execution Time", main=title_str) # %>%  layout(title = title_str)
+# abline(lm(ins ~ exe)) 
+
+# layout
+  x <- list(
+    title = "Total game instances"
+  )
+  y <- list(
+    title = "Execution time"
+  )
+  title_str <- "Instances v.s. Execution time in n-player, m-action"
+data2 <- data.frame(x, exe[,1], exe[,2], exe[,3])
+plot_ly(data2, x = ~ins[,1], y = ~exe[,1], name = 'n-player, 2-action ', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(x = ~ins[,2], y = ~exe[,2], name = 'n-player, 3-action', mode = 'lines+markers') %>%
+  add_trace(x = ~ins[,3], y = ~exe[,3], name = 'n-player, 4-action', mode = 'lines+markers') %>%  layout(title = title_str, xaxis=x, yaxis=y)
+
+# export to latex table
+library(xtable)
+path <- paste(sysPath, "/tables/totaldata.tex", sep="")
+print(xtable(totaldata, type = "latex"), file = path)
 
 
 
