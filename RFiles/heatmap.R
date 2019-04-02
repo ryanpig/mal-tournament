@@ -55,19 +55,35 @@ head(combined_final)
 data=as.matrix(combined_final)
 
 #basic heatmap
-## Drawing
+  # layout
+  x <- list(
+    title = "Algorithms in 2-player, 2-action games"
+  )
+  y <- list(
+    title = "Game types"
+  )
+  title_str <- "Performance of algorithms in 2-player, 2-action games"
 png(paste(sysPath,"img/heatmap_game_algorithms.png", sep=""), 640,640)
-plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
+plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")  %>% layout(title = title_str, xaxis=x, yaxis=y)
 dev.off()
 
 # Grouping
+  # layout
+  x <- list(
+    title = "MAL/Bandit Algorithms in 2-player, 2-action games"
+  )
+  y <- list(
+    title = "Game types"
+  )
+  title_str <- "Performance of MAL/Bandit algorithms in 2-player, 2-action games"
+
 mal <- c("FP", "NoRegret")
 bandit <- c("QL", "Softmax", "NGreedy", "EGreedy", "Satisficing", "UCB1", "EXP3")
 MAL_algorithms <- rowSums(data[, mal]) / length(mal)
 Bandit_algorithms <- rowSums(data[, bandit]) / length(bandit)
 data = cbind(MAL_algorithms, Bandit_algorithms)
 png(paste(sysPath,"img/heatmap_game_algorithms_by_group.png", sep=""), 640,640)
-plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
+plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")  %>% layout(title = title_str, xaxis=x, yaxis=y)
 dev.off()
 
 

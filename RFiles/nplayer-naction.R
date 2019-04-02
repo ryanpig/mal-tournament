@@ -82,23 +82,40 @@ library(plotly)
 
 #basic heatmap
 ## Drawing
-for(a in actions){
-  data = as.matrix(all[,,a-1])
-  png(paste(sysPath,"img/heatmap_nplayer_naction.png", sep=""), 640,640)
-  plot_ly(x=colnames(combined_players), y=rownames(combined_players), z = data, type = "heatmap")
-  dev.off()
-}
+  x <- list(
+    title = "Algorithms in 2,3,4 actions"
+    )
+  y <- list(
+    title = "Players"
+  )
+  data = cbind(cbind(as.matrix(all[,,1]),as.matrix(all[,,2])), as.matrix(all[,,3])) 
+  addActionStr<-function(n)
+  {
+    n <- paste(n, a, sep="")
+  }
+  tmp_col <- numeric(0)
+  for(a in actions)
+  {
+    tmp <- lapply(algorithms, addActionStr)
+    tmp_col <- c(tmp_col, tmp)
+  }
+  colnames(data) <- tmp_col
+  
+  rownames(data) <- c(2:10)
+  title_str <- paste(paste('Algorithms v.s. n-playes - ', "2,3,4", sep=""), "-actions", sep="")
+  plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap") %>% layout(title = title_str, xaxis=x, yaxis=y)
+  
 
 # Grouping
-#mal <- c("FP", "NoRegret")
-#bandit <- c("QL", "Softmax", "NGreedy", "EGreedy", "Satisficing", "UCB1", "EXP3")
-#MAL_algorithms <- rowSums(data[, mal]) / length(mal)
-#Bandit_algorithms <- rowSums(data[, bandit]) / length(bandit)
-#data = cbind(MAL_algorithms, Bandit_algorithms)
+x <- list(
+  title = "MAL/Bandit algorithms in 2,3,4 actions"
+)
+y <- list(
+  title = "Players"
+)
+title_str <- "MAL/Bandit algorithms v.s. n-players"
 colnames(totaldata) <- c("MAL_2A","Bandit_2A", "MAL_3A","Bandit_3A", "MAL_4A","Bandit_4A" )
-png(paste(sysPath,"img/heatmap_nplayer_naction.png", sep=""), 640,640)
-plot_ly(x=colnames(totaldata), y=rownames(totaldata), z =totaldata, type = "heatmap")
-dev.off()
+plot_ly(x=colnames(totaldata), y=rownames(totaldata), z =totaldata, type = "heatmap") %>%  layout(title = title_str, xaxis=x, yaxis=y)
 
 
 ## 
