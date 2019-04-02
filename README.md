@@ -75,6 +75,7 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 | -o [ --tournament ] arg           | run tournament w/ single game in all  algorithm pairs.| (Default:false)
 | -q [ --tournament_all_games ] arg | run tournament w/ all game types and all algorithms. | (Default:false)
 | -m [ --enable_multithreading ] arg | enable multithreading. | (Default:true)
+| -v [ --total_stratagies ] arg     | total strategies for tournament mode. | (Default:10)
 
 <a name="algorithms"></a> 
 ### Available strategies 
@@ -93,7 +94,7 @@ CollaborationGame, RandomCompoundGame, CoordinationGame,
 4. No parameter needed:
 Chicken, RockPaperScissors, PrisonersDilemma, BattleOfTheSexes, MatchingPennies, HawkAndDove, ShapleysGame, TwoByTwoGame, 
 
-Total 29 types
+Total 29 types ( Note: category 1 is used for all n-player, m-action experiment) 
 
 ## Running time performance
 - Testing condition
@@ -162,7 +163,7 @@ all algorithm pairs by 2~10 players games
 </p>
 
 <p align="center">
-grouping to MAL and Bandit by 2~20 players games. 
+grouping to MAL and Bandit by 2~10 players games. 
 <img src="img/nplayer-two-group-0324.png" height=500>
 </p>
 
