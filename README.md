@@ -165,3 +165,13 @@ all algorithm pairs by 2~10 players games
 grouping to MAL and Bandit by 2~20 players games. 
 <img src="img/nplayer-two-group-0324.png" height=500>
 </p>
+
+<p align="center">
+<img src="img/nplayer-naction-group-0331.png" height=500>
+</p>
+<p align="center">
+<img src="img/nplayer-naction-all-algorithms-0331.png" height=500>
+
+
+
+

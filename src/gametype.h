@@ -27,7 +27,7 @@ static const gameTypeVector vec_gametypes{
   {"MajorityVoting", 2, 2, true, true},
   {"RockPaperScissors", 2, 2, false, false}, 
   {"RandomZeroSum", 0, 2, false, true},
-  {"RandomCompoundGame", 2, 0, true, false}, 
+  {"RandomCompoundGame", 2, 0, true, false}, // only for n-player with 2 actions
   {"PrisonersDilemma", 0, 0, false, false},
   {"DispersionGame", 2, 2, true, true},
   {"BattleOfTheSexes", 0, 0, false, false},

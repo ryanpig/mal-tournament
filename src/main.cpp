@@ -404,7 +404,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
   auto gt_mgr = make_unique<GameTypeMgr>();
   int total_instatnces{0};
 	// n-player check
-	auto nplayerCheck = [](GameType &gt){return gt.allow_more_players && gt.name != "CollaborationGame" && gt.name != "CoordinationGame";};
+	// auto nplayerCheck = [](GameType &gt){return gt.allow_more_players && gt.name != "CollaborationGame" && gt.name != "CoordinationGame";};
 
   ThreadMgr tmgr(set_mt);
 	int taskid = 0;
@@ -416,15 +416,23 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
       // loop games
       for(auto gt : gt_mgr->getCollection())
       {
-				// set to n player
-				gt.players = set_players;
-				if(set_players >= 2){
-					if(!nplayerCheck(gt))
-					{	
-						// LOG(INFO) << "skip gametype doesn't support >2 player:" << gt.name;
-						continue;
-					}
+				// set to n players & m actions
+				if(!gt.allow_more_actions || !gt.allow_more_players)
+				{
+					continue;
 				}
+				else
+				{
+				 	gt.players = set_players;
+					gt.actions = set_actions;
+				}
+				// if(set_players >= 2){
+				//   if(!nplayerCheck(gt))
+				//   {	
+				//     // LOG(INFO) << "skip gametype doesn't support >2 player:" << gt.name;
+				//     continue;
+				//   }
+				// }
         Task task{gt, set_players, set_actions, set_rounds, iterations, (int)i, (int)j, taskid};
         tmgr.addTask(task);
         total_instatnces += set_players; 
@@ -441,7 +449,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 
 	// Insert to database
   db_mgr.queryAll();
-  LOG(INFO) << "Expect instances (n-players):" << (set_players*13*total_stratagies*total_stratagies) << ", Total actually played " << total_instatnces << " instances in the tournamenet";
+  LOG(INFO) << "Expect instances (n-players):" << (set_players*12*total_stratagies*total_stratagies) << ", Total actually played " << total_instatnces << " instances in the tournamenet";
 
 
 	return true;

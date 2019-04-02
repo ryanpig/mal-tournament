@@ -5,7 +5,6 @@
 #include <iostream>
 #include <set>
 #include <algorithm>
-
 bool GameParser::parser(string filename)
 {
 	// file open
@@ -18,7 +17,8 @@ bool GameParser::parser(string filename)
 	
 	// parsing line by line, and save result to a vector
   const int maxActionSize{4};
-  const int maxElementCount{65535}; // allows 12 players with 2 actions
+  // const int maxElementCount{590491}; // 10240 (10 player 2 actions) , 590490 (10 players 3 actions) , 524288 (8 players 4 actions)
+  const int maxElementCount{10485790}; // 10240 (10 player 2 actions) , 590490 (10 players 3 actions) , 524288 (8 players 4 actions)
 	std::string line;
 	bool start_flag = false;
 	std::vector<float> parsed_vec;

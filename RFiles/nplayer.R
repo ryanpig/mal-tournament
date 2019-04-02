@@ -2,7 +2,7 @@ library("RSQLite")
 sysPath = "~/CppProj/mal-tournament/"
 
 players <- c(2:10)
-combined_players <- matrix(0.0, nrow = length(players), ncol = length(algorithms))
+combined_players <- matrix(0.0, nrow = length(players), ncol = 10)
 rownames(combined_players) <- players
 instances <- matrix(0.0, nrow = length(players), ncol = 2)
 colnames(instances) <- c("instances", "executionTime")
@@ -11,7 +11,7 @@ instances[,2] = c(62,77,90,105,139, 197,253,323,405)
 
 # connect to the sqlite file
 for(n in players){
-  dbname = paste(sysPath, paste(paste("Result_nplayer/result_",n ,sep=""), "p.db", sep=""), sep="")
+  dbname = paste(sysPath, paste(paste("Result_nplayer_all/result_",n ,sep=""), "p4a.db", sep=""), sep="")
   con <- dbConnect(drv=RSQLite::SQLite(), dbname=dbname)
   tables <- dbListTables(con)
   tables <- tables[tables != "sqlite_sequence"]
@@ -86,18 +86,11 @@ favstats(avg_DF ~ type_p0,data=final)
 favstats(data$MAL_algorithms ~ MAL_algorithms,data=data[, "MAL_algorithms"])
 
 ##
-ins = instances[,1]      # the eruption durations 
-exe = instances[,2]         # the waiting interval 
-plot(ins, exe, type="b", xlab="Instances", ylab="Execution Time")
-abline(lm(ins ~ exe)) 
+#ins = instances[,1]      # the eruption durations 
+#exe = instances[,2]         # the waiting interval 
+#plot(ins, exe, type="b", xlab="Instances", ylab="Execution Time")
+#abline(lm(ins ~ exe)) 
 
-## finish 
-dbDisconnect(con)
-c <- vector("list", length=length(gametypes))
-for(i in seq(length(gametypes))){
-  tmp <- nrow(subset(final, gametype == gametypes[i]))
-  c[i] = tmp
-}
 
 
 
