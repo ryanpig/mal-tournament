@@ -3,6 +3,8 @@ sysPath = "~/CppProj/mal-tournament/"
 
 # connect to the sqlite file
 con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste(sysPath, "Result/result2.db", sep=""))
+# con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste(sysPath, "Result_nplayer/result_2p.db", sep=""))
+
 tables <- dbListTables(con)
 
 ## exclude sqlite_sequence (contains table information)
@@ -22,7 +24,7 @@ total[] = 0
 ## get average of payoffs
 for(i in seq(total_iteration)){
   tmp <- subset(DF, DF$round == i - 1)
-  total <- total + tmp[, paste("payoff_p", i-1,sep="")]
+  total <- total + tmp[, paste("payoff_p", 0,sep="")]
 }
 avg_DF <- total[] / total_iteration * 100
 new_DF <- tmp[, c("gametype", "type_p0", "type_p1")]
@@ -52,27 +54,38 @@ library(plotly)
 head(combined_final)
 data=as.matrix(combined_final)
 
-# Grouping
-mal <- c("FP", "NoRegret")
-bandit <- c("QL", "Softmax", "NGreedy", "EGreedy", "Satisficing", "UCB1", "EXP3")
-mal_sum <- rowSums(data[, mal]) / length(mal)
-bandit_sum <- rowSums(data[, bandit]) / length(bandit)
-data = cbind(mal_sum, bandit_sum)
 #basic heatmap
 ## Drawing
 png(paste(sysPath,"img/heatmap_game_algorithms.png", sep=""), 640,640)
 plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
 dev.off()
 
-# with normalization (right) (apply(,2,): by columns
-#png("heatmap_normal_games.png", 640,640)
-#data=apply(data, 2, function(x){x/mean(x)})
-#plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
+# Grouping
+mal <- c("FP", "NoRegret")
+bandit <- c("QL", "Softmax", "NGreedy", "EGreedy", "Satisficing", "UCB1", "EXP3")
+MAL_algorithms <- rowSums(data[, mal]) / length(mal)
+Bandit_algorithms <- rowSums(data[, bandit]) / length(bandit)
+data = cbind(MAL_algorithms, Bandit_algorithms)
+png(paste(sysPath,"img/heatmap_game_algorithms_by_group.png", sep=""), 640,640)
+plot_ly(x=colnames(data), y=rownames(data), z = data, type = "heatmap")
+dev.off()
+
 
 ## 
 library("mosaic")#favstats
 favstats(avg_DF ~ type_p0,data=final)
+favstats(data$MAL_algorithms ~ MAL_algorithms,data=data[, "MAL_algorithms"])
+
 
 ## finish 
 dbDisconnect(con)
+c <- vector("list", length=length(gametypes))
+for(i in seq(length(gametypes))){
+  tmp <- nrow(subset(final, gametype == gametypes[i]))
+  c[i] = tmp
+}
+
+
+         
+       
 
