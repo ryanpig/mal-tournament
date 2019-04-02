@@ -130,15 +130,11 @@ Algorithm v.s. Algorithm in a single game type
 </p>
 
 <p align="center">
-Games v.s. Algorithm in all game types
 <img src="img/heatmap_game_algorithms_29.png" height=500>
-
 </p>
 
 <p align="center">
-Games v.s. Algorithm in all game types by MAL and Bandit
 <img src="img/heatmap_game_algorithms_by_groups_29.png" height=500>
-
 </p>
 
 <p align="center">
@@ -155,16 +151,6 @@ all algorithms in bean plot.
 <p align="center">
 The execution time for 2 players to 10 players for all algorithms in 13 games
 <img src="img/instance_time-0324.png" height=500>
-</p>
-
-<p align="center">
-all algorithm pairs by 2~10 players games
-<img src="img/nplayer-algo-0324.png" height=500>
-</p>
-
-<p align="center">
-grouping to MAL and Bandit by 2~10 players games. 
-<img src="img/nplayer-two-group-0324.png" height=500>
 </p>
 
 <p align="center">
