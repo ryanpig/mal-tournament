@@ -149,8 +149,7 @@ all algorithms in bean plot.
 </p>
 
 <p align="center">
-The execution time for 2 players to 10 players for all algorithms in 13 games
-<img src="img/instance_time-0324.png" height=500>
+<img src="img/instance_time.png" height=500>
 </p>
 
 <p align="center">

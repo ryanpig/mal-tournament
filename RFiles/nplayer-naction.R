@@ -8,6 +8,14 @@ all <- array(0.0, c(length(players), 10, length(actions)))
 mal <- c("FP", "NoRegret")
 bandit <- c("QL", "Softmax", "NGreedy", "EGreedy", "Satisficing", "UCB1", "EXP3")
 totaldata <- numeric(0)
+
+# for instance v.s. running time
+instances <- matrix(0.0, nrow = length(players), ncol = 6)
+colnames(instances) <- c("instances", "executionTime")
+instances[,4] = c(62,77,90,105,139, 197,253,323,405) # 2 actions
+instances[,5] = c(58,72,93,128,176,241,331,473,653) # 3 actions
+instances[,6] = c(59,75,105,152,224,348,532,532,532) # 4 actions
+
 # connect to the sqlite file
 for(a in actions)
 {
@@ -23,7 +31,7 @@ for(a in actions)
     for (i in seq(along=tables)) {
       DF <- dbGetQuery(conn=con, statement=paste("SELECT * FROM '", tables[[i]], "'", sep=""))
     }
-    #instances[n-1,1] = nrow(DF)
+    instances[n-1,a-1] = nrow(DF)
     ## Average different round payoffs
     total_iteration <- length(unique(DF$round))
     ## create 0 value data
