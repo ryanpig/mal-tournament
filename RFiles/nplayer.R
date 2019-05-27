@@ -4,14 +4,13 @@ sysPath = "~/CppProj/mal-tournament/"
 players <- c(2:10)
 combined_players <- matrix(0.0, nrow = length(players), ncol = 10)
 rownames(combined_players) <- players
-instances <- matrix(0.0, nrow = length(players), ncol = 2)
+instances <- matrix(0.0, nrow = length(players), ncol = 4)
 colnames(instances) <- c("instances", "executionTime")
-# instances[,2] = c(63,77,95,118,154,201,259,331,416)
-instances[,2] = c(62,77,90,105,139, 197,253,323,405)
+instances[,2] = c(62,77,90,105,139, 197,253,323,405) # 2 actions
 
 # connect to the sqlite file
 for(n in players){
-  dbname = paste(sysPath, paste(paste("Result_nplayer_all/result_",n ,sep=""), "p4a.db", sep=""), sep="")
+  dbname = paste(sysPath, paste(paste("Result_nplayer_all/result_",n ,sep=""), "p2a.db", sep=""), sep="")
   con <- dbConnect(drv=RSQLite::SQLite(), dbname=dbname)
   tables <- dbListTables(con)
   tables <- tables[tables != "sqlite_sequence"]
@@ -92,7 +91,11 @@ favstats(data$MAL_algorithms ~ MAL_algorithms,data=data[, "MAL_algorithms"])
 #abline(lm(ins ~ exe)) 
 
 
-
-
+## Normalization for matrix
+normalize <- function(x) {
+  min_tmp = min(as.vector(x))
+  max_tmp = max(as.vector(x))
+  return ((x - min_tmp) / (max_tmp - min_tmp))
+}
 
 

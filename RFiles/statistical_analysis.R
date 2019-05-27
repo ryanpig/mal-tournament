@@ -2,7 +2,8 @@ library("RSQLite")
 sysPath = "~/CppProj/mal-tournament/"
 
 # connect to the sqlite file
-con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste(sysPath, "Result/result2.db", sep=""))
+# con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste(sysPath, "Result/result2.db", sep=""))
+con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste(sysPath, "Result_nplayer_all/result_10p2a.db", sep=""))
 tables <- dbListTables(con)
 
 ## exclude sqlite_sequence (contains table information)
@@ -22,9 +23,9 @@ for (i in seq(along=tables)) {
 ## get average of payoffs
   for(i in seq(total_iteration)){
     tmp <- subset(DF, DF$round == i - 1)
-    total <- total + tmp[, paste("payoff_p", i-1,sep="")]
+    total <- total + tmp[, paste("payoff_p", 0,sep="")]
   }
-  Average_Payoff <- total[] / total_iteration
+  Average_Payoff <- total[] / total_iteration * 100
   new_DF <- tmp[, c("gametype", "type_p0", "type_p1")]
   final <- cbind(new_DF,Average_Payoff)
   colnames(final)[2] <- "Main_Algorithms"
