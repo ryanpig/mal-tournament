@@ -406,7 +406,7 @@ bool GameGenerator::run_all_games_mt(int total_iterations, int set_players, int 
 	// n-player check
 	// auto nplayerCheck = [](GameType &gt){return gt.allow_more_players && gt.name != "CollaborationGame" && gt.name != "CoordinationGame";};
 	// filter games to support n-player and n-action parameters
-	bool flag_nplayer_naction{false};
+	bool flag_nplayer_naction{true};
 
   ThreadMgr tmgr(set_mt);
 	int taskid = 0;

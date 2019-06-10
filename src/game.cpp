@@ -59,7 +59,10 @@ void Game::update_hypo_rewards_by_action(unique_ptr<Player> &p, vector<int> &sel
 	for(int i = 0; i < action_size; i++)
 	{
 		acts[pid] = i;
-		float hypo_reward = m_game_parser->queryByVec(acts)[pid];
+		// float hypo_reward = m_game_parser->queryByVec(acts)[pid]; //TODO: compare with expected reward
+    float hypo_reward{0.0};
+		if(p->m_info.m_counts_by_action[i] > 0)
+      hypo_reward = p->m_info.m_acc_payoffs_by_action[i] / p->m_info.m_counts_by_action[i];
 		p->m_info.m_acc_hypo_reward_by_action[i] += hypo_reward - cur_reward;
 	}
 	
