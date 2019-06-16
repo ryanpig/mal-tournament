@@ -1,46 +1,43 @@
-## mal-tournament
-Build the test bed for both multi-agent learning algorithms and bandit algorithms, which can be adopted in various game types.
+## Description 
+The test bed for both multi-agent learning algorithms and bandit algorithms, which can be run with various game types. The basic framework includes three main components:
 
 - Algorithm set: [(here)](#algorithms)
   - MAL: No-regret, Q-Learning, Fictious Play, (Markov)
   - Bandit: UCB1, EXP3, Satificing, E-greedy, N-greedy, Softmax
   - Others: Random
 - Game Types [(here)](#gametypes)
-	- Most of game types that Gamut (the suite of game generator) supports, e.g. Coordination, Prison Dilemma, Chicken etc
-	- Custom defined game types 
+	- Game types in GAMUT, the suite of game generator, e.g. Coordination, Prison Dilemma, Chicken etc
 - Metrics:
-	- Accumulated Rewards
-	- Accumulated Regrets
+	- Average Accumulated Rewards
+	- Average Accumulated Regrets
 
 ## Features
 - A complete test framework to evaluate correlation among algorithms, games, and metrics.
-- Cover popular MAL & Bandit algorithms as many as possible.
-- Provide various game types from either scientific interested games or customized games.
-- Multi-threading default enabled to improve experiment running time.
+- Cover popular or representative MAL & Bandit algorithms that can be run in m-action n-player games.
+- Use multi-threading to improve running time, which is suitable to run a large scale tournament.
 - Single sqlite3 database file to store all experiment result.
-- System wide logging function.
 - Integrated GoogleTest for unit tests. 
-- Statistical analysis w/ visualization.
+- Combined with statistical analysis and visualization in R scripts.
 
 
 ## Build Dependencies 
-- Boost (used for command line input parsing)
-- sqlite3 (database)
-- gtest (used for unit testing.)
+- Boost (command line input parsing)
+- sqlite3 (database access)
+- gtest (optionally used for unit testing.)
 
 #### Build dependencies by make only
--  Install Boost and sqlite3 
-2. Modify corresponding library and header file paths of sqlite3 in Makefile
-3. `make`
+-  Install Boost and sqlite3 libraries
+2. Modify library and header file paths of libraries in Makefile
+3. `make -j8`
 
 #### Build dependencies by Conan
--  `pip conan` (if not installed in your system)
+-  `pip conan` (if not installed in the system)
 2. `vim ~/.conan/profiles/default` (compiler.libcxx=libstdc++11) (if gcc version > 5.1)
 3. `conan install .` (install all dep. and generate .mak)
 4. `cp Makefiles/MakefileForConan .` (use Conan version Makefile)
-5. `make` 
+5. `make -j8` 
 
-### Build the main program
+### Build and run the program
 - `make -j8 && ./mal`
 - `make test -j8 && ./unittest` 
 
