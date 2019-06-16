@@ -18,43 +18,47 @@ Build the test bed for both multi-agent learning algorithms and bandit algorithm
 - Provide various game types from either scientific interested games or customized games.
 - Multi-threading default enabled to improve experiment running time.
 - Single sqlite3 database file to store all experiment result.
-- system wide logging function.
+- System wide logging function.
 - Integrated GoogleTest for unit tests. 
-- Statistical analysis by visualization, such as heatmap, and boxchart.
+- Statistical analysis w/ visualization.
 
 
 ## Build Dependencies 
-- Boost (program_options)
-- sqlite3 
-- gtest (already included in the repo.)
+- Boost (used for command line input parsing)
+- sqlite3 (database)
+- gtest (used for unit testing.)
 
-### Build dependencies by make only
-1. Install Boost and sqlite3 
-2. Modify corresponding library and header file paths in Makefile
+#### Build dependencies by make only
+-  Install Boost and sqlite3 
+2. Modify corresponding library and header file paths of sqlite3 in Makefile
 3. `make`
 
-### Build dependencies by Conan
-1. `pip conan` (if not installed in your system)
+#### Build dependencies by Conan
+-  `pip conan` (if not installed in your system)
 2. `vim ~/.conan/profiles/default` (compiler.libcxx=libstdc++11) (if gcc version > 5.1)
 3. `conan install .` (install all dep. and generate .mak)
 4. `cp Makefiles/MakefileForConan .` (use Conan version Makefile)
 5. `make` 
 
-### build and test
+### Build the main program
 - `make -j8 && ./mal`
 - `make test -j8 && ./unittest` 
 
-## Test OS
-- Ubuntu 16.04 LTS
-- macOS Mojave 10.14
+## Test environments 
+- Ubuntu 16.04 LTS / gcc 8.1.0
+- macOS Mojave 10.14 / clang- 1000.10.44.4
 
 
 ## How to use 
-1. RandomGame w/ 2 players 2 actions in Softmax v.s. FictitiousPlay algorithm: `./mal -g RandomGame -a 2 -p 2 -s 6 -e 8`
-2. Run the tournament w/ all algorithms in a 2-player game w/ 3000 iterations
+1. A 2-player 2-action Random Game with a algorithm pair (Softmax(6), FP(8)): `./mal -g RandomGame -a 2 -p 2 -s 6 -e 8`
+2. Run a tournament w/ all algorithms in a 2-player game w/ 3000 iterations
 `./mal -o true -r 3000`
-3. Run the tournament w/ all algorithm pairs in all game types
+3. Run a tournament w/ all algorithm pairs in all game types
 `./mal -q true`
+4. Run a tournament w/ all algorithm paris in 3-action 5-player games 
+`./mal -q true -p 5 -a 3
+5. Run a tournament w/ all algorithm pairs in m-action n-player games (Note: time consuming)
+`./run_naction.sh`
 
 ## Command line flags 
 - `./mal --help`  
@@ -103,7 +107,6 @@ Total 29 types ( Note: category 1 is used for all n-player, m-action experiment)
 - Result:
 	- **16m19s** (debug mode, single thread)
 	- **9m3s** (debug mode, multi-thread)
-	- **5m18s** (debug mode, multi-thread, turn off -f)
 	- **3m13s** (debug mode, multi-thread, change the working flow to two stage operation) (Refer to the *pull-request game-create-run-separation*)
 	- **1m51s** (release mode, use compiler flag -O3 only) 
 	- **1m06s** (use pre-generated games)
@@ -124,29 +127,29 @@ Total 29 types ( Note: category 1 is used for all n-player, m-action experiment)
 
 
 ## Screenshots
-<p align="center">
-Algorithm v.s. Algorithm in a single game type
-<img src="img/heatmap_algorithms_algorithms_29.png" height=500>
-</p>
+<!-- <p align="center"> -->
+<!-- Algorithm v.s. Algorithm in a single game type -->
+<!-- <img src="img/heatmap_algorithms_algorithms_29.png" height=500> -->
+<!-- </p> -->
 
-<p align="center">
-<img src="img/heatmap_game_algorithms_29.png" height=500>
-</p>
+<!-- <p align="center"> -->
+<!-- <img src="img/heatmap_game_algorithms_29.png" height=500> -->
+<!-- </p> -->
 
-<p align="center">
-<img src="img/heatmap_game_algorithms_by_groups_29.png" height=500>
-</p>
+<!-- <p align="center"> -->
+<!-- <img src="img/heatmap_game_algorithms_by_groups_29.png" height=500> -->
+<!-- </p> -->
 
-<p align="center">
-all algorithms in box plot.
-<img src="img/boxplot.png" width=800>
+<!-- <p align="center"> -->
+<!-- all algorithms in box plot. -->
+<!-- <img src="img/boxplot.png" width=800> -->
 
-</p>
-<p align="center">
-all algorithms in bean plot.
-<img src="img/beanplot.png" width=800>
+<!-- </p> -->
+<!-- <p align="center"> -->
+<!-- all algorithms in bean plot. -->
+<!-- <img src="img/beanplot.png" width=800> -->
 
-</p>
+<!-- </p> -->
 
 <p align="center">
 <img src="img/instance_time.png" height=500>

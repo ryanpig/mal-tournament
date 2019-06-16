@@ -131,9 +131,12 @@ y2 <- exp(-x2) # Montonically Decreasing
 y3 <- sin(x / 5) # Not Monotonic
 
 par(mfrow=c(1,3))
-plot(x2, y2, type = 'l', main = 'Monotonically Decreasing', xlab="x", ylab="y", frame.plot = FALSE)
-plot(x, y, type = 'l', main = 'Monotonically Increasing', frame.plot = FALSE)
-plot(x, y3, type = 'l', main = 'Not Monotonic', xlab="x", ylab="y", frame.plot = FALSE)
+plot(x2, y2, type = 'l', main = 'Monotonically Decreasing', xlab="x", ylab="y", frame.plot = FALSE, 
+     cex.main=2.5, cex.lab=2, cex.axis=1)
+plot(x, y, type = 'l', main = 'Monotonically Increasing', frame.plot = FALSE, 
+     cex.main=2.5, cex.lab=2, cex.axis=1)
+plot(x, y3, type = 'l', main = 'Non-monotonic', xlab="x", ylab="y", frame.plot = FALSE,
+     cex.main=2.5, cex.lab=2, cex.axis=1)
 
 corr1 <-  cor.test(x2, y2, method = 'spearman', alternative = "greater") # Null
 corr2 <-  cor.test(x, y, method = 'spearman', alternative = "greater") # Alternative
