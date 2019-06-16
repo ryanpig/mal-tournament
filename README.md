@@ -123,14 +123,14 @@ Total 29 types ( Note: category 1 is used for all n-player, m-action experiment)
 
 
 ## Screenshots
-<!-- <p align="center"> -->
-<!-- Algorithm v.s. Algorithm in a single game type -->
-<!-- <img src="img/heatmap_algorithms_algorithms_29.png" height=500> -->
-<!-- </p> -->
+<p align="center">
+Algorithm v.s. Algorithm in a single game type
+<img src="img/heatmap_algorithms_algorithms_29.png" height=500>
+</p>
 
-<!-- <p align="center"> -->
-<!-- <img src="img/heatmap_game_algorithms_29.png" height=500> -->
-<!-- </p> -->
+<p align="center">
+<img src="img/heatmap_game_algorithms_29.png" height=500>
+</p>
 
 <!-- <p align="center"> -->
 <!-- <img src="img/heatmap_game_algorithms_by_groups_29.png" height=500> -->
