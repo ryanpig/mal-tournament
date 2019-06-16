@@ -39,11 +39,11 @@ int main(int argc, char** argv)
 	("gametype,g", po::value<string>()->required(), "the game type for normal single game (Default:RandomGame)")
 	("players,p", po::value<int>()->required(), "the number of players in a game (Default:2)")
 	("actions,a", po::value<int>()->required(), "the number of actions for each player (Default:2)")
-	("rounds,r", po::value<int>()->required(), "the number of rounds in a game (Default:10000)")
+	("iterations,r", po::value<int>()->required(), "the number of iterations in a game (Default:10000)")
 	("strategy,s", po::value<int>()->required(), "set main strategy in a single game for comparison (check available strategies)  (Default:0)")
 	("opp_strategy,e", po::value<int>()->required(), "set opponent strategy for comparison, in 2 player game (check available strategies) (Default:1)")
-	("print_top,t", po::value<int>()->required(), "print top n rounds info (Default:3)")
-	("print_last,l", po::value<int>()->required(), "print last n rounds info (Default:1)")
+	("print_top,t", po::value<int>()->required(), "print top n iterations info (Default:3)")
+	("print_last,l", po::value<int>()->required(), "print last n iterations info (Default:1)")
 	("print_flag,z", po::value<bool>()->required(), "true to print more info. (Default:true)") 
 	("permute,y", po::value<bool>()->required(), "run permutation of payoffs. (Default:false)")
 	("tournament,o", po::value<bool>()->required(), "run tournament w/ single game in all algorithm pairs. (Default:false)")
@@ -85,8 +85,8 @@ int main(int argc, char** argv)
         return -1;
       }
     }
-		if (vm.count("rounds"))
-		  set_rounds = vm["rounds"].as<int>();
+		if (vm.count("iterations"))
+		  set_rounds = vm["iterations"].as<int>();
 		if (vm.count("actions"))
 		  set_actions = vm["actions"].as<int>();
 		if (vm.count("players"))
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 		if (vm.count("total_stratagies"))
 		  set_totalstrategies = vm["total_stratagies"].as<int>();
 
-		LOG(INFO) << "CMD, rounds:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players;
+		LOG(INFO) << "CMD, iterations:" << set_rounds << ", actions:" << set_actions << ", players:" << set_players;
     LOG(INFO) << "Game type:" << set_gametype;
 		LOG(INFO) << "print flag:" << set_print_flag << ", permute flag:" << set_permute; 
 		LOG(INFO) << "main strategy:" <<  strategy_Mgr.getname(static_cast<StrategyType>(set_main_strategy));

@@ -66,11 +66,11 @@ The test bed for both multi-agent learning algorithms and bandit algorithms, whi
 | -g [ --gametype ] arg             | the game type for normal single game | (Default:RandomGame)
 | -p [ --players ] arg              | the number of players in a game | (Default:2)
 | -a [ --actions ] arg              | the number of actions for each player | (Default:2)
-| -r [ --rounds ] arg               | the number of rounds in a game | (Default:10000)
+| -r [ --iterations ] arg               | the number of iterations in a game | (Default:10000)
 | -s [ --strategy ] arg             | set main strategy in a single game for comparison (check available strategies)  | (Default:0)
 | -e [ --opp_strategy ] arg         | set opponent strategy for comparison, in 2 player game (check available strategies) | (Default:1)
-| -t [ --print_top ] arg            | print top n rounds info | (Default:3)
-| -l [ --print_last ] arg           | print last n rounds info | (Default:1)
+| -t [ --print_top ] arg            | print top n iterations info | (Default:3)
+| -l [ --print_last ] arg           | print last n iterations info | (Default:1)
 | -z [ --print_flag ] arg           | true to print more info.| (Default:true)
 | -y [ --permute ] arg              | run permutation of payoffs. | (Default:false)
 | -o [ --tournament ] arg           | run tournament w/ single game in all  algorithm pairs.| (Default:false)
@@ -100,17 +100,16 @@ Total 29 types ( Note: category 1 is used for all n-player, m-action experiment)
 ## Running time performance
 - Testing condition
 	- Hardware:  (Intel(R) Xeon(R) CPU E3-1231 v3 @3.4GHz , 8 cores
-	- Total Game Instances: 5800 2-player 2 actions game instances w/  10000 steps
+	- Total Game Instances: 5800 2-player 2 actions game instances w/  10000 iterations
 - Result:
 	- **16m19s** (debug mode, single thread)
-	- **9m3s** (debug mode, multi-thread)
 	- **3m13s** (debug mode, multi-thread, change the working flow to two stage operation) (Refer to the *pull-request game-create-run-separation*)
 	- **1m51s** (release mode, use compiler flag -O3 only) 
 	- **1m06s** (use pre-generated games)
-- Possible improvement:
+- Possible improvements:
 	- using asynchronous threads for database I/O and game file creation to achieve non-blocking executions.  (Done)
-	- using pre-generated game files. 
-	- algorithm execution in each step
+	- using pre-generated game files. (Done)
+	- algorithm execution in each iteration 
 	- others
 
 ## Reference
